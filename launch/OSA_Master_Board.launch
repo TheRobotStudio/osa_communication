@@ -1,0 +1,5 @@
+<launch>
+  <node name="osa_masterBoard_node" pkg="osa_serial" type="osa_masterBoard" output="screen" respawn="true">
+    <param name="usb_device" type="string" value="/dev/ttyUSB0" />
+  </node>
+</launch>
