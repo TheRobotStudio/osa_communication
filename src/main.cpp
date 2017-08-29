@@ -46,8 +46,9 @@ int main(int argc, char **argv)
 {
 	//ros::init(argc, argv, "osa_can_layer_node");
 	//ros::Rate r(15);
+
 	CANLayer *can_layer = new CANLayer(); //ros::this_node::getName());
-	can_layer->init();
+	if(can_layer->init()) return -1;
 	//ros::spin();
 
 /*
