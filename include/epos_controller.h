@@ -47,13 +47,13 @@ class EPOSController
 	//methods
 	public:
 		//constructor
-		EPOSController(unsigned int node_id);
+		EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value);
 		//destructor
 		~EPOSController();
 
 		/*! methods */
 		//setters
-		int	setNodeID(unsigned int node_id);
+		int	setNodeID(uint8_t node_id);
 		int	setName(std::string name);
 		int setControllerType(ControllerType controller_type);
 		int setMotorType(MotorType motor_type);
@@ -70,7 +70,7 @@ class EPOSController
 		int setBoardStatus(int8_t board_status);
 
 		//getters
-		unsigned int getNodeID() const { return node_id_; };
+		uint8_t getNodeID() const { return node_id_; };
 		std::string	getName() const { return name_; };
 		ControllerType getControllerType() const { return controller_type_; };
 		MotorType getMotorType() const { return motor_type_; };
@@ -134,11 +134,11 @@ class EPOSController
 	//attributes
 	protected:
 
-		unsigned int node_id_;
+		uint8_t node_id_;
 		std::string name_;
 		ControllerType controller_type_;
-		MotorType motor_type_;
 		bool inverted_; //0 for non inverted, 1 for inverted, this will invert the sign of commands.
+		MotorType motor_type_;
 		ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
 		int value_;
 

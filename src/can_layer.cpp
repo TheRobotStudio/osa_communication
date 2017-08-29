@@ -229,11 +229,11 @@ bool CANLayer::init()
 				}
 
 				//print the controller parameters
-				ROS_INFO("Parameters for %s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", node_id_path.str().c_str(),
+				ROS_INFO("Parameters for %s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", controller_idx_path.str().c_str(),
 						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
 
 				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(node_id);
+				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value);
 
 				//epos_controller->
 

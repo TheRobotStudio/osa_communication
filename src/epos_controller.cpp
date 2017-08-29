@@ -43,14 +43,14 @@
 using namespace std;
 
 //constructor
-EPOSController::EPOSController(unsigned int node_id) :
-node_id_(node_id),
-name_(""),
+EPOSController::EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value) :
+node_id_(0),
+name_(name),
 controller_type_(NOT_USED),
-motor_type_(NONE),
 inverted_(false),
+motor_type_(NONE),
 mode_(PROFILE_VELOCITY_MODE),
-value_(0),
+value_(value),
 tx_frame_pub_(),
 data_({0}),
 activ_mode_(),
@@ -73,6 +73,36 @@ statusword_(0),
 inc_enc1_cnt_at_idx_pls_(0),
 board_status_(0)
 {
+	//Init the parameters
+	//node_id_
+	if((node_id >=0) && (node_id<=255)) node_id_ = node_id; //check that the value is a uint8_t
+
+	//controller_type_
+	if(controller_type.compare("NOT_USED")) controller_type_ = ControllerType(NOT_USED);
+	else if(controller_type.compare("EPOS2")) controller_type_ = ControllerType(EPOS2);
+	else if(controller_type.compare("EPOS4")) controller_type_ = ControllerType(EPOS4);
+
+	//motor_type_
+	if(motor_type.compare("NONE")) motor_type_ = MotorType(NONE);
+	else if(motor_type.compare("DCX10")) motor_type_ = MotorType(DCX10);
+	else if(motor_type.compare("DCX14")) motor_type_ = MotorType(DCX14);
+	else if(motor_type.compare("DCX16")) motor_type_ = MotorType(DCX16);
+	else if(motor_type.compare("DCX22")) motor_type_ = MotorType(DCX22);
+	else if(motor_type.compare("DCX32")) motor_type_ = MotorType(DCX32);
+	else if(motor_type.compare("RE13")) motor_type_ = MotorType(RE13);
+	else if(motor_type.compare("RE30")) motor_type_ = MotorType(RE30);
+	else if(motor_type.compare("ECI40")) motor_type_ = MotorType(ECI40);
+	else if(motor_type.compare("ECI52")) motor_type_ = MotorType(ECI52);
+	else if(motor_type.compare("EC90")) motor_type_ = MotorType(EC90);
+
+	//mode_
+	if(mode.compare("INTERPOLATED_POSITION_MODE")) mode_ = ActivatedModeOfOperation(INTERPOLATED_POSITION_MODE);
+	else if(mode.compare("PROFILE_VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_VELOCITY_MODE);
+	else if(mode.compare("PROFILE_POSITION_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_POSITION_MODE);
+	else if(mode.compare("POSITION_MODE")) mode_ = ActivatedModeOfOperation(POSITION_MODE);
+	else if(mode.compare("VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(VELOCITY_MODE);
+	else if(mode.compare("CURRENT_MODE")) mode_ = ActivatedModeOfOperation(CURRENT_MODE);
+	else if(mode.compare("CYCLIC_SYNCHRONOUS_TORQUE_MODE")) mode_ = ActivatedModeOfOperation(CYCLIC_SYNCHRONOUS_TORQUE_MODE);
 }
 
 //destructor
@@ -96,7 +126,7 @@ int	EPOSController::setStatus(int status)
 		return -1;
 }*/
 
-int	EPOSController::setNodeID(unsigned int node_id)
+int	EPOSController::setNodeID(uint8_t node_id)
 {
 	//check the value
 	if(node_id > 0)

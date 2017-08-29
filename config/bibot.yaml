@@ -11,7 +11,7 @@ mobile_base:
   wheels_diameter: 0.2
 
 controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
 
 
 #controller1: 
