@@ -152,6 +152,7 @@ bool CANLayer::init()
 			if(nh.searchParam(controller_idx_str.str(), final_str))
 			{
 				ROS_INFO("%s found in YAML config file", controller_idx_str.str().c_str());
+				ROS_INFO("final_str = %s", final_str.c_str());
 
 				//create variables to store the controller parameters:
 				int node_id = 0;
@@ -163,9 +164,17 @@ bool CANLayer::init()
 				int value;
 
 				//grab the parameters of the current controller
-				if(!nh.getParam(controller_idx_str.str() + "/node_id", node_id));
-
-				ROS_INFO("node_id=%d", node_id);
+				std::ostringstream node_id_str;
+				node_id_str << controller_idx_str << "/node_id";
+				if(nh.getParam(node_id_str.str(), node_id))
+				{
+					ROS_INFO("node_id=%d", node_id);
+				}
+				else
+				{
+					ROS_ERROR("Can't grab param node_id for %s", controller_idx_str.str().c_str());
+					return false;
+				}
 
 				//create a new EPOS controller
 				EPOSController *epos_controller = new EPOSController(node_id);
