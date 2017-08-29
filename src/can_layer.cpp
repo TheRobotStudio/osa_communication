@@ -44,7 +44,6 @@
 #include <vector>
 #include "registers.h"
 #include "can_layer.h"
-#include <XmlRpcValue.h>
 
 #define LOOP_RATE 15
 
@@ -134,41 +133,29 @@ bool CANLayer::init()
 		int controller_idx = 1;
 		std::string rad_str = "controller"; //common radical name
 
-		//std::ostringstream controller_idx_str;
+		//std::ostringstream controller_idx_path;
 
-		//std::string final_str = controller_idx_str.str();
+		//std::string absolute_str = controller_idx_path.str();
 
-		//ROS_INFO("string=%s", final_str.c_str());
+		//ROS_INFO("string=%s", absolute_str.c_str());
 
 		while(controller_exist)
 		{
 			//create the string "controller+index" to search for the controller parameter with that index number
-			std::ostringstream controller_idx_str;
-			controller_idx_str << rad_str << controller_idx;
+			std::ostringstream controller_idx_path;
+			controller_idx_path << rad_str << controller_idx;
 
-			std::string final_str = "final_str";
+			std::string absolute_str = "absolute_str";
 
-			//ROS_INFO("string=%s", controller_idx_str.str().c_str());
+			//ROS_INFO("string=%s", controller_idx_path.str().c_str());
 
-			if(nh.searchParam(controller_idx_str.str(), final_str))
+			if(nh.searchParam(controller_idx_path.str(), absolute_str))
 			{
-				ROS_INFO("%s found in YAML config file", controller_idx_str.str().c_str());
-				ROS_INFO("final_str = %s", final_str.c_str());
-
-				//XmlRpc::XmlRpcValue controller_param_list;
-				//nh.getParam(controller_idx_str.str(), controller_param_list);
-				//ROS_ASSERT(controller_param_list.getType() == XmlRpc::XmlRpcValue::TypeStruct);
-/*
-				for(int32_t i=0; i<controller_param_list.size(); ++i)
-				{
-					//ROS_ASSERT(controller_param_list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-					//sum += static_cast<double>(controller_param_list[i]);
-				}*/
-
-
+				ROS_INFO("%s found in YAML config file", controller_idx_path.str().c_str());
+				//ROS_INFO("absolute_str = %s", absolute_str.c_str());
 
 				//create variables to store the controller parameters:
-				int node_id = 0; //static_cast<int>(controller_param_list[0]);
+				int node_id = 0;
 				std:: string name;
 				std:: string type;
 				bool inverted;
@@ -176,23 +163,74 @@ bool CANLayer::init()
 				std:: string mode;
 				int value;
 
-				//ROS_INFO("node_id=%d", node_id);
-
 				//grab the parameters of the current controller
-				std::ostringstream node_id_str;
-				node_id_str << final_str << "/node_id";
 
-				ROS_INFO("node_id_str = %s", node_id_str.str().c_str());
-
-				if(nh.getParam(node_id_str.str(), node_id))
+				//node_id
+				std::ostringstream node_id_path;
+				node_id_path << absolute_str << "/node_id";
+				if(!nh.getParam(node_id_path.str(), node_id))
 				{
-					ROS_INFO("node_id=%d", node_id);
-				}
-				else
-				{
-					ROS_ERROR("Can't grab param node_id for %s", controller_idx_str.str().c_str());
+					ROS_ERROR("Can't grab param node_id for %s", controller_idx_path.str().c_str());
 					return false;
 				}
+
+				//name
+				std::ostringstream name_path;
+				name_path << absolute_str << "/name";
+				if(!nh.getParam(name_path.str(), name))
+				{
+					ROS_ERROR("Can't grab param name for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//type
+				std::ostringstream type_path;
+				type_path << absolute_str << "/type";
+				if(!nh.getParam(type_path.str(), type))
+				{
+					ROS_ERROR("Can't grab param type for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//inverted
+				std::ostringstream inverted_path;
+				inverted_path << absolute_str << "/inverted";
+				if(!nh.getParam(inverted_path.str(), inverted))
+				{
+					ROS_ERROR("Can't grab param inverted for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//motor
+				std::ostringstream motor_path;
+				motor_path << absolute_str << "/motor";
+				if(!nh.getParam(motor_path.str(), motor))
+				{
+					ROS_ERROR("Can't grab param motor for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//mode
+				std::ostringstream mode_path;
+				mode_path << absolute_str << "/mode";
+				if(!nh.getParam(mode_path.str(), mode))
+				{
+					ROS_ERROR("Can't grab param mode for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//value
+				std::ostringstream value_path;
+				value_path << absolute_str << "/value";
+				if(!nh.getParam(value_path.str(), value))
+				{
+					ROS_ERROR("Can't grab param value for %s", controller_idx_path.str().c_str());
+					return false;
+				}
+
+				//print the controller parameters
+				ROS_INFO("Parameters for %s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", node_id_path.str().c_str(),
+						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
 
 				//create a new EPOS controller
 				EPOSController *epos_controller = new EPOSController(node_id);
