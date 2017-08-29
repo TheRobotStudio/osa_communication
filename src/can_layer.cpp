@@ -155,8 +155,8 @@ bool CANLayer::init()
 				ROS_INFO("%s found in YAML config file", controller_idx_str.str().c_str());
 				ROS_INFO("final_str = %s", final_str.c_str());
 
-				XmlRpc::XmlRpcValue controller_param_list;
-				nh.getParam(controller_idx_str.str(), controller_param_list);
+				//XmlRpc::XmlRpcValue controller_param_list;
+				//nh.getParam(controller_idx_str.str(), controller_param_list);
 				//ROS_ASSERT(controller_param_list.getType() == XmlRpc::XmlRpcValue::TypeStruct);
 /*
 				for(int32_t i=0; i<controller_param_list.size(); ++i)
@@ -168,7 +168,7 @@ bool CANLayer::init()
 
 
 				//create variables to store the controller parameters:
-				int node_id = static_cast<int>(controller_param_list[0]);
+				int node_id = 0; //static_cast<int>(controller_param_list[0]);
 				std:: string name;
 				std:: string type;
 				bool inverted;
@@ -176,11 +176,11 @@ bool CANLayer::init()
 				std:: string mode;
 				int value;
 
-				ROS_INFO("node_id=%d", node_id);
+				//ROS_INFO("node_id=%d", node_id);
 
-	/*			//grab the parameters of the current controller
+				//grab the parameters of the current controller
 				std::ostringstream node_id_str;
-				node_id_str << controller_idx_str.str() << "/node_id";
+				node_id_str << final_str << "/node_id";
 
 				ROS_INFO("node_id_str = %s", node_id_str.str().c_str());
 
@@ -192,7 +192,7 @@ bool CANLayer::init()
 				{
 					ROS_ERROR("Can't grab param node_id for %s", controller_idx_str.str().c_str());
 					return false;
-				}*/
+				}
 
 				//create a new EPOS controller
 				EPOSController *epos_controller = new EPOSController(node_id);
