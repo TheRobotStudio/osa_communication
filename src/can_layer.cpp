@@ -157,7 +157,7 @@ bool CANLayer::init()
 
 				XmlRpc::XmlRpcValue controller_param_list;
 				nh.getParam(controller_idx_str.str(), controller_param_list);
-				ROS_ASSERT(controller_param_list.getType() == XmlRpc::XmlRpcValue::TypeStruct);
+				//ROS_ASSERT(controller_param_list.getType() == XmlRpc::XmlRpcValue::TypeStruct);
 /*
 				for(int32_t i=0; i<controller_param_list.size(); ++i)
 				{
