@@ -165,7 +165,7 @@ bool CANLayer::init()
 
 				//grab the parameters of the current controller
 				std::ostringstream node_id_str;
-				node_id_str << controller_idx_str << "/node_id";
+				node_id_str << controller_idx_str.str() << "/node_id";
 				if(nh.getParam(node_id_str.str(), node_id))
 				{
 					ROS_INFO("node_id=%d", node_id);
