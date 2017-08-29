@@ -77,21 +77,23 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(osa_serial
-#   src/${PROJECT_NAME}/osa_serial.cpp
-# )
+add_library(osa_communication
+  src/can_layer.cpp
+  src/epos_controller.cpp
+)
 
 ## Declare a cpp executable
-add_executable(osa_masterBoard src/masterBoard.cpp)
-add_executable(osa_socketcan src/socketcan.cpp)
+#add_executable(osa_master_board src/master_board.cpp)
+add_executable(osa_can_layer src/main.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(osa_serial_node osa_serial_generate_messages_cpp)
+#add_dependencies(osa_can_layer osa_communication_generate_messages_cpp)
+add_dependencies(osa_can_layer osa_communication)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(osa_masterBoard ${catkin_LIBRARIES})
-target_link_libraries(osa_socketcan ${catkin_LIBRARIES})
+#target_link_libraries(osa_master_board ${catkin_LIBRARIES})
+target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication)
 
 #############
 ## Install ##

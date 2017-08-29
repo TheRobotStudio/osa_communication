@@ -25,26 +25,27 @@
  */
  
  /**
- * @file robot.h
+ * @file enums.h
  * @author Cyril Jourdan
  * @date Mar 03, 2017
  * @version 2.0.0
- * @brief header file for Robot
+ * @brief header file for enums definitions
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Mar 11, 2015
  */
 
-#ifndef ROBOT_H
-#define ROBOT_H
-
-/*! Includes */
-//#include "ConfigFile.h"
-#include <unistd.h> //for usleep
-#include <time.h>
+#ifndef ENUMS_H
+#define ENUMS_H
 
 /*! Defines */
-#define NUMBER_OF_MOTORS	2
+//#define NUMBER_OF_MOTORS	2
+#define NUMBER_BYTES_PER_MSG        8
+#define NB_SAMPLES_MEDIAN           5
+#define PAUSE                       10
+#define EPOS_OK                     0
+#define EPOS_ERROR                  -1
+#define TIMEOUT                     10000
 
 /*! Enums */
 enum MotorType
@@ -81,22 +82,21 @@ enum ActivatedModeOfOperation
     CYCLIC_SYNCHRONOUS_TORQUE_MODE = 6
     //NO_MODE = 15
 }; 
- 
-/*! Structures */
-typedef struct Motor 
+
+/*!< enum that describe the possible commands received from ROS */
+enum ROSCommand //TODO special EPOS4 cases
 {
-   int nodeID;
-   ControllerType controllerType;
-   MotorType motorType;   
-   bool inverted; //0 for non inverted, 1 for inverted, this will invert the sign of commands.
-   ActivatedModeOfOperation mode;
-   int value; //current
-} Motor;
+    SET_TARGET_POSITION = 0,
+    SET_TARGET_VELOCITY = 1,
+    SET_PROFILE_ACCELERATION = 2,
+    SET_PROFILE_DECELERATION = 3,
+    SET_PROFILE_VELOCITY = 4,
+    SET_OUTPUT_CURRENT_LIMIT = 5,
+    SET_CONTROLWORD = 6,
+    SET_CURRENT_MODE_SETTING_VALUE = 7,
+    SET_MAXIMAL_SPEED_IN_CURRENT_MODE = 8,
+    SET_MODES_OF_OPERATION = 9,
+    SEND_DUMB_MESSAGE = 15
+};
 
-        
-/*! Variables */
-//extern Serial pc;
-Motor motorArray[NUMBER_OF_MOTORS];
-uint8_t numberEposBoards;
-
-#endif //ROBOT_H
+#endif //ENUMS_H

@@ -1,0 +1,42 @@
+# Config file for the BiBot robot with 18 DOF, 2 in the base and 16 in the right arm
+
+robot:
+  name: 'BiBot_base'
+  dof: 2
+  can_device: 'can0'
+  
+mobile_base:
+  nb_of_wheels: 2
+  distance_between_wheels: 0.3 # in meter (m)
+  wheels_diameter: 0.2
+
+controller1: {nodeID: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller2: {nodeID: 2, name: 'left wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+
+#controller1: 
+#{
+#  nodeID: 1,
+#  name: 'right wheel',
+#  type: 'EPOS4',
+#  inverted: true,
+#  motor: 
+#    type: 'EC90'
+#    gearbox: {ratio_numerator: 52, ratio_denominator: 1}
+#    encoder: {nb_chan: 3, resolution: 512},  # resolution is number of ticks per motor turn
+#  mode: 'PROFILE_VELOCITY_MODE',
+#  value: 0,
+#}
+#
+#controller2:
+#  nodeID: 2,
+#  name: 'left wheel',
+#  type: 'EPOS4',
+#  inverted: false
+#  motor: 
+#    type: 'EC90'
+#    gearbox: {ratio_numerator: 52, ratio_denominator: 1}
+#    encoder: {nb_chan: 3, resolution: 512}  # resolution is number of ticks per motor turn
+#  mode: 'PROFILE_VELOCITY_MODE'
+#  value: 0
+
