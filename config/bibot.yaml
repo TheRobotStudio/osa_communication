@@ -10,8 +10,8 @@ mobile_base:
   distance_between_wheels: 0.3 # in meter (m)
   wheels_diameter: 0.2
 
-controller1: {nodeID: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-controller2: {nodeID: 2, name: 'left wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
 
 
 #controller1: 

@@ -43,8 +43,8 @@
 using namespace std;
 
 //constructor
-EPOSController::EPOSController() :
-node_id_(0),
+EPOSController::EPOSController(unsigned int node_id) :
+node_id_(node_id),
 name_(""),
 controller_type_(NOT_USED),
 motor_type_(NONE),

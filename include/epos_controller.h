@@ -47,7 +47,7 @@ class EPOSController
 	//methods
 	public:
 		//constructor
-		EPOSController();
+		EPOSController(unsigned int node_id);
 		//destructor
 		~EPOSController();
 

@@ -55,8 +55,8 @@
 //ros::Publisher data_pub;
 
 CANLayer::CANLayer() :
-robot_name_(0),
-robot_can_device_(0),
+robot_name_(""),
+robot_can_device_(""),
 epos_controllers_vp_(0),
 number_epos_boards_(0),
 data_({0}),
@@ -131,32 +131,47 @@ bool CANLayer::init()
 		bool controller_exist = true;
 		//start with controller 1
 		int controller_idx = 1;
-		std::string rad_str = "controller";
+		std::string rad_str = "controller"; //common radical name
 
-		//std::ostringstream controllerIdx_str;
+		//std::ostringstream controller_idx_str;
 
-		//std::string final_str = controllerIdx_str.str();
+		//std::string final_str = controller_idx_str.str();
 
 		//ROS_INFO("string=%s", final_str.c_str());
 
 		while(controller_exist)
 		{
 			//create the string "controller+index" to search for the controller parameter with that index number
-			std::ostringstream controllerIdx_str;
-			controllerIdx_str << rad_str << controller_idx;
+			std::ostringstream controller_idx_str;
+			controller_idx_str << rad_str << controller_idx;
 
 			std::string final_str = "final_str";
 
-			//ROS_INFO("string=%s", controllerIdx_str.str().c_str());
+			//ROS_INFO("string=%s", controller_idx_str.str().c_str());
 
-			if(nh.searchParam(controllerIdx_str.str(), final_str))
+			if(nh.searchParam(controller_idx_str.str(), final_str))
 			{
-				ROS_INFO("%s found in YAML config file", controllerIdx_str.str().c_str());
-				//Controller controller;
+				ROS_INFO("%s found in YAML config file", controller_idx_str.str().c_str());
 
-				//controller
+				//create variables to store the controller parameters:
+				int node_id;
+				std:: string name;
+				std:: string type;
+				bool inverted;
+				std:: string motor;
+				std:: string mode;
+				int value;
+
+				//grab the parameters of the current controller
+				if(!nh.getParam(controller_idx_str.str() + "/node_id", node_id));
+
+				//create a new EPOS controller
+				EPOSController *epos_controller = new EPOSController(node_id);
+
+				//epos_controller->
 
 				//v_controllers.push_back(controller);
+				epos_controllers_vp_.push_back(epos_controller);
 
 				//increment to search for the next controller
 				controller_idx++;
