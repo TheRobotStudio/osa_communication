@@ -80,7 +80,7 @@ board_status_(0)
 	//controller_type_
 	if(controller_type.compare("NOT_USED")) controller_type_ = ControllerType(NOT_USED);
 	else if(controller_type.compare("EPOS2")) controller_type_ = ControllerType(EPOS2);
-	else if(controller_type.compare("EPOS4")) controller_type_ = ControllerType(EPOS4);
+	else if(controller_type.compare("EPOS4")) ROS_INFO("YES EPOS4");//controller_type_ = ControllerType(EPOS4);
 
 	//motor_type_
 	if(motor_type.compare("NONE")) motor_type_ = MotorType(NONE);
@@ -93,11 +93,11 @@ board_status_(0)
 	else if(motor_type.compare("RE30")) motor_type_ = MotorType(RE30);
 	else if(motor_type.compare("ECI40")) motor_type_ = MotorType(ECI40);
 	else if(motor_type.compare("ECI52")) motor_type_ = MotorType(ECI52);
-	else if(motor_type.compare("EC90")) motor_type_ = MotorType(EC90);
+	else if(motor_type.compare("EC90")) ROS_INFO("YES EC90");//motor_type_ = MotorType(EC90);
 
 	//mode_
 	if(mode.compare("INTERPOLATED_POSITION_MODE")) mode_ = ActivatedModeOfOperation(INTERPOLATED_POSITION_MODE);
-	else if(mode.compare("PROFILE_VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_VELOCITY_MODE);
+	else if(mode.compare("PROFILE_VELOCITY_MODE")) ROS_INFO("YES PROFILE_VELOCITY_MODE");//mode_ = ActivatedModeOfOperation(PROFILE_VELOCITY_MODE);
 	else if(mode.compare("PROFILE_POSITION_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_POSITION_MODE);
 	else if(mode.compare("POSITION_MODE")) mode_ = ActivatedModeOfOperation(POSITION_MODE);
 	else if(mode.compare("VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(VELOCITY_MODE);
