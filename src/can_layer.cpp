@@ -335,7 +335,7 @@ bool CANLayer::init()
 		}
 	}
 
-	ROS_INFO("--- Getting motor data ---\n");
+	ROS_INFO("--- Getting motor data ---");
 	//gather first pack of data
 	//get the sensor values
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
@@ -344,8 +344,7 @@ bool CANLayer::init()
 	}
 
 
-	//then start the main loop
-	ROS_INFO("--- Start main loop ---\n");
+
 
 	/*
 
@@ -355,6 +354,8 @@ bool CANLayer::init()
 	//Subscribers
 	m_sub_motorDataArray = nh.subscribe("/motor_data_array", 10, &BasicControlNode::motorDataArray_cb, this);
 */
+
+	ROS_INFO("--- Init motor command array ---\n");
 
 	//create the commands multi array
 	motor_cmd_ma_.layout.dim.push_back(std_msgs::MultiArrayDimension());
@@ -386,6 +387,9 @@ bool CANLayer::init()
 	}
 */
 
+	//then start the main loop
+	ROS_INFO("--- Start main loop ---\n");
+
 	//m_playback = false;
 	ros::start();
 
@@ -402,10 +406,9 @@ void CANLayer::run()
 
 		//publish if enabled
 		//if(m_enablePublish)
-		tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
+		//tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
 
-		//TODO check when the Q_SLOT is executed, make sure no command is reset before being sent.
-		resetMotorCmdMultiArray();
+		//resetMotorCmdMultiArray();
 
 		r.sleep();
 	}
