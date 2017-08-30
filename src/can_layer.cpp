@@ -314,7 +314,7 @@ bool CANLayer::init()
 	//TEST assume 2 EPOS4
 	//numberEposBoards = 2;
 
-	ROS_INFO("--- Initialise EPOS boards ---\n");
+	ROS_INFO("--- Initialise EPOS boards ---\n");  //TODO make it as a service
 	//power or pushbutton reset
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
@@ -327,7 +327,7 @@ bool CANLayer::init()
 		}
 	}
 
-	ROS_INFO("--- Calibrate Arm ---\n");
+	ROS_INFO("--- Calibrate Arm ---\n");  //TODO make it as a service
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
 		if(epos_controllers_vp_[node_id-1]->calibrate() == EPOS_ERROR)
@@ -450,7 +450,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 		        int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
 		                                       
-		        ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
+		        //ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
 		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) //!< change sign
 		        {
@@ -475,7 +475,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        int16_t follErr = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
 		        uint16_t statwrd = (can_msg->data[5]<<8 | can_msg->data[4]); //(0x0000FFFF00000000 & data) >> 32;
 		     
-		        ROS_INFO("NodeID[%d] curr[%d] follErr[%d] statwrd[%b]", node_id, curr, follErr, statwrd);
+		        //ROS_INFO("NodeID[%d] curr[%d] follErr[%d] statwrd[%b]", node_id, curr, follErr, statwrd);
 
 		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) curr = -1*curr; //change sign
 		        epos_controllers_vp_[node_id-1]->setCurrent(curr);
@@ -598,7 +598,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 
 		//create the data multi array
 		motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
-		motorData_ma.layout.dim[0].size = epos_controllers_vp_.size();
+		motorData_ma.layout.dim[0].size = 1; //epos_controllers_vp_.size();
 		motorData_ma.layout.dim[0].stride = epos_controllers_vp_.size();
 		motorData_ma.layout.dim[0].label = "motors";
 		motorData_ma.layout.data_offset = 0;
