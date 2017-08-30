@@ -78,31 +78,32 @@ board_status_(0)
 	if((node_id >=0) && (node_id<=255)) node_id_ = node_id; //check that the value is a uint8_t
 
 	//controller_type_
-	if(controller_type.compare("NOT_USED")) controller_type_ = ControllerType(NOT_USED);
-	else if(controller_type.compare("EPOS2")) controller_type_ = ControllerType(EPOS2);
-	else if(controller_type.compare("EPOS4")) ROS_INFO("YES EPOS4");//controller_type_ = ControllerType(EPOS4);
+	if(!controller_type.compare("NOT_USED")) controller_type_ = ControllerType(NOT_USED);
+	else if(!controller_type.compare("EPOS2")) controller_type_ = ControllerType(EPOS2);
+	else if(!controller_type.compare("EPOS4")) ROS_INFO("YES EPOS4");//controller_type_ = ControllerType(EPOS4);
 
 	//motor_type_
-	if(motor_type.compare("NONE")) motor_type_ = MotorType(NONE);
-	else if(motor_type.compare("DCX10")) motor_type_ = MotorType(DCX10);
-	else if(motor_type.compare("DCX14")) motor_type_ = MotorType(DCX14);
-	else if(motor_type.compare("DCX16")) motor_type_ = MotorType(DCX16);
-	else if(motor_type.compare("DCX22")) motor_type_ = MotorType(DCX22);
-	else if(motor_type.compare("DCX32")) motor_type_ = MotorType(DCX32);
-	else if(motor_type.compare("RE13")) motor_type_ = MotorType(RE13);
-	else if(motor_type.compare("RE30")) motor_type_ = MotorType(RE30);
-	else if(motor_type.compare("ECI40")) motor_type_ = MotorType(ECI40);
-	else if(motor_type.compare("ECI52")) motor_type_ = MotorType(ECI52);
-	else if(motor_type.compare("EC90")) ROS_INFO("YES EC90");//motor_type_ = MotorType(EC90);
+	ROS_INFO("motor_type = %s", motor_type.c_str());
+	if(!motor_type.compare("NONE")) motor_type_ = MotorType(NONE);
+	else if(!motor_type.compare("DCX10")) motor_type_ = MotorType(DCX10);
+	else if(!motor_type.compare("DCX14")) motor_type_ = MotorType(DCX14);
+	else if(!motor_type.compare("DCX16")) motor_type_ = MotorType(DCX16);
+	else if(!motor_type.compare("DCX22")) motor_type_ = MotorType(DCX22);
+	else if(!motor_type.compare("DCX32")) motor_type_ = MotorType(DCX32);
+	else if(!motor_type.compare("RE13")) motor_type_ = MotorType(RE13);
+	else if(!motor_type.compare("RE30")) motor_type_ = MotorType(RE30);
+	else if(!motor_type.compare("ECI40")) motor_type_ = MotorType(ECI40);
+	else if(!motor_type.compare("ECI52")) motor_type_ = MotorType(ECI52);
+	else if(!motor_type.compare("EC90")) ROS_INFO("YES EC90");//motor_type_ = MotorType(EC90);
 
 	//mode_
-	if(mode.compare("INTERPOLATED_POSITION_MODE")) mode_ = ActivatedModeOfOperation(INTERPOLATED_POSITION_MODE);
-	else if(mode.compare("PROFILE_VELOCITY_MODE")) ROS_INFO("YES PROFILE_VELOCITY_MODE");//mode_ = ActivatedModeOfOperation(PROFILE_VELOCITY_MODE);
-	else if(mode.compare("PROFILE_POSITION_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_POSITION_MODE);
-	else if(mode.compare("POSITION_MODE")) mode_ = ActivatedModeOfOperation(POSITION_MODE);
-	else if(mode.compare("VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(VELOCITY_MODE);
-	else if(mode.compare("CURRENT_MODE")) mode_ = ActivatedModeOfOperation(CURRENT_MODE);
-	else if(mode.compare("CYCLIC_SYNCHRONOUS_TORQUE_MODE")) mode_ = ActivatedModeOfOperation(CYCLIC_SYNCHRONOUS_TORQUE_MODE);
+	if(!mode.compare("INTERPOLATED_POSITION_MODE")) mode_ = ActivatedModeOfOperation(INTERPOLATED_POSITION_MODE);
+	else if(!mode.compare("PROFILE_VELOCITY_MODE")) ROS_INFO("YES PROFILE_VELOCITY_MODE");//mode_ = ActivatedModeOfOperation(PROFILE_VELOCITY_MODE);
+	else if(!mode.compare("PROFILE_POSITION_MODE")) mode_ = ActivatedModeOfOperation(PROFILE_POSITION_MODE);
+	else if(!mode.compare("POSITION_MODE")) mode_ = ActivatedModeOfOperation(POSITION_MODE);
+	else if(!mode.compare("VELOCITY_MODE")) mode_ = ActivatedModeOfOperation(VELOCITY_MODE);
+	else if(!mode.compare("CURRENT_MODE")) mode_ = ActivatedModeOfOperation(CURRENT_MODE);
+	else if(!mode.compare("CYCLIC_SYNCHRONOUS_TORQUE_MODE")) mode_ = ActivatedModeOfOperation(CYCLIC_SYNCHRONOUS_TORQUE_MODE);
 }
 
 //destructor
