@@ -43,7 +43,7 @@
 using namespace std;
 
 //constructor
-EPOSController::EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value) :
+EPOSController::EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value, ros::Publisher *tx_can_frame_pub) :
 node_id_(0),
 name_(name),
 controller_type_(NOT_USED),
@@ -51,7 +51,7 @@ inverted_(false),
 motor_type_(NONE),
 mode_(PROFILE_VELOCITY_MODE),
 value_(value),
-tx_frame_pub_(),
+tx_can_frame_pub_(tx_can_frame_pub),
 data_({0}),
 activ_mode_(),
 ros_cmd_(SEND_DUMB_MESSAGE),
@@ -261,7 +261,7 @@ void EPOSController::canToEposWrite(int id, char* data, char len)
 	frame.header.stamp = ros::Time::now();
 
 	//publish the CAN frame
-	tx_frame_pub_->publish(frame);
+	tx_can_frame_pub_->publish(frame);
 }
 
 void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
@@ -302,7 +302,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	frame.header.stamp = ros::Time::now();
 
 	//publish the CAN frame
-	tx_frame_pub_->publish(frame);
+	tx_can_frame_pub_->publish(frame);
 
 	ros::Duration(0.01).sleep();
 }

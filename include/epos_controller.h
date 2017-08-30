@@ -47,7 +47,7 @@ class EPOSController
 	//methods
 	public:
 		//constructor
-		EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value);
+		EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value, ros::Publisher *tx_can_frame_pub);
 		//destructor
 		~EPOSController();
 
@@ -142,7 +142,7 @@ class EPOSController
 		ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
 		int value_;
 
-		ros::Publisher *tx_frame_pub_;
+		ros::Publisher *tx_can_frame_pub_;
 		char data_[8]; //can message data
 
 		ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge

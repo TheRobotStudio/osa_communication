@@ -93,6 +93,16 @@ bool CANLayer::init()
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle nh("~");
 
+	ROS_INFO("*** Init Publishers and Subsribers ***\n");
+
+	//Subsribers and publishers
+	rx_can_frame_sub_ = nh.subscribe("/received_messages", 8, &CANLayer::receiveMessagesCallback, this); //check size of FIFO : works with 8 (2 motors*(2 request + 2 answers))
+	tx_can_frame_pub_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
+	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
+	motor_data_pub_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
+
+	ROS_INFO("*** Grab the parameters from the YAML file ***\n");
+
 	// Grab the parameters
 	try
 	{
@@ -233,7 +243,7 @@ bool CANLayer::init()
 						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
 
 				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value);
+				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value, tx_can_frame_pub_);
 
 				//epos_controller->
 
@@ -287,14 +297,6 @@ bool CANLayer::init()
 		return false;
 	}
 
-	ROS_INFO("*** Init Publishers and Subsribers ***\n");
-
-	//Subsribers and publishers
-	rx_can_frame_sub_ = nh.subscribe("/received_messages", 8, &CANLayer::receiveMessagesCallback, this); //check size of FIFO : works with 8 (2 motors*(2 request + 2 answers))
-	tx_can_frame_pub_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
-	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
-	motor_data_pub_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
-
 	//wait for the Publisher/Subscriber to connect
 	ROS_INFO("--- wait for the Publisher/Subscriber to connect ---\n");
 
@@ -306,8 +308,6 @@ bool CANLayer::init()
 
 	int i = 0; //msg
 	int j = 0; //byte number
-
-	//
 
 	//TEST assume 2 EPOS4
 	//numberEposBoards = 2;
