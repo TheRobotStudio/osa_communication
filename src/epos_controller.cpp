@@ -47,7 +47,7 @@ EPOSController::EPOSController(int node_id, std::string name, std::string contro
 node_id_(0),
 name_(name),
 controller_type_(NOT_USED),
-inverted_(false),
+inverted_(inverted),
 motor_type_(NONE),
 mode_(PROFILE_VELOCITY_MODE),
 value_(value),
