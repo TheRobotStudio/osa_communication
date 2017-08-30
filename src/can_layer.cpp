@@ -450,7 +450,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 		        int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
 		                                       
-		        //ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
+		        ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
 		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) //!< change sign
 		        {
@@ -599,7 +599,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		//create the data multi array
 		motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
 		motorData_ma.layout.dim[0].size = epos_controllers_vp_.size();
-		motorData_ma.layout.dim[0].stride = 1; //epos_controllers_vp_.size();
+		motorData_ma.layout.dim[0].stride = epos_controllers_vp_.size();
 		motorData_ma.layout.dim[0].label = "epos";
 		motorData_ma.layout.data_offset = 0;
 		motorData_ma.motorData.clear();
