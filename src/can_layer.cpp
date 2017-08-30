@@ -46,6 +46,7 @@
 #include "can_layer.h"
 
 #define LOOP_RATE 15
+#define CAN_FRAME_FIFO_SIZE_FACTOR 4 //(2 request + 2 answers) factor for FIFO size: example (2 motors*(2 request + 2 answers) = 8)
 
 //Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
@@ -94,9 +95,7 @@ bool CANLayer::init()
 	ros::NodeHandle nh("~");
 
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
-
 	//Subsribers and publishers
-	rx_can_frame_sub_ = nh.subscribe("/received_messages", 8, &CANLayer::receiveMessagesCallback, this); //check size of FIFO : works with 8 (2 motors*(2 request + 2 answers))
 	tx_can_frame_pub_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
 	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	motor_data_pub_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
@@ -296,6 +295,9 @@ bool CANLayer::init()
 
 		return false;
 	}
+
+	//Subsriber, need the number of EPOS for the FIFO
+	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveMessagesCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
 	ROS_INFO("--- wait for the Publisher/Subscriber to connect ---\n");
