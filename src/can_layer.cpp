@@ -396,14 +396,10 @@ bool CANLayer::init()
 
 void CANLayer::run()
 {
-	//ROS_INFO("--- RUN ---");
-
 	ros::Rate r(LOOP_RATE);
 
 	while(ros::ok())
 	{
-		ROS_INFO("--- Getting motor data ---\n");
-		//gather first pack of data
 		//get the sensor values
 		for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 		{
@@ -411,14 +407,6 @@ void CANLayer::run()
 		}
 
 		ros::spinOnce();
-
-		//publish if enabled
-		//if(m_enablePublish)
-		//tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
-
-		//resetMotorCmdMultiArray();
-
-		//ROS_INFO("sleep");
 		r.sleep();
 	}
 }
@@ -430,7 +418,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	uint8_t node_id = 0;
 	int16_t cob_id = 0;
 
-	ROS_INFO("receiveMessagesCallback");
+	//ROS_INFO("receiveMessagesCallback");
 
 	//ROS_INFO("Interrupt frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 
@@ -638,7 +626,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 	//toggle flag, a message has been received
 	motor_cmd_received_ = true;
 
-	ROS_INFO("sendMotorCmdMultiArrayCallback");
+	//ROS_INFO("sendMotorCmdMultiArrayCallback");
 
 	for(int i=0; i<epos_controllers_vp_.size(); i++)
 	{
