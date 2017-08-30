@@ -475,7 +475,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        int16_t follErr = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
 		        uint16_t statwrd = (can_msg->data[5]<<8 | can_msg->data[4]); //(0x0000FFFF00000000 & data) >> 32;
 		     
-		        //ROS_INFO("NodeID[%d] curr[%d] follErr[%d] statwrd[%b]", node_id, curr, follErr, statwrd);
+		        ROS_INFO("NodeID[%d] curr[%d] follErr[%d] statwrd[%b]", node_id, curr, follErr, statwrd);
 
 		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) curr = -1*curr; //change sign
 		        epos_controllers_vp_[node_id-1]->setCurrent(curr);
@@ -607,6 +607,8 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 
 		for(int i=0; i<epos_controllers_vp_.size(); i++)
 		{
+			ROS_INFO("motorData_ma[%d] position[%d] current[%d] status[%d]", i+1, epos_controllers_vp_[i]->getPosition(), epos_controllers_vp_[i]->getCurrent(), epos_controllers_vp_[i]->getStatusword());
+
 			motorData_ma.motorData[i].position = epos_controllers_vp_[i]->getPosition();
 			motorData_ma.motorData[i].current = epos_controllers_vp_[i]->getCurrent();
 			motorData_ma.motorData[i].status = epos_controllers_vp_[i]->getStatusword();
