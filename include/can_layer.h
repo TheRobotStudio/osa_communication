@@ -70,7 +70,7 @@ class CANLayer
 		/*! methods */
 		void receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg);
 		void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_ma);
-		void resetMotorCmdMultiArray();
+		//void resetMotorCmdMultiArray();
 
 		void display();
 
@@ -86,7 +86,7 @@ class CANLayer
 		ros::Publisher *tx_can_frame_pub_; //to link it to EPOSController
 		ros::Publisher motor_data_pub_;
 		bool motor_cmd_received_;
-		osa_msgs::MotorCmdMultiArray motor_cmd_ma_;
+		//osa_msgs::MotorCmdMultiArray motor_cmd_ma_;
 };
 
 #endif /* CAN_LAYER_H */

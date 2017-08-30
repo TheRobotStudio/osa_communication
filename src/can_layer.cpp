@@ -354,7 +354,7 @@ bool CANLayer::init()
 	//Subscribers
 	m_sub_motorDataArray = nh.subscribe("/motor_data_array", 10, &BasicControlNode::motorDataArray_cb, this);
 */
-
+/*
 	ROS_INFO("--- Init motor command array ---\n");
 
 	//create the commands multi array
@@ -369,7 +369,7 @@ bool CANLayer::init()
 	motor_cmd_ma_.motorCmd.resize(number_epos_boards_);
 
 	resetMotorCmdMultiArray();
-
+*/
 /*
 	motor_cmd_ma_.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	motor_cmd_ma_.layout.dim[0].size = NUMBER_MAX_EPOS2_PER_SLAVE;
@@ -407,9 +407,9 @@ void CANLayer::run()
 
 		//publish if enabled
 		//if(m_enablePublish)
-		tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
+		//tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
 
-		resetMotorCmdMultiArray();
+		//resetMotorCmdMultiArray();
 
 		//ROS_INFO("sleep");
 		r.sleep();
@@ -772,7 +772,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 
 	//ROS_INFO("cmd[%d] val[%d]", motorCmd_ma->motorCmd[0].command, motorCmd_ma->motorCmd[0].value);
 }
-
+/*
 void CANLayer::resetMotorCmdMultiArray()
 {
 	for(int i=0; i<number_epos_boards_; i++)
@@ -783,4 +783,4 @@ void CANLayer::resetMotorCmdMultiArray()
 		motor_cmd_ma_.motorCmd[i].value = 0;
 	}
 }
-
+*/
