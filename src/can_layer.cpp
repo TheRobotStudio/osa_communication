@@ -316,6 +316,8 @@ bool CANLayer::init()
 	//power or pushbutton reset
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
+		//ROS_INFO("initEposBoard %d", node_id);
+
 		if(epos_controllers_vp_[node_id-1]->initEposBoard() != EPOS_OK)
 		{
 			ROS_INFO("initEposBoard error");

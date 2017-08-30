@@ -688,7 +688,7 @@ int8_t EPOSController::initEposBoard()
 
     //if(node_id_ ==1) setNMT(CS_RESET_NODE);
 
-    printf("\t- initialise board ID = %d...", node_id_);
+    ROS_INFO("\t- initialise board ID = %d...", node_id_);
 
     //if(cantoepos.frequency(1000000) != 1)  return EPOS_ERROR;
 
