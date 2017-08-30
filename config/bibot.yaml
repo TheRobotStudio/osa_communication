@@ -10,8 +10,27 @@ mobile_base:
   distance_between_wheels: 0.3 # in meter (m)
   wheels_diameter: 0.2
 
-controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller1: {node_id: 1, name: 'R Biceps', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 150}
+controller2: {node_id: 2, name: 'R Supra', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller3: {node_id: 3, name: 'R Subscap', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller4: {node_id: 4, name: 'R Infra', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller5: {node_id: 5, name: 'R Tmin', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller6: {node_id: 6, name: 'R LatDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller7: {node_id: 7, name: 'R AntDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller8: {node_id: 8, name: 'R PostDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller9: {node_id: 9, name: 'R Triceps', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller10: {node_id: 10, name: 'R Brachi', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller11: {node_id: 11, name: 'R Hand', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+controller12: {node_id: 12, name: 'R Rotator', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 0}
+controller13: {node_id: 13, name: 'R WristIn', type: 'EPOS2', inverted: false, motor: 'RE13', mode: 'CURRENT_MODE', value: 80}
+controller14: {node_id: 14, name: 'R WristUp', type: 'EPOS2', inverted: true, motor: 'RE13', mode: 'CURRENT_MODE', value: 80}
+controller15: {node_id: 15, name: 'R WristDown', type: 'EPOS2', inverted: true, motor: 'RE13', mode: 'CURRENT_MODE', value: 150}
+controller16: {node_id: 16, name: 'R Thumb', type: 'EPOS2', inverted: false, motor: 'DCX10', mode: 'CURRENT_MODE', value: 70}
+controller17: {node_id: 17, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+controller18: {node_id: 18, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+#controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
 
 
 #controller1: 
