@@ -3,6 +3,7 @@
 	<!-- Load parameters -->
 	<rosparam file="$(find osa_communication)/config/bibot.yaml" command="load"/>
 	
+	<!--node name="osa_can_layer_node" pkg="osa_communication" type="osa_can_layer" output="screen" launch-prefix="gdb -ex run --args" respawn="false"-->
 	<node name="osa_can_layer_node" pkg="osa_communication" type="osa_can_layer" output="screen" launch-prefix="gdb -ex run --args" respawn="false">
 <!--	    <param name="can_device" type="string" value="can0" />
 
