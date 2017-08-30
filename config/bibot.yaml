@@ -1,8 +1,8 @@
 # Config file for the BiBot robot with 18 DOF, 2 in the base and 16 in the right arm
 
 robot:
-  name: 'BiBot_base'
-  dof: 2
+  name: 'BiBot'
+  dof: 18
   can_device: 'can0'
   
 mobile_base:
