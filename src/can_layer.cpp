@@ -396,22 +396,22 @@ bool CANLayer::init()
 
 void CANLayer::run()
 {
-	ROS_INFO("--- RUN ---");
+	//ROS_INFO("--- RUN ---");
 
 	ros::Rate r(LOOP_RATE);
 
 	while(ros::ok())
 	{
-		ROS_INFO("spinOnce");
+		//ROS_INFO("spinOnce");
 		ros::spinOnce();
 
 		//publish if enabled
 		//if(m_enablePublish)
-		//tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
+		tx_can_frame_pub_->publish(motor_cmd_ma_); //TODO pub motor cmd
 
-		//resetMotorCmdMultiArray();
+		resetMotorCmdMultiArray();
 
-		ROS_INFO("sleep");
+		//ROS_INFO("sleep");
 		r.sleep();
 	}
 }
