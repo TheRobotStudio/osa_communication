@@ -402,7 +402,14 @@ void CANLayer::run()
 
 	while(ros::ok())
 	{
-		//ROS_INFO("spinOnce");
+		ROS_INFO("--- Getting motor data ---\n");
+		//gather first pack of data
+		//get the sensor values
+		for(int node_id=1; node_id<=number_epos_boards_; node_id++)
+		{
+			epos_controllers_vp_[node_id-1]->getData();
+		}
+
 		ros::spinOnce();
 
 		//publish if enabled
