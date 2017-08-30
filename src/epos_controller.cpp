@@ -141,41 +141,23 @@ int	EPOSController::setNodeID(uint8_t node_id)
 
 int EPOSController::setPosition(int32_t position)
 {
-	//check the value
-	if(position > 0)
-	{
-		position_ = position;
+	position_ = position;
 
-		return 0;
-	}
-	else
-		return -1;
+	return 0;
 }
 
 int EPOSController::setCurrent(int16_t current)
 {
-	//check the value
-	if(current > 0)
-	{
-		current_ = current;
+	current_ = current;
 
-		return 0;
-	}
-	else
-		return -1;
+	return 0;
 }
 
 int EPOSController::setVelocity(int32_t velocity)
 {
-	//check the value
-	if(velocity > 0)
-	{
-		velocity_ = velocity;
+	velocity_ = velocity;
 
-		return 0;
-	}
-	else
-		return -1;
+	return 0;
 }
 
 int EPOSController::setStatusword(uint16_t statusword)
@@ -193,15 +175,9 @@ int EPOSController::setStatusword(uint16_t statusword)
 
 int EPOSController::setFollowingError(int16_t following_error)
 {
-	//check the value
-	if(following_error > 0)
-	{
-		following_error_ = following_error;
+	following_error_ = following_error;
 
-		return 0;
-	}
-	else
-		return -1;
+	return 0;
 }
 
 int EPOSController::setIncEnc1CntAtIdxPls(uint32_t inc_enc1_cnt_at_idx_pls)
@@ -217,17 +193,11 @@ int EPOSController::setIncEnc1CntAtIdxPls(uint32_t inc_enc1_cnt_at_idx_pls)
 		return -1;
 }
 
-int EPOSController::setBoardStatus(int8_t inc_enc1_cnt_at_idx_pls)
+int EPOSController::setBoardStatus(int8_t board_status)
 {
-	//check the value
-	if(inc_enc1_cnt_at_idx_pls > 0)
-	{
-		inc_enc1_cnt_at_idx_pls_ = inc_enc1_cnt_at_idx_pls;
+	board_status_ = board_status;
 
-		return 0;
-	}
-	else
-		return -1;
+	return 0;
 }
 
 //other methods
