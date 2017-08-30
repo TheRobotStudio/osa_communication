@@ -598,18 +598,18 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 
 		//create the data multi array
 		motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
-		motorData_ma.layout.dim[0].size = 1; //epos_controllers_vp_.size();
-		motorData_ma.layout.dim[0].stride = epos_controllers_vp_.size();
-		motorData_ma.layout.dim[0].label = "motors";
+		motorData_ma.layout.dim[0].size = epos_controllers_vp_.size();
+		motorData_ma.layout.dim[0].stride = 1; //epos_controllers_vp_.size();
+		motorData_ma.layout.dim[0].label = "epos";
 		motorData_ma.layout.data_offset = 0;
 		motorData_ma.motorData.clear();
 		motorData_ma.motorData.resize(epos_controllers_vp_.size());
 
 		for(int i=0; i<epos_controllers_vp_.size(); i++)
 		{
-			motorData_ma.motorData[i].position = epos_controllers_vp_[node_id-1]->getPosition();
-			motorData_ma.motorData[i].current = epos_controllers_vp_[node_id-1]->getCurrent();
-			motorData_ma.motorData[i].status = epos_controllers_vp_[node_id-1]->getStatusword();
+			motorData_ma.motorData[i].position = epos_controllers_vp_[i]->getPosition();
+			motorData_ma.motorData[i].current = epos_controllers_vp_[i]->getCurrent();
+			motorData_ma.motorData[i].status = epos_controllers_vp_[i]->getStatusword();
 		}
 
 		//ROS_INFO("Publish motor data\n");
