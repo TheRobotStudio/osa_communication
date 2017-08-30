@@ -389,9 +389,7 @@ bool CANLayer::init()
 
 	//then start the main loop
 	ROS_INFO("--- Start main loop ---");
-
-	//m_playback = false;
-	ros::start();
+	run();
 
 	return true;
 }
