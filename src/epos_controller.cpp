@@ -290,7 +290,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 		frame.dlc = 6;
 	}
 
-	//printf("frame.id = %X\n", frame.id);
+	//ROS_INFO("frame.id = %X", frame.id);
 	/*//401#0F0088130000E803
 	for(int i=0; i<8; i++)
 	{
@@ -386,7 +386,7 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
 
         if(timeout >= TIMEOUT)
         {
-            //printf("setObjectSDO TIMEOUT\r\n");
+            //ROS_INFO("setObjectSDO TIMEOUT");
             return EPOS_ERROR;
         }
 
@@ -396,9 +396,9 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
     //ros::Duration(0.01).sleep();
 	ros::Duration(0.1).sleep();
 
-    //printf("setObjectSDO ACK received\r\n");
+    //ROS_INFO("setObjectSDO ACK received");
 
-    //printf("setSDO[%d] [%02X %02X %02X %02X %02X %02X %02X %02X]\n\r", node_id_, data[7], data[6], data[5], data[4], data[3], data[2], data[1], data[0]);
+    //ROS_INFO("setSDO[%d] [%02X %02X %02X %02X %02X %02X %02X %02X]", node_id_, data[7], data[6], data[5], data[4], data[3], data[2], data[1], data[0]);
 
     return EPOS_OK;
 }
@@ -547,7 +547,7 @@ int8_t EPOSController::setModeOfOperationSDO(int8_t mode)
 
         default :
         {
-            printf("Wrong mode value\r\n");
+            ROS_INFO("Wrong mode value");
             return EPOS_ERROR;
         }
     }
@@ -708,8 +708,8 @@ int8_t EPOSController::initEposBoard()
     {
         case NONE :
         {
-            printf("...set to NONE. STOP here.\n\r");
-            printf("\tAll boards are initialised\n\r");
+            ROS_INFO("...set to NONE. STOP here.");
+            ROS_INFO("\tAll boards are initialised");
             return EPOS_ERROR;
             //break;
         }
@@ -718,28 +718,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("DCX10 - ");
+                ROS_INFO("DCX10 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -749,28 +749,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("DCX14 - ");
+                ROS_INFO("DCX14 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -780,28 +780,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("DCX16 - ");
+                ROS_INFO("DCX16 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -811,22 +811,22 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("DCX22 - ");
+                ROS_INFO("DCX22 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0FA0);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
 
@@ -845,7 +845,7 @@ int8_t EPOSController::initEposBoard()
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -855,28 +855,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("DCX32 - ");
+                ROS_INFO("DCX32 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -886,28 +886,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("RE13 - ");
+                ROS_INFO("RE13 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -917,28 +917,28 @@ int8_t EPOSController::initEposBoard()
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
             {
-                printf("RE30 - ");
+                ROS_INFO("RE30 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not a DC motor\n\r");
+                ROS_INFO("...not a DC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -949,11 +949,11 @@ int8_t EPOSController::initEposBoard()
             //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
             if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK)
             {
-                printf("ECI40 - ");
+                ROS_INFO("ECI40 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x2530);
                     setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
@@ -961,18 +961,18 @@ int8_t EPOSController::initEposBoard()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not an EC motor\n\r");
+                ROS_INFO("...not an EC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -983,11 +983,11 @@ int8_t EPOSController::initEposBoard()
             //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
             if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK)
             {
-                printf("ECI52 - ");
+                ROS_INFO("ECI52 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x2530);
                     setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
@@ -995,18 +995,18 @@ int8_t EPOSController::initEposBoard()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4 - TODO!");
+                    ROS_INFO("EPOS4 - TODO!");
                     return EPOS_ERROR;
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             }
             else
             {
-                printf("...not an EC motor\n\r");
+                ROS_INFO("...not an EC motor");
                 return EPOS_ERROR;
             }
             break;
@@ -1017,13 +1017,13 @@ int8_t EPOSController::initEposBoard()
             //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
             //if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
             //{
-                printf("EC90 - ");
+                ROS_INFO("EC90 - ");
 
                 if(controller_type_ == EPOS2)
                 {
                     if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
                     {
-                        printf("EPOS2");
+                        ROS_INFO("EPOS2");
                         setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x0C);
                         setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x2530);
                         setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
@@ -1031,7 +1031,7 @@ int8_t EPOSController::initEposBoard()
                     }
                     else
                     {
-                        printf("...not an EC motor\n\r");
+                        ROS_INFO("...not an EC motor");
                         return EPOS_ERROR;
                     }
                 }
@@ -1039,7 +1039,7 @@ int8_t EPOSController::initEposBoard()
                 {
                     if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
                     {
-                        printf("EPOS4");
+                        ROS_INFO("EPOS4");
                         setObjectSDO(OBJECT_EPOS4_POLE_PAIR_NUMBER, 0x0C);
                         setObjectSDO(OBJECT_EPOS4_OUTPUT_CURRENT_LIMIT, 0x2530);
                         setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
@@ -1047,19 +1047,19 @@ int8_t EPOSController::initEposBoard()
                     }
                     else
                     {
-                        printf("...not an EC motor\n\r");
+                        ROS_INFO("...not an EC motor");
                         return EPOS_ERROR;
                     }
                 }
                 else
                 {
-                    printf("no controller selected!");
+                    ROS_INFO("no controller selected!");
                     return EPOS_ERROR;
                 }
             /*}
             else
             {
-                printf("...not an EC motor\n\r");
+                ROS_INFO("...not an EC motor");
                 return EPOS_ERROR;
             }*/
             break;
@@ -1067,13 +1067,13 @@ int8_t EPOSController::initEposBoard()
 
         default :
         {
-            printf("...config file value incorrect!\n\r");
+            ROS_INFO("...config file value incorrect!");
             return EPOS_ERROR; //!< return ERROR if the value is not correct
             //break;
         }
     }
 
-    printf("...param");
+    ROS_INFO("...param");
 
     if(controller_type_ == EPOS2)
     {
@@ -1106,10 +1106,10 @@ int8_t EPOSController::initEposBoard()
     setNMT(CS_ENTER_PRE_OPERATIONAL);
 
     //set RxPDO 1
-    printf("...RxPDO-1,");
+    ROS_INFO("...RxPDO-1,");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_1_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_1_SUBINDEX, COB_ID_RECEIVE_PDO_1_DISABLE + node_id_, 4);
-    //printf("...TEST,");
+    //ROS_INFO("...TEST,");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, NUMBER_OBJECTS_RECEIVE_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1122,7 +1122,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(RECEIVE_PDO_1_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_1_SUBINDEX, COB_ID_RECEIVE_PDO_1_ENABLE + node_id_, 4);
 
     //set RxPDO 2
-    printf("2,");
+    ROS_INFO("2,");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_2_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_2_SUBINDEX, COB_ID_RECEIVE_PDO_2_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1137,7 +1137,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(RECEIVE_PDO_2_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_2_SUBINDEX, COB_ID_RECEIVE_PDO_2_ENABLE + node_id_, 4);
 
     //set RxPDO 3
-    printf("3,");
+    ROS_INFO("3,");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_3_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_3_SUBINDEX, COB_ID_RECEIVE_PDO_3_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1163,7 +1163,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(RECEIVE_PDO_3_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_3_SUBINDEX, COB_ID_RECEIVE_PDO_3_ENABLE + node_id_, 4);
 
     //set RxPDO 4
-    printf("4");
+    ROS_INFO("4");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_4_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_4_SUBINDEX, COB_ID_RECEIVE_PDO_4_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1182,7 +1182,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(RECEIVE_PDO_4_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_4_SUBINDEX, COB_ID_RECEIVE_PDO_4_ENABLE + node_id_, 4);
 
     //set TxPDO 1
-    printf("...TxPDO-1,");
+    ROS_INFO("...TxPDO-1,");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_1_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1194,7 +1194,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_1_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x02, 1);
 
     //set TxPDO 2
-    printf("2,");
+    ROS_INFO("2,");
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_2_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
 
     if(controller_type_ == EPOS2)
@@ -1220,7 +1220,7 @@ int8_t EPOSController::initEposBoard()
     }
 
     //set TxPDO 3
-    printf("3,");
+    ROS_INFO("3,");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_3_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1229,7 +1229,7 @@ int8_t EPOSController::initEposBoard()
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_3_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x01, 1);
 
     //set TxPDO 4
-    printf("4...");
+    ROS_INFO("4...");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_4_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1260,7 +1260,7 @@ int8_t EPOSController::initEposBoard()
 
     setNMT(CS_START_REMOTE_NODE);
 
-    printf("mode...");
+    ROS_INFO("mode...");
     //this also initialise activMode variable
     switch(mode_)
     {
@@ -1313,10 +1313,10 @@ int8_t EPOSController::initEposBoard()
     }
 
     shutdownControlword();
-    printf("ON");
+    ROS_INFO("ON");
     switchOnEnableOperationControlword();
 
-    printf("...OK\n\r");
+    ROS_INFO("...OK");
 
     return EPOS_OK;
 }
@@ -1650,7 +1650,7 @@ void EPOSController::setModesOfOperation(int8_t mode)
 
         default :
 	{
-            printf("Wrong mode value\r\n");
+            ROS_INFO("Wrong mode value");
             return;
 	}
     }
@@ -1711,11 +1711,11 @@ int EPOSController::calibrate()
     uint32_t profDec = 0;
     uint32_t maxSpeed = 0;
 
-    ROS_INFO("- Start Calibration\n");
+    ROS_INFO("- Start Calibration");
 
     //for(int nodeID=1; nodeID<=numberEposBoards; nodeID++)
     //{
-        //printf("NodeID[%d] - ", nodeID);
+        //ROS_INFO("NodeID[%d] - ", nodeID);
 
         //set default parameters
         switch(motor_type_)
@@ -1728,11 +1728,11 @@ int EPOSController::calibrate()
 
             case DCX10 :
             {
-                printf("DCX10 - ");
+                ROS_INFO("DCX10 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 2000;
                     profVel = 2000;
@@ -1749,11 +1749,11 @@ int EPOSController::calibrate()
 
             case DCX14 :
             {
-                printf("DCX14 - ");
+                ROS_INFO("DCX14 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 2000;
                     profVel = 2000;
@@ -1770,11 +1770,11 @@ int EPOSController::calibrate()
 
             case DCX16 : //!< return error if it is not a DC type of motor
             {
-                printf("DCX16 - ");
+                ROS_INFO("DCX16 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 800;
@@ -1791,11 +1791,11 @@ int EPOSController::calibrate()
 
             case DCX22 :
             {
-                printf("DCX22 - ");
+                ROS_INFO("DCX22 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 2000;
                     profVel = 800;
@@ -1812,11 +1812,11 @@ int EPOSController::calibrate()
 
             case DCX32 :
             {
-                printf("DCX32 - ");
+                ROS_INFO("DCX32 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 800;
@@ -1826,7 +1826,7 @@ int EPOSController::calibrate()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4");
+                    ROS_INFO("EPOS4");
 
                     //outCurLmt = 1000;
                     profVel = 800;
@@ -1839,11 +1839,11 @@ int EPOSController::calibrate()
 
             case RE13 :
             {
-                printf("RE13 - ");
+                ROS_INFO("RE13 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 2000;
                     profVel = 800;
@@ -1860,11 +1860,11 @@ int EPOSController::calibrate()
 
             case RE30 :
             {
-                printf("RE30 - ");
+                ROS_INFO("RE30 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 800;
@@ -1874,7 +1874,7 @@ int EPOSController::calibrate()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4");
+                    ROS_INFO("EPOS4");
 
                     profVel = 800;
                     profAcc = 1000;
@@ -1886,11 +1886,11 @@ int EPOSController::calibrate()
 
             case ECI40 :
             {
-                printf("ECI40 - ");
+                ROS_INFO("ECI40 - ");
 
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 800;
@@ -1900,7 +1900,7 @@ int EPOSController::calibrate()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4");
+                    ROS_INFO("EPOS4");
 
                     profVel = 800;
                     profAcc = 1000;
@@ -1912,10 +1912,10 @@ int EPOSController::calibrate()
 
             case ECI52 :
             {
-                printf("ECI52 - ");
+                ROS_INFO("ECI52 - ");
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 800;
@@ -1925,7 +1925,7 @@ int EPOSController::calibrate()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4");
+                    ROS_INFO("EPOS4");
 
                     profVel = 800;
                     profAcc = 1000;
@@ -1937,10 +1937,10 @@ int EPOSController::calibrate()
 
             case EC90 :
             {
-                printf("EC90 - ");
+                ROS_INFO("EC90 - ");
                 if(controller_type_ == EPOS2)
                 {
-                    printf("EPOS2");
+                    ROS_INFO("EPOS2");
 
                     outCurLmt = 1000;
                     profVel = 1500;
@@ -1950,7 +1950,7 @@ int EPOSController::calibrate()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    printf("EPOS4");
+                    ROS_INFO("EPOS4");
 
                     profVel = 1500;
                     profAcc = 10000;
@@ -2006,7 +2006,7 @@ int EPOSController::calibrate()
                 setTargetVelocity(value_);
                 ros::Duration(0.1).sleep();
                 setControlword(0x000F); //Start to move
-                printf(" - PROFILE_VELOCITY_MODE val[%d] setControlword[0x000F]", value_);
+                ROS_INFO(" - PROFILE_VELOCITY_MODE val[%d] setControlword[0x000F]", value_);
                 break;
             }
 
@@ -2017,7 +2017,7 @@ int EPOSController::calibrate()
                 setControlword(0x002F); //Start Positioning (absolute position and start immediately)
                 ros::Duration(0.1).sleep();
                 setControlword(0x003F);
-                printf(" - PROFILE_POSITION_MODE val[%d] setControlword[rising edge 0x002F to 0x003F]", value_);
+                ROS_INFO(" - PROFILE_POSITION_MODE val[%d] setControlword[rising edge 0x002F to 0x003F]", value_);
                 break;
             }
 
@@ -2037,7 +2037,7 @@ int EPOSController::calibrate()
             {
                 setCurrentModeSettingValue(value_);
                 ros::Duration(0.1).sleep();
-                printf(" - CURRENT_MODE val[%d]", value_);
+                ROS_INFO(" - CURRENT_MODE val[%d]", value_);
                 break;
             }
 
@@ -2063,7 +2063,7 @@ int EPOSController::calibrate()
         ros::Duration(0.01).sleep();
 
         //print results to check things are working properly
-        printf(" - pos=%d vel=%d cur=%d stwrd=%d\n", position_, velocity_, current_, statusword_);
+        ROS_INFO(" - pos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
     //}
 
     return EPOS_OK;
@@ -2075,7 +2075,7 @@ int EPOSController::calibrate()
  */
 void EPOSController::getData()
 {
-	//printf("getData\n");
+	//ROS_INFO("getData");
 	//for(int i=1; i<=numberEposBoards; i++)
 	//for(int i=1; i<=2; i++)
 	//{
