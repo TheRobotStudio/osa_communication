@@ -133,7 +133,6 @@ class EPOSController
 
 	//attributes
 	protected:
-
 		uint8_t node_id_;
 		std::string name_;
 		ControllerType controller_type_;
@@ -141,13 +140,10 @@ class EPOSController
 		MotorType motor_type_;
 		ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
 		int value_;
-
 		ros::Publisher *tx_can_frame_pub_;
 		char data_[8]; //can message data
-
 		ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge
 		ROSCommand ros_cmd_;
-
 		//latest stored commands
 		//RPDO1
 		int32_t target_position_;
@@ -163,7 +159,6 @@ class EPOSController
 		uint32_t maximal_speed_in_current_mode_;
 		uint16_t controlword_;
 		int8_t modes_of_operation_;
-
 		//sensor variables
 		//TPDO1
 		int32_t position_;
@@ -176,7 +171,6 @@ class EPOSController
 		//int8_t modesOfOperation;
 		//TPDO4
 		uint32_t inc_enc1_cnt_at_idx_pls_; //incremental encoder 1 count at index pulse
-
 		int8_t board_status_;
 };
 

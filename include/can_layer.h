@@ -46,7 +46,6 @@
 #include <socketcan_bridge/topic_to_socketcan.h>
 #include <socketcan_bridge/socketcan_to_topic.h>
 #include <socketcan_interface/socketcan.h>
-
 #include "epos_controller.h"
 
 #define DATA_LENGTH 8
@@ -86,7 +85,6 @@ class CANLayer
 		ros::Publisher *tx_can_frame_pub_; //to link it to EPOSController
 		ros::Publisher motor_data_pub_;
 		bool motor_cmd_received_;
-		//osa_msgs::MotorCmdMultiArray motor_cmd_ma_;
 };
 
 #endif /* CAN_LAYER_H */

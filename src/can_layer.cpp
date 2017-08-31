@@ -513,7 +513,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		    {	
 		        //ROS_INFO("Emergency frame, Node ID : [%d], PDO COB-ID [%02X], data = %02X\n", node_id, cobID, data);
 		        //ROS_INFO("EF [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
-		        ROS_INFO("EF%02X-%02X%02X\n", can_msg->id, can_msg->data[1], can_msg->data[0]);
+		        ROS_WARN("EF%02X-%02X%02X", can_msg->id, can_msg->data[1], can_msg->data[0]);
 		        //ledchain[1] = 1;            
 		        //nh.logerror("Emergency frame");
 		        epos_controllers_vp_[node_id-1]->setBoardStatus(1);
@@ -572,7 +572,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		                if(fault == 0) //reset OK
 		                {
 		                	epos_controllers_vp_[node_id-1]->setBoardStatus(0); //Board is reset and enable OK
-		                    ROS_INFO("%d OK\n", node_id);
+		                    ROS_INFO("%d OK", node_id);
 		                    //ledchain[1] = 0;
 		                }
 		                else //try to reset again
@@ -589,7 +589,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		    }               
 		    default :
 		    {
-		        ROS_WARN("Unknown frame [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
+		        ROS_WARN("Unknown frame [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 		    }                        
 		} //end switch
 

@@ -1763,9 +1763,9 @@ int EPOSController::calibrate()
 				ROS_INFO("\tEPOS2");
 
 				outCurLmt = 2000;
-				profVel = 800;
-				profAcc = 1000;
-				profDec = 1000;
+				profVel = 2000;
+				profAcc = 10000;
+				profDec = 10000;
 				maxSpeed = 10000;
 			}
 			else if(controller_type_ == EPOS4)
