@@ -658,7 +658,7 @@ int8_t EPOSController::initEposBoard()
 
     //if(node_id_ ==1) setNMT(CS_RESET_NODE);
 
-    ROS_INFO("- initialise board ID = %d...", node_id_);
+    ROS_INFO("- initialise board ID = %d", node_id_);
 
     //if(cantoepos.frequency(1000000) != 1)  return EPOS_ERROR;
 
@@ -1229,7 +1229,7 @@ int8_t EPOSController::initEposBoard()
 
     setNMT(CS_START_REMOTE_NODE);
 
-    ROS_INFO("Mode of operation:");
+    ROS_INFO("\tMode of operation:");
     //this also initialise activMode variable
     switch(mode_)
     {

@@ -323,7 +323,7 @@ bool CANLayer::init()
 		}
 	}
 
-	ROS_INFO("--- Calibrate Arm ---\n");  //TODO make it as a service
+	ROS_INFO("\n*** Calibrate Arm ***");  //TODO make it as a service
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
 		if(epos_controllers_vp_[node_id-1]->calibrate() == EPOS_ERROR)
@@ -423,7 +423,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	node_id = 0x07F & can_msg->id;
 	cob_id = 0x0F80 & can_msg->id;
 
-	ROS_INFO("node_id [%02X],  cobID [%02X], can_msg->dlc=%d", node_id, cob_id, can_msg->dlc);
+	//ROS_INFO("node_id [%02X],  cobID [%02X], can_msg->dlc=%d", node_id, cob_id, can_msg->dlc);
 	
 
 	for(int i=0; i<can_msg->dlc; i++) //dlc=len
@@ -441,7 +441,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		{       
 		    case COB_ID_TRANSMIT_PDO_1_ENABLE : //getPositionVelocity
 		    {
-		        ROS_INFO("TPDO1 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
+		        //ROS_INFO("TPDO1 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
 		        
 		        int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 		        int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
@@ -466,7 +466,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	    
 		    case COB_ID_TRANSMIT_PDO_2_ENABLE : //getCurrentFollErrStatusword
 		    {
-		        ROS_INFO("TPDO2 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
+		        //ROS_INFO("TPDO2 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
 		        //ROS_INFO("IT[%02X] [%02X %02X]\n", can_msg->id, can_msg->data[5] ,  can_msg->data[4]);
 		        
 		        int16_t curr  = (can_msg->data[1]<<8 | can_msg->data[0]); //0x000000000000FFFF & data;
@@ -589,7 +589,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		    }               
 		    default :
 		    {
-		        ROS_INFO("Unknown frame [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
+		        ROS_WARN("Unknown frame [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 		    }                        
 		} //end switch
 
@@ -620,7 +620,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	}
 	else
 	{
-		ROS_INFO("NODEID ERROR\n");    
+		ROS_WARN("NODEID ERROR\n");
 	}
 }
 
