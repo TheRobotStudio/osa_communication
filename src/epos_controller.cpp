@@ -431,14 +431,14 @@ int8_t EPOSController::setPDO(uint16_t pdoIdx, uint8_t subIdx, uint32_t value, u
     data_[7] = (uint8_t)(value >> 24);
     canToEposWrite(COB_ID_SDO_CLIENT_TO_SERVER_DEFAULT + node_id_, data_, 4 + nbByte);
 
-/*
+/*//TODO a mechanism that wait for the returned CAN frame
     while(!(cantoepos.read(canmsg)))
     {
         ros::Duration(0.000001).sleep();
     }
 */
-    //ros::Duration(0.01).sleep();
-	ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
+	//ros::Duration(0.1).sleep();
 
     return EPOS_OK;
 }

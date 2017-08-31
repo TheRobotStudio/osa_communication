@@ -323,7 +323,7 @@ bool CANLayer::init()
 		}
 	}
 
-	ROS_INFO("\n*** Calibrate Arm ***");  //TODO make it as a service
+	ROS_INFO("*** Calibrate Arm ***");  //TODO make it as a service
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
 		if(epos_controllers_vp_[node_id-1]->calibrate() == EPOS_ERROR)
@@ -333,7 +333,7 @@ bool CANLayer::init()
 		}
 	}
 
-	ROS_INFO("\n*** Getting motor data ***\n");
+	ROS_INFO("*** Getting motor data ***\n");
 	//gather first pack of data
 	//get the sensor values
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
@@ -620,7 +620,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	}
 	else
 	{
-		ROS_WARN("NODEID ERROR\n");
+		//ROS_WARN("NODEID ERROR\n");
 	}
 }
 
