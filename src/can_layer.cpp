@@ -82,6 +82,8 @@ CANLayer::~CANLayer()
 
 bool CANLayer::init()
 {
+	ROS_INFO("*** CANLayer Init ***\n");
+
 	int init_argc = 0;
 	char** init_argv = 0;
 	ros::init(init_argc, init_argv, "osa_can_layer_node");
@@ -100,7 +102,7 @@ bool CANLayer::init()
 	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	motor_data_pub_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
 
-	ROS_INFO("*** Grab the parameters from the YAML file ***\n");
+	ROS_INFO("*** Grab the parameters from the YAML file ***");
 
 	// Grab the parameters
 	try
@@ -142,12 +144,6 @@ bool CANLayer::init()
 		int controller_idx = 1;
 		std::string rad_str = "controller"; //common radical name
 
-		//std::ostringstream controller_idx_path;
-
-		//std::string absolute_str = controller_idx_path.str();
-
-		//ROS_INFO("string=%s", absolute_str.c_str());
-
 		while(controller_exist)
 		{
 			//create the string "controller+index" to search for the controller parameter with that index number
@@ -160,7 +156,7 @@ bool CANLayer::init()
 
 			if(nh.searchParam(controller_idx_path.str(), absolute_str))
 			{
-				ROS_INFO("%s found in YAML config file", controller_idx_path.str().c_str());
+				//ROS_INFO("%s found in YAML config file", controller_idx_path.str().c_str());
 				//ROS_INFO("absolute_str = %s", absolute_str.c_str());
 
 				//create variables to store the controller parameters:
@@ -238,7 +234,7 @@ bool CANLayer::init()
 				}
 
 				//print the controller parameters
-				ROS_INFO("Parameters for %s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", controller_idx_path.str().c_str(),
+				ROS_INFO("%s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", controller_idx_path.str().c_str(),
 						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
 
 				//create a new EPOS controller
@@ -255,7 +251,7 @@ bool CANLayer::init()
 			else
 			{
 				controller_exist = false;
-				ROS_INFO("No more controllers found in YAML config file");
+				//ROS_INFO("No more controllers found in YAML config file");
 			}
 
 			//controller_exist = false;
@@ -286,7 +282,7 @@ bool CANLayer::init()
 		nh.param("value2", value2_int);
 		*/
 
-		ROS_INFO("Parameters loaded successfully!");
+		ROS_INFO("Parameters loaded successfully!\n");
 	}
 	catch(int exception)
 	{
@@ -300,7 +296,7 @@ bool CANLayer::init()
 	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveMessagesCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
-	ROS_INFO("--- wait for the Publisher/Subscriber to connect ---\n");
+	ROS_INFO("*** Waiting for the TX CAN frame publisher to connect ***\n");
 
 	ros::Rate poll_rate(100);
 	while(tx_can_frame_pub_->getNumSubscribers() == 0)
@@ -308,13 +304,13 @@ bool CANLayer::init()
 			poll_rate.sleep();
 	}
 
-	int i = 0; //msg
-	int j = 0; //byte number
+	//int i = 0; //msg
+	//int j = 0; //byte number
 
 	//TEST assume 2 EPOS4
 	//numberEposBoards = 2;
 
-	ROS_INFO("--- Initialise EPOS boards ---\n");  //TODO make it as a service
+	ROS_INFO("*** Initialise EPOS boards ***");  //TODO make it as a service
 	//power or pushbutton reset
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
