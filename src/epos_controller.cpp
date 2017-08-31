@@ -275,6 +275,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	tx_can_frame_pub_->publish(frame);
 
 	ros::Duration(0.01).sleep();
+	//ros::Duration(0.001).sleep();
 }
 
 /*! \fn void setNMT(, uint8_t cs)
@@ -1680,360 +1681,352 @@ int EPOSController::calibrate()
     uint32_t profDec = 0;
     uint32_t maxSpeed = 0;
 
-    ROS_INFO("- Start Calibration");
+    ROS_INFO("- Calibration for nodeID %d", node_id_);
 
-    //for(int nodeID=1; nodeID<=numberEposBoards; nodeID++)
-    //{
-        //ROS_INFO("NodeID[%d] - ", nodeID);
+	//set default parameters
+	switch(motor_type_)
+	{
+		case NONE :
+		{
+			return EPOS_ERROR;
+		}
 
-        //set default parameters
-        switch(motor_type_)
-        {
-            case NONE :
-            {
-                return EPOS_ERROR;
-                //break;
-            }
+		case DCX10 :
+		{
+			ROS_INFO("\tDCX10");
 
-            case DCX10 :
-            {
-                ROS_INFO("DCX10 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 2000;
+				profVel = 2000;
+				profAcc = 2000;
+				profDec = 2000;
+				maxSpeed = 10000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
 
-                    outCurLmt = 2000;
-                    profVel = 2000;
-                    profAcc = 2000;
-                    profDec = 2000;
-                    maxSpeed = 10000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    return EPOS_ERROR;
-                }
-                break;
-            }
+		case DCX14 :
+		{
+			ROS_INFO("\tDCX14");
 
-            case DCX14 :
-            {
-                ROS_INFO("DCX14 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 2000;
+				profVel = 2000;
+				profAcc = 2000;
+				profDec = 2000;
+				maxSpeed = 10000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
 
-                    outCurLmt = 2000;
-                    profVel = 2000;
-                    profAcc = 2000;
-                    profDec = 2000;
-                    maxSpeed = 10000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    return EPOS_ERROR;
-                }
-                break;
-            }
+		case DCX16 : //!< return error if it is not a DC type of motor
+		{
+			ROS_INFO("\tDCX16");
 
-            case DCX16 : //!< return error if it is not a DC type of motor
-            {
-                ROS_INFO("DCX16 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
 
-                    outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    return EPOS_ERROR;
-                }
-                break;
-            }
+		case DCX22 :
+		{
+			ROS_INFO("\tDCX22");
 
-            case DCX22 :
-            {
-                ROS_INFO("DCX22 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 2000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 10000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
 
-                    outCurLmt = 2000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 10000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    return EPOS_ERROR;
-                }
-                break;
-            }
+		case DCX32 :
+		{
+			ROS_INFO("\tDCX32");
 
-            case DCX32 :
-            {
-                ROS_INFO("DCX32 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				ROS_INFO("\tEPOS4");
 
-                    outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    ROS_INFO("EPOS4");
+				//outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			break;
+		}
 
-                    //outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                break;
-            }
+		case RE13 :
+		{
+			ROS_INFO("\tRE13");
 
-            case RE13 :
-            {
-                ROS_INFO("RE13 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 2000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 10000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
 
-                    outCurLmt = 2000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 10000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    return EPOS_ERROR;
-                }
-                break;
-            }
+		case RE30 :
+		{
+			ROS_INFO("\tRE30");
 
-            case RE30 :
-            {
-                ROS_INFO("RE30 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				ROS_INFO("\tEPOS4");
 
-                    outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    ROS_INFO("EPOS4");
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			break;
+		}
 
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                break;
-            }
+		case ECI40 :
+		{
+			ROS_INFO("\tECI40");
 
-            case ECI40 :
-            {
-                ROS_INFO("ECI40 - ");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				ROS_INFO("\tEPOS4");
 
-                    outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    ROS_INFO("EPOS4");
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			break;
+		}
 
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                break;
-            }
+		case ECI52 :
+		{
+			ROS_INFO("\tECI52");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-            case ECI52 :
-            {
-                ROS_INFO("ECI52 - ");
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				ROS_INFO("\tEPOS4");
 
-                    outCurLmt = 1000;
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    ROS_INFO("EPOS4");
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			break;
+		}
 
-                    profVel = 800;
-                    profAcc = 1000;
-                    profDec = 1000;
-                    maxSpeed = 1000;
-                }
-                break;
-            }
+		case EC90 :
+		{
+			ROS_INFO("\tEC90");
+			if(controller_type_ == EPOS2)
+			{
+				ROS_INFO("\tEPOS2");
 
-            case EC90 :
-            {
-                ROS_INFO("EC90 - ");
-                if(controller_type_ == EPOS2)
-                {
-                    ROS_INFO("EPOS2");
+				outCurLmt = 1000;
+				profVel = 1500;
+				profAcc = 10000;
+				profDec = 10000;
+				maxSpeed = 5000;
+			}
+			else if(controller_type_ == EPOS4)
+			{
+				ROS_INFO("\tEPOS4");
 
-                    outCurLmt = 1000;
-                    profVel = 1500;
-                    profAcc = 10000;
-                    profDec = 10000;
-                    maxSpeed = 5000;
-                }
-                else if(controller_type_ == EPOS4)
-                {
-                    ROS_INFO("EPOS4");
+				profVel = 1500;
+				profAcc = 10000;
+				profDec = 10000;
+				maxSpeed = 5000;
+			}
+			break;
+		}
 
-                    profVel = 1500;
-                    profAcc = 10000;
-                    profDec = 10000;
-                    maxSpeed = 5000;
-                }
-                break;
-            }
+		default :
+		{
+			return EPOS_ERROR;
+		}
+	}
 
-            default :
-            {
-                return EPOS_ERROR;
-                //break;
-            }
-        }
+	//Apply values
+	//RPDO3
+	setControlword(0x0006); //Shutdown
+	ros::Duration(0.01).sleep();
+	setProfileVelocity(profVel); //NEW try this first
+	ros::Duration(0.01).sleep();
+	if(controller_type_ == EPOS2) setOutputCurrentLimit(outCurLmt); //10100 //10000 for EPOS2 70/10, see documentation
+	ros::Duration(0.01).sleep();
 
-        //Apply values
-        //RPDO3
-        setControlword(0x0006); //Shutdown
-        ros::Duration(0.01).sleep();
-        setProfileVelocity(profVel); //NEW try this first
-        ros::Duration(0.01).sleep();
-        if(controller_type_ == EPOS2) setOutputCurrentLimit(outCurLmt); //10100 //10000 for EPOS2 70/10, see documentation
-        ros::Duration(0.01).sleep();
+	//RPDO2
+	setProfileAcceleration(profAcc);
+	ros::Duration(0.01).sleep();
+	setProfileDeceleration(profDec);
+	ros::Duration(0.01).sleep();
 
-        //RPDO2
-        setProfileAcceleration(profAcc);
-        ros::Duration(0.01).sleep();
-        setProfileDeceleration(profDec);
-        ros::Duration(0.01).sleep();
+	//RPDO4
+	setMaximalSpeedInCurrentMode(maxSpeed); //TODO change function name for fitting with EPOS4 too
+	ros::Duration(0.01).sleep();
 
-        //RPDO4
-        setMaximalSpeedInCurrentMode(maxSpeed); //TODO change function name for fitting with EPOS4 too
-        ros::Duration(0.01).sleep();
+	//Common to all motor type
+	setControlword(0x0006); //Shutdown
+	ros::Duration(0.01).sleep();
+	setControlword(0x000F); //SwitchOn
+	ros::Duration(0.01).sleep();
 
-        //Common to all motor type
-        setControlword(0x0006); //Shutdown
-        ros::Duration(0.01).sleep();
-        setControlword(0x000F); //SwitchOn
-        ros::Duration(0.01).sleep();
+	//Apply a default value based on the selected mode
+	switch(mode_)
+	{
+		case INTERPOLATED_POSITION_MODE :
+		{
+			return EPOS_ERROR;
+			//break;
+		}
 
-        //Apply a default value based on the selected mode
-        switch(mode_)
-        {
-            case INTERPOLATED_POSITION_MODE :
-            {
-                return EPOS_ERROR;
-                //break;
-            }
+		case PROFILE_VELOCITY_MODE :
+		{
+			setTargetVelocity(value_);
+			ros::Duration(0.1).sleep();
+			setControlword(0x000F); //Start to move
+			ROS_INFO("\tPROFILE_VELOCITY_MODE val[%d] setControlword[0x000F]", value_);
+			break;
+		}
 
-            case PROFILE_VELOCITY_MODE :
-            {
-                setTargetVelocity(value_);
-                ros::Duration(0.1).sleep();
-                setControlword(0x000F); //Start to move
-                ROS_INFO(" - PROFILE_VELOCITY_MODE val[%d] setControlword[0x000F]", value_);
-                break;
-            }
+		case PROFILE_POSITION_MODE :
+		{
+			setTargetPosition(value_);
+			ros::Duration(0.1).sleep();
+			setControlword(0x002F); //Start Positioning (absolute position and start immediately)
+			ros::Duration(0.1).sleep();
+			setControlword(0x003F);
+			ROS_INFO("\tPROFILE_POSITION_MODE val[%d] setControlword[rising edge 0x002F to 0x003F]", value_);
+			break;
+		}
 
-            case PROFILE_POSITION_MODE :
-            {
-                setTargetPosition(value_);
-                ros::Duration(0.1).sleep();
-                setControlword(0x002F); //Start Positioning (absolute position and start immediately)
-                ros::Duration(0.1).sleep();
-                setControlword(0x003F);
-                ROS_INFO(" - PROFILE_POSITION_MODE val[%d] setControlword[rising edge 0x002F to 0x003F]", value_);
-                break;
-            }
+		case POSITION_MODE :
+		{
+			return EPOS_ERROR;
+			//break;
+		}
 
-            case POSITION_MODE :
-            {
-                return EPOS_ERROR;
-                //break;
-            }
+		case VELOCITY_MODE :
+		{
+			return EPOS_ERROR;
+			//break;
+		}
 
-            case VELOCITY_MODE :
-            {
-                return EPOS_ERROR;
-                //break;
-            }
+		case CURRENT_MODE :
+		{
+			setCurrentModeSettingValue(value_);
+			ros::Duration(0.1).sleep();
+			ROS_INFO("\tCURRENT_MODE val[%d]", value_);
+			break;
+		}
 
-            case CURRENT_MODE :
-            {
-                setCurrentModeSettingValue(value_);
-                ros::Duration(0.1).sleep();
-                ROS_INFO(" - CURRENT_MODE val[%d]", value_);
-                break;
-            }
+		case CYCLIC_SYNCHRONOUS_TORQUE_MODE :
+		{
+			return EPOS_ERROR; //TODO
+		}
 
-            case CYCLIC_SYNCHRONOUS_TORQUE_MODE :
-            {
-                return EPOS_ERROR; //TODO
-                //break;
-            }
+		default :
+		{
+			return EPOS_ERROR;
+		}
+	}
 
-            default :
-            {
-                return EPOS_ERROR;
-            }
-        }
+   // ledchain[3] = 1;
+	ros::Duration(0.01).sleep();
 
-       // ledchain[3] = 1;
-        ros::Duration(0.01).sleep();
+	//TPDO : get data once to fill in the arrays
+	getPositionVelocity();
+	ros::Duration(0.01).sleep();
+	getCurrentFollErrStatusword();
+	ros::Duration(0.01).sleep();
 
-        //TPDO : get data once to fill in the arrays
-        getPositionVelocity();
-        ros::Duration(0.01).sleep();
-        getCurrentFollErrStatusword();
-        ros::Duration(0.01).sleep();
-
-        //print results to check things are working properly
-        ROS_INFO(" - pos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
-    //}
+	//print results to check things are working properly
+	ROS_INFO("\tpos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
 
     return EPOS_OK;
 }

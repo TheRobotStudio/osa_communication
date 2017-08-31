@@ -318,7 +318,7 @@ bool CANLayer::init()
 
 		if(epos_controllers_vp_[node_id-1]->initEposBoard() != EPOS_OK)
 		{
-			ROS_INFO("initEposBoard error");
+			ROS_ERROR("initEposBoard error");
 			return false; //exit the main function and return fault if an initialization failed
 		}
 	}
@@ -328,12 +328,12 @@ bool CANLayer::init()
 	{
 		if(epos_controllers_vp_[node_id-1]->calibrate() == EPOS_ERROR)
 		{
-			ROS_INFO("Calibration error, check the mode/value of your config file, only use Profile modes for EPOS2/EPOS4 and Current mode for EPOS2.");
+			ROS_ERROR("Calibration error, check the mode/value of your config file, only use Profile modes for EPOS2/EPOS4 and Current mode for EPOS2.");
 			return false;
 		}
 	}
 
-	ROS_INFO("--- Getting motor data ---\n");
+	ROS_INFO("\n*** Getting motor data ***\n");
 	//gather first pack of data
 	//get the sensor values
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
@@ -386,7 +386,7 @@ bool CANLayer::init()
 */
 
 	//then start the main loop
-	ROS_INFO("--- Start main loop ---");
+	ROS_INFO("*** Start main loop ***");
 	run();
 
 	return true;
