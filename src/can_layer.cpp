@@ -635,20 +635,27 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 	//toggle flag, a message has been received
 	motor_cmd_received_ = true;
 
-	ROS_INFO("motor_cmd_received_");
+	//ROS_INFO("motor_cmd_received_");
 
 	for(int i=0; i<epos_controllers_vp_.size(); i++)
+	//for(std::vector<int>::const_iterator it = motorCmd_ma->motorCmd.begin(); it != motorCmd_ma->motorCmd.end(); ++it)
 	{
 		uint8_t node_id = motorCmd_ma->motorCmd[i].nodeID;
 		uint8_t command = motorCmd_ma->motorCmd[i].command;
 		int32_t value = motorCmd_ma->motorCmd[i].value;
 
-		//ROS_INFO("cmd[%d] val[%d]\n", command, value);
+/*		uint8_t node_id = it.nodeID;
+		uint8_t command = it.command;
+		int32_t value = it.value;
+*/
+		//ROS_INFO("cmd[%d] val[%d]", command, value);
 
 		switch(command)
 		{
 		    case SET_TARGET_POSITION:
 		    {
+		    	//ROS_INFO("SET_TARGET_POSITION");
+		    	ROS_INFO("SET_TARGET_POSITION: cmd[%d] val[%d]", command, value);
 		    	epos_controllers_vp_[node_id-1]->setTargetPosition(value);
 				break;
 		    }
