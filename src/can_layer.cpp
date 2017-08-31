@@ -620,6 +620,7 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	}
 	else
 	{
+		//TODO check those node ID, make a mechanism to tell a frame has been received and put back the while loop that waits for it in the other EPOSController functions
 		//ROS_WARN("NODEID ERROR\n");
 	}
 }
@@ -634,7 +635,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 	//toggle flag, a message has been received
 	motor_cmd_received_ = true;
 
-	//ROS_INFO("sendMotorCmdMultiArrayCallback");
+	ROS_INFO("motor_cmd_received_");
 
 	for(int i=0; i<epos_controllers_vp_.size(); i++)
 	{
