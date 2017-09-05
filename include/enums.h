@@ -28,17 +28,16 @@
  * @file enums.h
  * @author Cyril Jourdan
  * @date Mar 03, 2017
- * @version 2.0.0
+ * @version 0.1.0
  * @brief header file for enums definitions
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Mar 11, 2015
  */
 
-#ifndef ENUMS_H
-#define ENUMS_H
+#ifndef OSA_COMMUNICATION_ENUMS_H
+#define OSA_COMMUNICATION_ENUMS_H
 
-/*! Defines */
 //#define NUMBER_OF_MOTORS	2
 #define NUMBER_BYTES_PER_MSG        8
 #define NB_SAMPLES_MEDIAN           5
@@ -47,7 +46,10 @@
 #define EPOS_ERROR                  -1
 #define TIMEOUT                     10000
 
-/*! Enums */
+/**
+ * @enum MotorType
+ * @brief Enumeration that tells the type of a motor.
+ */
 enum MotorType
 {
     NONE = 0,
@@ -63,6 +65,10 @@ enum MotorType
     EC90 = 10
 }; 
 
+/**
+ * @enum ControllerType
+ * @brief Enumeration that tells the type of a motor controller.
+ */
 enum ControllerType
 {
     NOT_USED = 0,
@@ -70,7 +76,10 @@ enum ControllerType
     EPOS4 = 2
 }; 
 
-/*!< enum that describe the activated mode of operation of a motor controller */
+/**
+ * @enum ActivatedModeOfOperation
+ * @brief Enumeration that tells the activated mode of operation of a motor controller.
+ */
 enum ActivatedModeOfOperation
 {
     INTERPOLATED_POSITION_MODE = 0,
@@ -83,7 +92,10 @@ enum ActivatedModeOfOperation
     //NO_MODE = 15
 }; 
 
-/*!< enum that describe the possible commands received from ROS */
+/**
+ * @enum ROSCommand
+ * @brief Enumeration that tells the possible commands received from ROS.
+ */
 enum ROSCommand //TODO special EPOS4 cases
 {
     SET_TARGET_POSITION = 0,
@@ -99,4 +111,4 @@ enum ROSCommand //TODO special EPOS4 cases
     SEND_DUMB_MESSAGE = 15
 };
 
-#endif //ENUMS_H
+#endif // OSA_COMMUNICATION_ENUMS_H

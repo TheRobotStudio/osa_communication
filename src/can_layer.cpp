@@ -28,14 +28,12 @@
  * @file can_layer.cpp
  * @author Cyril Jourdan
  * @date Aug 29, 2017
- * @version 2.0.0
+ * @version 0.1.0
  * @brief Implementation file for the CAN communication, adaptation from the mbed code
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : May 24, 2017
  */
-
-/*! Includes */
 
 //Other includes
 //#include <ros/ros.h>
@@ -50,36 +48,40 @@
 
 //Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
-//Motor epos_controllers_vp_[epos_controllers_vp_.size()] = {0, NOT_USED, NONE, false, PROFILE_VELOCITY_MODE, 0};
-//can_msgs::Frame canFrame[epos_controllers_vp_.size()];
-//bool motor_cmd_received_ = false;
-//ros::Publisher data_pub;
-
+/**
+ * @brief Constructor.
+ */
 CANLayer::CANLayer() :
 robot_name_(""),
 robot_can_device_(""),
-epos_controllers_vp_(0),
+epos_controller_list_(0),
 number_epos_boards_(0),
 data_({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
-tx_can_frame_pub_(),
-motor_data_pub_(),
+ptr_pub_tx_can_frame_(),
+pub_motor_data_(),
 motor_cmd_received_(false)
 {
 }
 
-//destructor
+/**
+ * @brief Destructor.
+ */
 CANLayer::~CANLayer()
 {
 	if(ros::isStarted())
 	{
-	  ros::shutdown(); // this is necessary after using ros::start().
+	  ros::shutdown(); // This is necessary after using ros::start().
 	  ros::waitForShutdown();
 	}
 	wait();
 }
 
+/**
+ * @brief Initialize the ROS node.
+ * @return bool Returns true if the initialization has completed successfully and false otherwise.
+ */
 bool CANLayer::init()
 {
 	ROS_INFO("*** CANLayer Init ***\n");
@@ -98,9 +100,9 @@ bool CANLayer::init()
 
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
 	//Subsribers and publishers
-	tx_can_frame_pub_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
+	ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
 	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
-	motor_data_pub_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
+	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
 
 	ROS_INFO("*** Grab the parameters from the YAML file ***");
 
@@ -238,12 +240,12 @@ bool CANLayer::init()
 						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
 
 				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value, tx_can_frame_pub_);
+				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value, ptr_pub_tx_can_frame_);
 
 				//epos_controller->
 
 				//v_controllers.push_back(controller);
-				epos_controllers_vp_.push_back(epos_controller);
+				epos_controller_list_.push_back(epos_controller);
 
 				//increment to search for the next controller
 				controller_idx++;
@@ -293,13 +295,13 @@ bool CANLayer::init()
 	}
 
 	//Subsriber, need the number of EPOS for the FIFO
-	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveMessagesCallback, this);
+	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
 	ROS_INFO("*** Waiting for the TX CAN frame publisher to connect ***\n");
 
 	ros::Rate poll_rate(100);
-	while(tx_can_frame_pub_->getNumSubscribers() == 0)
+	while(ptr_pub_tx_can_frame_->getNumSubscribers() == 0)
 	{
 			poll_rate.sleep();
 	}
@@ -316,7 +318,7 @@ bool CANLayer::init()
 	{
 		//ROS_INFO("initEposBoard %d", node_id);
 
-		if(epos_controllers_vp_[node_id-1]->initEposBoard() != EPOS_OK)
+		if(epos_controller_list_[node_id-1]->initEposBoard() != EPOS_OK)
 		{
 			ROS_ERROR("initEposBoard error");
 			return false; //exit the main function and return fault if an initialization failed
@@ -326,7 +328,7 @@ bool CANLayer::init()
 	ROS_INFO("*** Calibrate Arm ***");  //TODO make it as a service
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
-		if(epos_controllers_vp_[node_id-1]->calibrate() == EPOS_ERROR)
+		if(epos_controller_list_[node_id-1]->calibrate() == EPOS_ERROR)
 		{
 			ROS_ERROR("Calibration error, check the mode/value of your config file, only use Profile modes for EPOS2/EPOS4 and Current mode for EPOS2.");
 			return false;
@@ -338,11 +340,8 @@ bool CANLayer::init()
 	//get the sensor values
 	for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 	{
-		epos_controllers_vp_[node_id-1]->getData();
+		epos_controller_list_[node_id-1]->getData();
 	}
-
-
-
 
 	/*
 
@@ -392,6 +391,10 @@ bool CANLayer::init()
 	return true;
 }
 
+/**
+ * @brief Run the ROS node.
+ * @return void
+ */
 void CANLayer::run()
 {
 	ros::Rate r(LOOP_RATE);
@@ -401,7 +404,7 @@ void CANLayer::run()
 		//get the sensor values
 		for(int node_id=1; node_id<=number_epos_boards_; node_id++)
 		{
-			epos_controllers_vp_[node_id-1]->getData();
+			epos_controller_list_[node_id-1]->getData();
 		}
 
 		ros::spinOnce();
@@ -409,14 +412,18 @@ void CANLayer::run()
 	}
 }
 
-//callback
-void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
+/**
+ *  @brief Callback function that receives CAN messages from the CAN bus and updates motor data.
+ *  @param can_msg CAN message.
+ *  @return void
+ */
+void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 {
 	uint64_t data = 0x0000000000000000; //64 bits
 	uint8_t node_id = 0;
 	int16_t cob_id = 0;
 
-	//ROS_INFO("receiveMessagesCallback");
+	//ROS_INFO("receiveCANMessageCallback");
 
 	//ROS_INFO("Interrupt frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 
@@ -425,7 +432,6 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 
 	//ROS_INFO("node_id [%02X],  cobID [%02X], can_msg->dlc=%d", node_id, cob_id, can_msg->dlc);
 	
-
 	for(int i=0; i<can_msg->dlc; i++) //dlc=len
 	{
 		//ROS_INFO("for i=%d", i);
@@ -448,18 +454,18 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		                                       
 		        //ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
-		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) //!< change sign
+		        if(epos_controller_list_[node_id-1]->getInverted() == true) //!< change sign
 		        {
-		        	epos_controllers_vp_[node_id-1]->setPosition(-1*pos);
-		        	epos_controllers_vp_[node_id-1]->setVelocity(-1*vel);
+		        	epos_controller_list_[node_id-1]->setPosition(-1*pos);
+		        	epos_controller_list_[node_id-1]->setVelocity(-1*vel);
 		        }
 		        else
 		        {
-		        	epos_controllers_vp_[node_id-1]->setPosition(pos);
-		        	epos_controllers_vp_[node_id-1]->setVelocity(vel);
+		        	epos_controller_list_[node_id-1]->setPosition(pos);
+		        	epos_controller_list_[node_id-1]->setVelocity(vel);
 		        }
 		        
-		        //ROS_INFO("1 motorData_ma[%d] position[%d] current[%d] status[%d]", node_id, epos_controllers_vp_[node_id-1]->getPosition(), epos_controllers_vp_[node_id-1]->getCurrent(), epos_controllers_vp_[node_id-1]->getStatusword());
+		        //ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[node_id-1]->getPosition(), epos_controller_list_[node_id-1]->getCurrent(), epos_controller_list_[node_id-1]->getStatusword());
 
 		        break;
 		    }
@@ -470,19 +476,19 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        //ROS_INFO("IT[%02X] [%02X %02X]\n", can_msg->id, can_msg->data[5] ,  can_msg->data[4]);
 		        
 		        int16_t curr  = (can_msg->data[1]<<8 | can_msg->data[0]); //0x000000000000FFFF & data;
-		        int16_t follErr = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
+		        int16_t foll_err = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
 		        uint16_t statwrd = (can_msg->data[5]<<8 | can_msg->data[4]); //(0x0000FFFF00000000 & data) >> 32;
 		     
-		        //ROS_INFO("NodeID[%d] curr[%d] follErr[%d] statwrd[%d]", node_id, curr, follErr, statwrd);
+		        //ROS_INFO("NodeID[%d] curr[%d] foll_err[%d] statwrd[%d]", node_id, curr, foll_err, statwrd);
 
-		        if(epos_controllers_vp_[node_id-1]->getInverted() == true) curr = -1*curr; //change sign
-		        epos_controllers_vp_[node_id-1]->setCurrent(curr);
-		        epos_controllers_vp_[node_id-1]->setFollowingError(follErr);
-		        epos_controllers_vp_[node_id-1]->setStatusword(statwrd);
+		        if(epos_controller_list_[node_id-1]->getInverted() == true) curr = -1*curr; //change sign
+		        epos_controller_list_[node_id-1]->setCurrent(curr);
+		        epos_controller_list_[node_id-1]->setFollowingError(foll_err);
+		        epos_controller_list_[node_id-1]->setStatusword(statwrd);
 		        
-		        //ROS_INFO("TPDO2 Node-ID[%d] curr[%d] follErr[%d] statwrd[%d]\n", node_id, curr, follErr, statwrd);
+		        //ROS_INFO("TPDO2 Node-ID[%d] curr[%d] foll_err[%d] statwrd[%d]\n", node_id, curr, foll_err, statwrd);
 		        
-		        //ROS_INFO("2 motorData_ma[%d] position[%d] current[%d] status[%d]", node_id, epos_controllers_vp_[node_id-1]->getPosition(), epos_controllers_vp_[node_id-1]->getCurrent(), epos_controllers_vp_[node_id-1]->getStatusword());
+		        //ROS_INFO("2 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[node_id-1]->getPosition(), epos_controller_list_[node_id-1]->getCurrent(), epos_controller_list_[node_id-1]->getStatusword());
 
 		        break;
 		    }
@@ -491,9 +497,9 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		    {
 		        //ROS_INFO("TPDO3 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
 		        
-		        int8_t modesOfOp = 0x00000000000000FF & data;;
+		        int8_t modes_of_op = 0x00000000000000FF & data;;
 		                                      
-		        epos_controllers_vp_[node_id-1]->setModesOfOperation(modesOfOp);
+		        epos_controller_list_[node_id-1]->setModesOfOperation(modes_of_op);
 		        
 		        break;
 		    }
@@ -502,11 +508,11 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		    {
 		        //ROS_INFO("TPDO4 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
 		        
-		        uint32_t incEnc1 = 0x00000000FFFFFFFF & data;;
+		        uint32_t inc_enc1 = 0x00000000FFFFFFFF & data;;
 		        
-		        epos_controllers_vp_[node_id-1]->setIncEnc1CntAtIdxPls(incEnc1);
+		        epos_controller_list_[node_id-1]->setIncEnc1CntAtIdxPls(inc_enc1);
 		        
-		        break; 
+		        break;
 		    }
 	 
 		    case COB_ID_EMCY_DEFAULT : //Emergency frame
@@ -516,54 +522,54 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		        ROS_WARN("EF%02X-%02X%02X", can_msg->id, can_msg->data[1], can_msg->data[0]);
 		        //ledchain[1] = 1;            
 		        //nh.logerror("Emergency frame");
-		        epos_controllers_vp_[node_id-1]->setBoardStatus(1);
+		        epos_controller_list_[node_id-1]->setBoardStatus(1);
 		        //first step : fault reset on controlword
 		        //ROS_INFO("Node %d - STEP 1 - faultResetControlword\n", node_id);
 		        
 		        //Debug for fault detection on brachii
-		        epos_controllers_vp_[node_id-1]->faultResetControlword();        //TODO replace with RPDO
+		        epos_controller_list_[node_id-1]->faultResetControlword();        //TODO replace with RPDO
 		        break;  
 		    }
 	    
 		    case COB_ID_SDO_SERVER_TO_CLIENT_DEFAULT : //SDO Acknoledgement frame
 		    {            
-	    		int32_t regData = 0x00000000;
-		        regData = (int32_t)data;
+	    		int32_t reg_data = 0x00000000;
+		        reg_data = (int32_t)data;
 		        
-		        //ROS_INFO("Node %d - regData [%02X]\n", node_id, regData);
+		        //ROS_INFO("Node %d - reg_data [%02X]\n", node_id, reg_data);
 		                        
-		        if(regData == 0x00604060) //Controlword
+		        if(reg_data == 0x00604060) //Controlword
 		        {
-		            if(epos_controllers_vp_[node_id-1]->getBoardStatus() == 1)
+		            if(epos_controller_list_[node_id-1]->getBoardStatus() == 1)
 		            {
-		            	epos_controllers_vp_[node_id-1]->setBoardStatus(2);
+		            	epos_controller_list_[node_id-1]->setBoardStatus(2);
 		                //second step : shutdown controlword
 		                //ROS_INFO("Node %d - STEP 2 - shutdownControlwordIT\n", node_id);
-		            	epos_controllers_vp_[node_id-1]->shutdownControlwordIT(); //TODO replace with RPDO
+		            	epos_controller_list_[node_id-1]->shutdownControlwordIT(); //TODO replace with RPDO
 		            }
-		            else if(epos_controllers_vp_[node_id-1]->getBoardStatus() == 2)
+		            else if(epos_controller_list_[node_id-1]->getBoardStatus() == 2)
 		            {
-		            	epos_controllers_vp_[node_id-1]->setBoardStatus(3);
+		            	epos_controller_list_[node_id-1]->setBoardStatus(3);
 		                //third step : Switch On & Enable Operation on Controlword
 		                //ROS_INFO("Node %d - STEP 3 - switchOnEnableOperationControlwordIT\n", node_id);
-		            	epos_controllers_vp_[node_id-1]->switchOnEnableOperationControlwordIT(); //TODO replace with RPDO
+		            	epos_controller_list_[node_id-1]->switchOnEnableOperationControlwordIT(); //TODO replace with RPDO
 		            }
-		            else if(epos_controllers_vp_[node_id-1]->getBoardStatus() == 3)
+		            else if(epos_controller_list_[node_id-1]->getBoardStatus() == 3)
 		            {
-		            	epos_controllers_vp_[node_id-1]->setBoardStatus(4);
+		            	epos_controller_list_[node_id-1]->setBoardStatus(4);
 		                //ask for statusword to check if the board has reset well
 		                //ROS_INFO("Node %d - STEP 4 - getStatusword\n", node_id);
 		                //TODO getStatusword(node_id);
 		            }
 		        } 
-		        else if(regData == 0x0060414B) //read Statusword
+		        else if(reg_data == 0x0060414B) //read Statusword
 		        {
 		            //int32_t swData = 0x00000000;
 		            
 		            //ROS_INFO("Node %d - Statusword [%02X]\n", node_id, can_msg->data[4]);
 		            //ROS_INFO("Statusword frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 		            
-		            if(epos_controllers_vp_[node_id-1]->getBoardStatus() == 4)
+		            if(epos_controller_list_[node_id-1]->getBoardStatus() == 4)
 		            {
 		                //swData = data >> 32;
 		                int8_t fault = 0x00;
@@ -571,17 +577,17 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		                                       
 		                if(fault == 0) //reset OK
 		                {
-		                	epos_controllers_vp_[node_id-1]->setBoardStatus(0); //Board is reset and enable OK
+		                	epos_controller_list_[node_id-1]->setBoardStatus(0); //Board is reset and enable OK
 		                    ROS_INFO("%d OK", node_id);
 		                    //ledchain[1] = 0;
 		                }
 		                else //try to reset again
 		                {
 		                    //ROS_INFO("Node %d - try to reset again\n", node_id);
-		                	epos_controllers_vp_[node_id-1]->setBoardStatus(1);
+		                	epos_controller_list_[node_id-1]->setBoardStatus(1);
 		                    //go back to first step : fault reset on controlword
 		                    //ROS_INFO("Node %d - STEP 1 - faultResetControlword\n", node_id);
-		                	epos_controllers_vp_[node_id-1]->faultResetControlword();       //TODO replace with RPDO
+		                	epos_controller_list_[node_id-1]->faultResetControlword();       //TODO replace with RPDO
 		                }
 		            }  
 		        }                                            
@@ -594,28 +600,28 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 		} //end switch
 
 		//publish data
-		osa_msgs::MotorDataMultiArray motorData_ma;
+		osa_msgs::MotorDataMultiArray motor_data_array;
 
 		//create the data multi array
-		motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
-		motorData_ma.layout.dim[0].size = epos_controllers_vp_.size();
-		motorData_ma.layout.dim[0].stride = epos_controllers_vp_.size();
-		motorData_ma.layout.dim[0].label = "epos";
-		motorData_ma.layout.data_offset = 0;
-		motorData_ma.motorData.clear();
-		motorData_ma.motorData.resize(epos_controllers_vp_.size());
+		motor_data_array.layout.dim.push_back(std_msgs::MultiArrayDimension());
+		motor_data_array.layout.dim[0].size = epos_controller_list_.size();
+		motor_data_array.layout.dim[0].stride = epos_controller_list_.size();
+		motor_data_array.layout.dim[0].label = "epos";
+		motor_data_array.layout.data_offset = 0;
+		motor_data_array.motor_data.clear();
+		motor_data_array.motor_data.resize(epos_controller_list_.size());
 
-		for(int i=0; i<epos_controllers_vp_.size(); i++)
+		for(int i=0; i<epos_controller_list_.size(); i++)
 		{
-			//ROS_INFO("3 motorData_ma[%d] position[%d] current[%d] status[%d]", i+1, epos_controllers_vp_[i]->getPosition(), epos_controllers_vp_[i]->getCurrent(), epos_controllers_vp_[i]->getStatusword());
+			//ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
 
-			motorData_ma.motorData[i].position = epos_controllers_vp_[i]->getPosition();
-			motorData_ma.motorData[i].current = epos_controllers_vp_[i]->getCurrent();
-			motorData_ma.motorData[i].status = epos_controllers_vp_[i]->getStatusword();
+			motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
+			motor_data_array.motor_data[i].current = epos_controller_list_[i]->getCurrent();
+			motor_data_array.motor_data[i].status = epos_controller_list_[i]->getStatusword();
 		}
 
 		//ROS_INFO("Publish motor data\n");
-		motor_data_pub_.publish(motorData_ma);
+		pub_motor_data_.publish(motor_data_array);
 
 	}
 	else
@@ -625,26 +631,26 @@ void CANLayer::receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg)
 	}
 }
 
-/*! \fn void sendMotorCmdMultiArray_cb(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
- *  \brief callback function that received EPOS commands and that fits it into the right frame format to be sent over CAN bus.
- *  \param motorCmd_ma motor command multi-array.
- *  \return void
+/**
+ *  @brief Callback function that receives EPOS commands and that fits it into the right frame format to be sent over CAN bus.
+ *  @param motor_cmd_array Motor command multi-array.
+ *  @return void
  */
-void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
+void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array)
 {	
 	//toggle flag, a message has been received
 	motor_cmd_received_ = true;
 
 	//ROS_INFO("motor_cmd_received_");
 
-	for(int i=0; i<epos_controllers_vp_.size(); i++)
-	//for(std::vector<int>::const_iterator it = motorCmd_ma->motorCmd.begin(); it != motorCmd_ma->motorCmd.end(); ++it)
+	for(int i=0; i<epos_controller_list_.size(); i++)
+	//for(std::vector<int>::const_iterator it = motor_cmd_array->motor_cmd.begin(); it != motor_cmd_array->motor_cmd.end(); ++it)
 	{
-		uint8_t node_id = motorCmd_ma->motorCmd[i].nodeID;
-		uint8_t command = motorCmd_ma->motorCmd[i].command;
-		int32_t value = motorCmd_ma->motorCmd[i].value;
+		uint8_t node_id = motor_cmd_array->motor_cmd[i].node_id;
+		uint8_t command = motor_cmd_array->motor_cmd[i].command;
+		int32_t value = motor_cmd_array->motor_cmd[i].value;
 
-/*		uint8_t node_id = it.nodeID;
+/*		uint8_t node_id = it.node_id;
 		uint8_t command = it.command;
 		int32_t value = it.value;
 */
@@ -656,55 +662,55 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 		    {
 		    	//ROS_INFO("SET_TARGET_POSITION");
 		    	ROS_INFO("SET_TARGET_POSITION: cmd[%d] val[%d]", command, value);
-		    	epos_controllers_vp_[node_id-1]->setTargetPosition(value);
+		    	epos_controller_list_[node_id-1]->setTargetPosition(value);
 				break;
 		    }
 
 		    case SET_TARGET_VELOCITY:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setTargetVelocity(value);
+		    	epos_controller_list_[node_id-1]->setTargetVelocity(value);
 				break;
 		    }
 
 		    case SET_PROFILE_ACCELERATION:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setProfileAcceleration(value);
+		    	epos_controller_list_[node_id-1]->setProfileAcceleration(value);
 				break;
 		    }
 
 		    case SET_PROFILE_DECELERATION:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setProfileDeceleration(value);
+		    	epos_controller_list_[node_id-1]->setProfileDeceleration(value);
 				break;
 		    }
 
 		    case SET_PROFILE_VELOCITY:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setProfileVelocity(value);
+		    	epos_controller_list_[node_id-1]->setProfileVelocity(value);
 				break;
 		    }
 
 		    case SET_OUTPUT_CURRENT_LIMIT:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setOutputCurrentLimit(value);
+		    	epos_controller_list_[node_id-1]->setOutputCurrentLimit(value);
 				break;
 		    }
 		    
 		    case SET_CONTROLWORD:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setControlword(value);
+		    	epos_controller_list_[node_id-1]->setControlword(value);
 				break;
 		    }
 
 		    case SET_CURRENT_MODE_SETTING_VALUE:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setCurrentModeSettingValue(value);
+		    	epos_controller_list_[node_id-1]->setCurrentModeSettingValue(value);
 				break;
 		    }
 
 		    case SET_MAXIMAL_SPEED_IN_CURRENT_MODE:
 		    {
-		    	epos_controllers_vp_[node_id-1]->setMaximalSpeedInCurrentMode(value);
+		    	epos_controller_list_[node_id-1]->setMaximalSpeedInCurrentMode(value);
 				break;
 		    }
 
@@ -714,43 +720,43 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 				{
 					case INTERPOLATED_POSITION_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_INTERPOLATED_POSITION_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_INTERPOLATED_POSITION_MODE);
 						break;
 					}
 
 					case PROFILE_VELOCITY_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_PROFILE_VELOCITY_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_PROFILE_VELOCITY_MODE);
 						break;
 					}
 
 					case PROFILE_POSITION_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_PROFILE_POSITION_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_PROFILE_POSITION_MODE);
 						break;
 					}
 
 					case POSITION_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_POSITION_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_POSITION_MODE);
 						break;
 					}
 
 					case VELOCITY_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_VELOCITY_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_VELOCITY_MODE);
 						break;
 					}
 
 					case CURRENT_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_CURRENT_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_CURRENT_MODE);
 						break;
 					}
 
 					case CYCLIC_SYNCHRONOUS_TORQUE_MODE:
 					{
-						epos_controllers_vp_[node_id-1]->setModesOfOperation(VALUE_CYCLIC_SYNCHRONOUS_TORQUE_MODE);
+						epos_controller_list_[node_id-1]->setModesOfOperation(VALUE_CYCLIC_SYNCHRONOUS_TORQUE_MODE);
 						break;
 					}
 
@@ -781,17 +787,6 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 		ros::Duration(0.00001).sleep(); //10us
 	}	
 
-	//ROS_INFO("cmd[%d] val[%d]", motorCmd_ma->motorCmd[0].command, motorCmd_ma->motorCmd[0].value);
+	//ROS_INFO("cmd[%d] val[%d]", motor_cmd_array->motor_cmd[0].command, motor_cmd_array->motor_cmd[0].value);
 }
-/*
-void CANLayer::resetMotorCmdMultiArray()
-{
-	for(int i=0; i<number_epos_boards_; i++)
-	{
-		motor_cmd_ma_.motorCmd[i].slaveBoardID = 1;
-		motor_cmd_ma_.motorCmd[i].nodeID = i + 1;
-		motor_cmd_ma_.motorCmd[i].command = SEND_DUMB_MESSAGE;
-		motor_cmd_ma_.motorCmd[i].value = 0;
-	}
-}
-*/
+

@@ -28,17 +28,16 @@
  * @file can_layer.h
  * @author Cyril Jourdan
  * @date Aug 29, 2017
- * @version 0.0.1
+ * @version 0.1.0
  * @brief Header file for class CANLayer
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Aug 3, 2017
  */
 
-#ifndef CAN_LAYER_H
-#define CAN_LAYER_H
+#ifndef OSA_COMMUNICATION_CAN_LAYER_H
+#define OSA_COMMUNICATION_CAN_LAYER_H
 
-//ROS includes
 #include <ros/ros.h>
 #include "osa_msgs/MotorCmdMultiArray.h"
 #include "osa_msgs/MotorDataMultiArray.h"
@@ -50,41 +49,41 @@
 
 #define DATA_LENGTH 8
 
+/**
+ * @brief Class representing a CAN communication layer.
+ */
 class CANLayer
 {
-	//methods
-	public:
-		//constructor
-		CANLayer();
-		//destructor
-		~CANLayer();
+public:
+	/** @brief Constructor. */
+	CANLayer();
 
-		bool init();
-		void run();
+	/** @brief Destructor. */
+	~CANLayer();
 
-		//setters
+	/** @brief Initialize the ROS node. */
+	bool init();
 
-		//getters
+	/** @brief Run the ROS node. */
+	void run();
 
-		/*! methods */
-		void receiveMessagesCallback(const can_msgs::FrameConstPtr& can_msg);
-		void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_ma);
-		//void resetMotorCmdMultiArray();
+	/** @brief Callback method for the CAN messages received on the bus. */
+	void receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg);
 
-		void display();
+	/** @brief Callback method for the motor commands to be sent. */
+	void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array);
 
-	//attributes
-	protected:
-		std::string robot_name_;
-		std::string robot_can_device_;
-		std::vector<EPOSController*> epos_controllers_vp_;
-		int number_epos_boards_; //size of epos_controllers_vp_
-		char data_[DATA_LENGTH];
-		ros::Subscriber rx_can_frame_sub_;
-		ros::Subscriber motor_cmd_sub_;
-		ros::Publisher *tx_can_frame_pub_; //to link it to EPOSController
-		ros::Publisher motor_data_pub_;
-		bool motor_cmd_received_;
+protected:
+	std::string robot_name_;
+	std::string robot_can_device_;
+	std::vector<EPOSController*> epos_controller_list_;
+	int number_epos_boards_; /**< Size of epos_controller_list_ */
+	char data_[DATA_LENGTH];
+	ros::Subscriber rx_can_frame_sub_;
+	ros::Subscriber motor_cmd_sub_;
+	ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
+	ros::Publisher pub_motor_data_;
+	bool motor_cmd_received_;
 };
 
-#endif /* CAN_LAYER_H */
+#endif // OSA_COMMUNICATION_CAN_LAYER_H

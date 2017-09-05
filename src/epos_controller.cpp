@@ -28,13 +28,12 @@
  * @file EPOSController.cpp
  * @author Cyril Jourdan
  * @date Aug 29, 2017
- * @version 0.0.1
+ * @version 0.1.0
  * @brief Implementation file for class EPOSController
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Aug 3, 2017
  */
-
 
 #include <epos_controller.h>
 #include <iostream>
@@ -42,8 +41,13 @@
 
 using namespace std;
 
-//constructor
-EPOSController::EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value, ros::Publisher *tx_can_frame_pub) :
+/**
+ * @brief Constructor.
+ */
+EPOSController::EPOSController(int node_id, std::string name,
+		std::string controller_type, bool inverted,
+		std::string motor_type, std::string mode,
+		int value, ros::Publisher *tx_can_frame_pub) :
 node_id_(0),
 name_(name),
 controller_type_(NOT_USED),
@@ -105,26 +109,13 @@ board_status_(0)
 	else if(!mode.compare("CYCLIC_SYNCHRONOUS_TORQUE_MODE")) mode_ = ActivatedModeOfOperation(CYCLIC_SYNCHRONOUS_TORQUE_MODE);
 }
 
-//destructor
+/**
+ * @brief Destructor.
+ */
 EPOSController::~EPOSController()
 {
 
 }
-
-//setters
-/*
-int	EPOSController::setStatus(int status)
-{
-	//check the value
-	if(status > 0)
-	{
-		status_ = status;
-
-		return 0;
-	}
-	else
-		return -1;
-}*/
 
 int	EPOSController::setNodeID(uint8_t node_id)
 {
@@ -2052,14 +2043,4 @@ void EPOSController::getData()
 		ros::Duration(0.002).sleep();
 		//ros::Duration(0.002).sleep();
 	//}
-}
-
-void EPOSController::display()
-{/*
-	cout << "EPOSController:" << endl;
-	cout << "Status: " << m_status << endl;
-	cout << "NodeID: " << m_node_id_ << endl;
-	cout << "Position: " << m_position << endl;
-	cout << "Current: " << m_current << endl;
-	cout << "Velocity: " << m_velocity << endl;*/
 }

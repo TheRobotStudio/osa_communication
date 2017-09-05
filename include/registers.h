@@ -28,17 +28,15 @@
  * @file registers.h
  * @author Cyril Jourdan
  * @date Mar 02, 2017
- * @version 2.0.0
+ * @version 0.1.0
  * @brief header file that defines the CAN registers, based on MAXON EPOS2 Firmware Specification
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Feb 27, 2013
  */
  
-#ifndef REGISTERS_H
-#define REGISTERS_H
-
-/*! Defines */
+#ifndef OSA_COMMUNICATION_REGISTERS_H
+#define OSA_COMMUNICATION_REGISTERS_H
 
 /*! Communication */
 /*! Node IDs (FS 7.1) */
@@ -342,4 +340,4 @@
 /*! EPOS4 specific values */
 #define VALUE_CYCLIC_SYNCHRONOUS_TORQUE_MODE            0x0A
 
-#endif //REGISTERS_H
+#endif // OSA_COMMUNICATION_REGISTERS_H

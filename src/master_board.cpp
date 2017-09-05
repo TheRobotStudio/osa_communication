@@ -28,8 +28,9 @@
  * @file masterBoard.cpp
  * @author Cyril Jourdan
  * @date Mar 03, 2017
- * @version 2.0.0
+ * @version 0.1.0
  * @brief Implementation file for the serial communication between ROS and the Master Board
+ * Deprecated.
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : Feb 28, 2013
@@ -42,7 +43,6 @@
 #include "osa_msgs/MotorDataMultiArray.h"
 #include <sstream>
 #include <string>
-//#include "robotDefines.h"
 
 /*! Defines */
 #define LOOP_RATE		15 //HEART_BEAT
@@ -59,7 +59,7 @@
 
 /*! Variables */
 char data[NUMBER_SLAVE_BOARDS][NUMBER_MAX_EPOS_PER_SLAVE][BYTES_PER_MSG];
-bool msgReceived = false;
+bool msg_received = false;
 
 /*! Functions */
 
@@ -115,35 +115,35 @@ char verifyChecksum(char* data, int nbBytes)
 	}
 }
 
-/*! \fn void sendMotorCmdMultiArray_cb(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
+/*! \fn void sendMotorCmdArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
  *  \brief callback function that received EPOS commands and that fits it into the right format to be sent over RS232 bus.
  *  \param motorCmd_ma motor command multi-array.
  *  \return void
  */
-void sendMotorCmdMultiArray_cb(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
+void sendMotorCmdArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motorCmd_ma)
 {
 	if((motorCmd_ma->layout.dim[0].size == NUMBER_SLAVE_BOARDS) && (motorCmd_ma->layout.dim[1].size == NUMBER_MAX_EPOS_PER_SLAVE))
 	{
 		//toggle flag, a message has been received
-		msgReceived = true;
+		msg_received = true;
 
 		#ifdef TRS_DEBUG
-		ROS_INFO("msgReceived");
+		ROS_INFO("msg_received");
 		#endif
 
-		//ROS_INFO("cmd[%d] val[%d]", motorCmd_ma->motorCmd[0].command, motorCmd_ma->motorCmd[0].value);
+		//ROS_INFO("cmd[%d] val[%d]", motorCmd_ma->motor_cmd[0].command, motorCmd_ma->motor_cmd[0].value);
 
 		//update data with the new msg cmds
 		for(int i=0; i<NUMBER_SLAVE_BOARDS; i++)
 		{
 			for(int j=0; j<NUMBER_MAX_EPOS_PER_SLAVE; j++)
 			{
-				//data[i][j][0] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].nodeID);// + i*NUMBER_MAX_EPOS_PER_SLAVE); //nodeID
-				data[i][j][0] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].command); //command
-				data[i][j][1] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value); //data 4 bytes
-				data[i][j][2] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 8);
-				data[i][j][3] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 16);
-				data[i][j][4] = (char)(motorCmd_ma->motorCmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 24);
+				//data[i][j][0] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].nodeID);// + i*NUMBER_MAX_EPOS_PER_SLAVE); //nodeID
+				data[i][j][0] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].command); //command
+				data[i][j][1] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value); //data 4 bytes
+				data[i][j][2] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 8);
+				data[i][j][3] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 16);
+				data[i][j][4] = (char)(motorCmd_ma->motor_cmd[i*NUMBER_MAX_EPOS_PER_SLAVE + j].value >> 24);
 			}
 		}
 	}
@@ -158,7 +158,7 @@ void sendMotorCmdMultiArray_cb(const osa_msgs::MotorCmdMultiArrayConstPtr& motor
 int main(int argc, char** argv)
 {
 	// Initialize ROS
-    ros::init(argc, argv, "osa_masterBoard_node");
+    ros::init(argc, argv, "osa_master_board_node");
     ros::NodeHandle nh("~");
 
     ros::Rate r(LOOP_RATE);
@@ -173,33 +173,33 @@ int main(int argc, char** argv)
     char reply[REPLY_SIZE] = {0x00};
     char checksum[1];
 
-    bool dataValid = false;
+    bool data_valid = false;
 
-	ros::Subscriber cmd_sub = nh.subscribe("/motor_cmd_array", 1, sendMotorCmdMultiArray_cb);
+	ros::Subscriber cmd_sub = nh.subscribe("/motor_cmd_array", 1, sendMotorCmdArrayCallback);
 	ros::Publisher data_pub = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1);
-	osa_msgs::MotorDataMultiArray motorData_ma;
+	osa_msgs::MotorDataMultiArray motor_data_array;
 
 	//create the data multi array
-	motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
-	motorData_ma.layout.dim[0].size = NUMBER_SLAVE_BOARDS;
-	motorData_ma.layout.dim[0].stride = NUMBER_SLAVE_BOARDS*NUMBER_MAX_EPOS_PER_SLAVE;
-	motorData_ma.layout.dim[0].label = "slaves";
-	motorData_ma.layout.dim.push_back(std_msgs::MultiArrayDimension());
-	motorData_ma.layout.dim[1].size = NUMBER_MAX_EPOS_PER_SLAVE;
-	motorData_ma.layout.dim[1].stride = NUMBER_MAX_EPOS_PER_SLAVE;
-	motorData_ma.layout.dim[1].label = "motors";
-	motorData_ma.layout.data_offset = 0;
-	motorData_ma.motorData.clear();
-	motorData_ma.motorData.resize(NUMBER_SLAVE_BOARDS*NUMBER_MAX_EPOS_PER_SLAVE);
+	motor_data_array.layout.dim.push_back(std_msgs::MultiArrayDimension());
+	motor_data_array.layout.dim[0].size = NUMBER_SLAVE_BOARDS;
+	motor_data_array.layout.dim[0].stride = NUMBER_SLAVE_BOARDS*NUMBER_MAX_EPOS_PER_SLAVE;
+	motor_data_array.layout.dim[0].label = "slaves";
+	motor_data_array.layout.dim.push_back(std_msgs::MultiArrayDimension());
+	motor_data_array.layout.dim[1].size = NUMBER_MAX_EPOS_PER_SLAVE;
+	motor_data_array.layout.dim[1].stride = NUMBER_MAX_EPOS_PER_SLAVE;
+	motor_data_array.layout.dim[1].label = "motors";
+	motor_data_array.layout.data_offset = 0;
+	motor_data_array.motor_data.clear();
+	motor_data_array.motor_data.resize(NUMBER_SLAVE_BOARDS*NUMBER_MAX_EPOS_PER_SLAVE);
 
 	//init data array
 	for(int i=0; i<NUMBER_SLAVE_BOARDS; i++)
 	{
 		for(int j=0; j<NUMBER_MAX_EPOS_PER_SLAVE; j++)
 		{
-			motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].position = 0;
-			motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].current = 0;
-			motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].status = 0;
+			motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].position = 0;
+			motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].current = 0;
+			motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].status = 0;
 
 			//init RS232 char data
 			//data[i][j][0] = i*NUMBER_MAX_EPOS_PER_SLAVE + j + 1;
@@ -212,7 +212,10 @@ int main(int argc, char** argv)
 	}
 
     // Change the next line according to your port name and baud rate
-	try{ device.open(usb_device_name.c_str(), RS232_BAUDRATE); }
+	try
+	{
+		device.open(usb_device_name.c_str(), RS232_BAUDRATE);
+	}
     catch(cereal::Exception& e)
     {
         ROS_FATAL("Failed to open the serial port %s at 460800 baud !!!", usb_device_name.c_str());
@@ -223,20 +226,19 @@ int main(int argc, char** argv)
     //Main loop
     while(ros::ok())
     {
-    	msgReceived = false;
+    	msg_received = false;
 
     	//check for a new message incoming
-    	ros::spinOnce(); //this will toggle the flag msgReceived if a msg has been published by another node
+    	ros::spinOnce(); //this will toggle the flag msg_received if a msg has been published by another node
 
     	//if no msg received
-    	if(!msgReceived)
+    	if(!msg_received)
     	{
     		//reset data mode with 0xFF, i.e. idle slave mode
     		for(int i=0; i<NUMBER_SLAVE_BOARDS; i++)
 			{
 				for(int j=0; j<NUMBER_MAX_EPOS_PER_SLAVE; j++)
 				{
-
 					//data[i][j][0] = 0x00;//optional
 
 					//mode
@@ -267,16 +269,19 @@ int main(int argc, char** argv)
 
         //read data on serial Rx
         // Get the reply, the last value is the timeout in ms
-        try{ device.readBytes(reply, REPLY_SIZE, TIMEOUT); }
+        try
+        {
+        	device.readBytes(reply, REPLY_SIZE, TIMEOUT);
+        }
         catch(cereal::TimeoutException& e)
         {
             ROS_ERROR("Timeout!");
         }
 
         //check if the data are valid
-        dataValid = verifyChecksum(reply, REPLY_SIZE);
+        data_valid = verifyChecksum(reply, REPLY_SIZE);
 
-        if(dataValid)
+        if(data_valid)
         {
         	//ROS_INFO("Data valid");
 
@@ -285,26 +290,26 @@ int main(int argc, char** argv)
 			{
 				for(int j=0; j<NUMBER_MAX_EPOS_PER_SLAVE; j++)
 				{
-					motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].position =
+					motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].position =
 														  (uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 0]
 													  + (((uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 1]) << 8)
 													  + (((uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 2]) << 16)
 													  + (((uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 3]) << 24);
 
-					motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].current =
+					motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].current =
 														  (uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 4]
 													  + (((uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 5]) << 8);
 
-					motorData_ma.motorData[i*NUMBER_MAX_EPOS_PER_SLAVE + j].status =
+					motor_data_array.motor_data[i*NUMBER_MAX_EPOS_PER_SLAVE + j].status =
 														  (uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 6]
 													  + (((uint8_t)reply[(i*NUMBER_MAX_EPOS_PER_SLAVE + j)*BYTES_PER_DATA + 7]) << 8);
 				}
 			}
 
         	//publish it
-        	data_pub.publish(motorData_ma);
+        	data_pub.publish(motor_data_array);
         	//ROS_INFO("Valid");
-        	dataValid = false; //reset flag
+        	data_valid = false; //reset flag
         }
         else
         {
