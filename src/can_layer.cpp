@@ -246,7 +246,7 @@ bool CANLayer::init()
 				}
 
 				//print the dof parameters
-				ROS_INFO("%s : name[%s], type[%s], node_id[%d], controller[%d], motor[%s], inverted[%d], mode[%s], value[%d]", dof_idx_path.str().c_str(),
+				ROS_INFO("%s : name[%s], type[%s], node_id[%d], controller[%s], motor[%s], inverted[%d], mode[%s], value[%d]", dof_idx_path.str().c_str(),
 						name.c_str(), type.c_str(), node_id, controller.c_str(), motor.c_str(), inverted, mode.c_str(), value);
 
 				//create a new EPOS controller
