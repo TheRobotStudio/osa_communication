@@ -2,16 +2,16 @@
 
 robot:
   name: 'BiBot'
-  dof: 2
+  dof: 2  # Number of Degrees Of Freedom.
   can_device: 'can0'
   
-mobile_base:
-  nb_of_wheels: 2
-  distance_between_wheels: 0.3 # in meter (m)
-  wheels_diameter: 0.2
+#mobile_base:
+#  nb_of_wheels: 2
+#  distance_between_wheels: 0.3 # in meter (m)
+#  wheels_diameter: 0.2
 
-controller1: {node_id: 1, name: 'R Biceps', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 150}
-controller2: {node_id: 2, name: 'R Supra', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
+dof1: {name: 'arm/r_biceps', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 150}
+dof2: {name: 'arm/r_supra', type: 'TENDON', node_id: 2, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 100}
 #controller3: {node_id: 3, name: 'R Subscap', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
 #controller4: {node_id: 4, name: 'R Infra', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
 #controller5: {node_id: 5, name: 'R Tmin', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}

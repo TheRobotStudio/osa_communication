@@ -47,6 +47,17 @@
 #define TIMEOUT                     10000
 
 /**
+ * @enum DegreeOfFreedomType
+ * @brief Enumeration that tells the type of a Degree Of Freedom.
+ */
+enum DegreeOfFreedomType
+{
+    TENDON = 0,
+    WHEEL = 1,
+    CLASSICAL = 2
+}; 
+
+/**
  * @enum MotorType
  * @brief Enumeration that tells the type of a motor.
  */
@@ -63,7 +74,7 @@ enum MotorType
     ECI40 = 8,
     ECI52 = 9,
     EC90 = 10
-}; 
+};
 
 /**
  * @enum ControllerType

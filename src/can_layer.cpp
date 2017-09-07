@@ -141,52 +141,44 @@ bool CANLayer::init()
 		//Example:
 		//controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
 
-		bool controller_exist = true;
+		bool dof_exist = true;
 		//start with controller 1
-		int controller_idx = 1;
-		std::string rad_str = "controller"; //common radical name
+		int dof_idx = 1;
+		std::string rad_str = "dof"; //common radical name
 
-		while(controller_exist)
+		while(dof_exist)
 		{
 			//create the string "controller+index" to search for the controller parameter with that index number
-			std::ostringstream controller_idx_path;
-			controller_idx_path << rad_str << controller_idx;
+			std::ostringstream dof_idx_path;
+			dof_idx_path << rad_str << dof_idx;
 
 			std::string absolute_str = "absolute_str";
 
-			//ROS_INFO("string=%s", controller_idx_path.str().c_str());
+			//ROS_INFO("string=%s", dof_idx_path.str().c_str());
 
-			if(nh.searchParam(controller_idx_path.str(), absolute_str))
+			if(nh.searchParam(dof_idx_path.str(), absolute_str))
 			{
-				//ROS_INFO("%s found in YAML config file", controller_idx_path.str().c_str());
+				//ROS_INFO("%s found in YAML config file", dof_idx_path.str().c_str());
 				//ROS_INFO("absolute_str = %s", absolute_str.c_str());
 
 				//create variables to store the controller parameters:
-				int node_id = 0;
 				std:: string name;
 				std:: string type;
-				bool inverted;
+				int node_id = 0;
+				std:: string controller;
 				std:: string motor;
+				bool inverted;
 				std:: string mode;
 				int value;
 
 				//grab the parameters of the current controller
-
-				//node_id
-				std::ostringstream node_id_path;
-				node_id_path << absolute_str << "/node_id";
-				if(!nh.getParam(node_id_path.str(), node_id))
-				{
-					ROS_ERROR("Can't grab param node_id for %s", controller_idx_path.str().c_str());
-					return false;
-				}
 
 				//name
 				std::ostringstream name_path;
 				name_path << absolute_str << "/name";
 				if(!nh.getParam(name_path.str(), name))
 				{
-					ROS_ERROR("Can't grab param name for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param name for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
@@ -195,16 +187,25 @@ bool CANLayer::init()
 				type_path << absolute_str << "/type";
 				if(!nh.getParam(type_path.str(), type))
 				{
-					ROS_ERROR("Can't grab param type for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param type for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
-				//inverted
-				std::ostringstream inverted_path;
-				inverted_path << absolute_str << "/inverted";
-				if(!nh.getParam(inverted_path.str(), inverted))
+				//node_id
+				std::ostringstream node_id_path;
+				node_id_path << absolute_str << "/node_id";
+				if(!nh.getParam(node_id_path.str(), node_id))
 				{
-					ROS_ERROR("Can't grab param inverted for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param node_id for %s", dof_idx_path.str().c_str());
+					return false;
+				}
+
+				//controller
+				std::ostringstream controller_path;
+				type_path << absolute_str << "/controller";
+				if(!nh.getParam(type_path.str(), controller))
+				{
+					ROS_ERROR("Can't grab param type for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
@@ -213,7 +214,16 @@ bool CANLayer::init()
 				motor_path << absolute_str << "/motor";
 				if(!nh.getParam(motor_path.str(), motor))
 				{
-					ROS_ERROR("Can't grab param motor for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param motor for %s", dof_idx_path.str().c_str());
+					return false;
+				}
+
+				//inverted
+				std::ostringstream inverted_path;
+				inverted_path << absolute_str << "/inverted";
+				if(!nh.getParam(inverted_path.str(), inverted))
+				{
+					ROS_ERROR("Can't grab param inverted for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
@@ -222,7 +232,7 @@ bool CANLayer::init()
 				mode_path << absolute_str << "/mode";
 				if(!nh.getParam(mode_path.str(), mode))
 				{
-					ROS_ERROR("Can't grab param mode for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param mode for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
@@ -231,16 +241,16 @@ bool CANLayer::init()
 				value_path << absolute_str << "/value";
 				if(!nh.getParam(value_path.str(), value))
 				{
-					ROS_ERROR("Can't grab param value for %s", controller_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param value for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
-				//print the controller parameters
-				ROS_INFO("%s : node_id[%d], name[%s], type[%s], inverted[%d], motor[%s], mode[%s], value[%d]", controller_idx_path.str().c_str(),
-						node_id, name.c_str(), type.c_str(), inverted, motor.c_str(), mode.c_str(), value);
+				//print the dof parameters
+				ROS_INFO("%s : name[%s], type[%s], node_id[%d], controller[%d], motor[%s], inverted[%d], mode[%s], value[%d]", dof_idx_path.str().c_str(),
+						name.c_str(), type.c_str(), node_id, controller.c_str(), motor.c_str(), inverted, mode.c_str(), value);
 
 				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(node_id, name, type, inverted, motor, mode, value, ptr_pub_tx_can_frame_);
+				EPOSController *epos_controller = new EPOSController(name, type, node_id, controller, motor, inverted, mode, value, ptr_pub_tx_can_frame_);
 
 				//epos_controller->
 
@@ -248,22 +258,22 @@ bool CANLayer::init()
 				epos_controller_list_.push_back(epos_controller);
 
 				//increment to search for the next controller
-				controller_idx++;
+				dof_idx++;
 			}
 			else
 			{
-				controller_exist = false;
+				dof_exist = false;
 				//ROS_INFO("No more controllers found in YAML config file");
 			}
 
-			//controller_exist = false;
+			//dof_exist = false;
 		}
 
-		controller_idx--;
-		if(number_epos_boards_ == controller_idx) ROS_INFO("Same number of DOF(%d) and controllers(%d) defined in the YAML config file!", number_epos_boards_, controller_idx);
+		dof_idx--;
+		if(number_epos_boards_ == dof_idx) ROS_INFO("Same number of DOF(%d) and controllers(%d) defined in the YAML config file!", number_epos_boards_, dof_idx);
 		else
 		{
-			ROS_WARN("Not the same number of DOF(%d) and controllers(%d) defined in the YAML config file!", number_epos_boards_, controller_idx);
+			ROS_WARN("Not the same number of DOF(%d) and controllers(%d) defined in the YAML config file!", number_epos_boards_, dof_idx);
 			throw 1;
 		}
 

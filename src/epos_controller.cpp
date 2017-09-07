@@ -44,15 +44,16 @@ using namespace std;
 /**
  * @brief Constructor.
  */
-EPOSController::EPOSController(int node_id, std::string name,
-		std::string controller_type, bool inverted,
-		std::string motor_type, std::string mode,
-		int value, ros::Publisher *tx_can_frame_pub) :
-node_id_(0),
+EPOSController::EPOSController(std::string name, std::string degree_of_freedom_type,
+		int node_id, std::string controller_type,
+		std::string motor_type, bool inverted,
+		std::string mode, int value, ros::Publisher *tx_can_frame_pub) :
 name_(name),
+degree_of_freedom_type_(TENDON),
+node_id_(0),
 controller_type_(NOT_USED),
-inverted_(inverted),
 motor_type_(NONE),
+inverted_(inverted),
 mode_(PROFILE_VELOCITY_MODE),
 value_(value),
 tx_can_frame_pub_(tx_can_frame_pub),
@@ -78,6 +79,12 @@ inc_enc1_cnt_at_idx_pls_(0),
 board_status_(0)
 {
 	//Init the parameters
+
+	//degree_of_freedom_type_
+	if(!degree_of_freedom_type.compare("TENDON")) degree_of_freedom_type_ = TENDON;
+	else if(!degree_of_freedom_type.compare("WHEEL")) degree_of_freedom_type_ = WHEEL;
+	else if(!degree_of_freedom_type.compare("CLASSICAL")) degree_of_freedom_type_ = CLASSICAL;
+
 	//node_id_
 	if((node_id >=0) && (node_id<=255)) node_id_ = node_id; //check that the value is a uint8_t
 

@@ -48,15 +48,20 @@
 class EPOSController
 {
 public:
-	/** @brief Constructor. */
-	EPOSController(int node_id, std::string name, std::string controller_type, bool inverted, std::string motor_type, std::string mode, int value, ros::Publisher *tx_can_frame_pub);
+	/**
+	 * @brief Constructor.
+	 */
+	EPOSController(std::string name, std::string degree_of_freedom_type,
+			int node_id, std::string controller_type,
+			std::string motor_type, bool inverted,
+			std::string mode, int value, ros::Publisher *tx_can_frame_pub);
 
 	/** @brief Destructor. */
 	~EPOSController();
 
 	//setters //TODO check wether assessors are useful
-	int	setNodeID(uint8_t node_id);
 	int	setName(std::string name);
+	int	setNodeID(uint8_t node_id);
 	int setControllerType(ControllerType controller_type);
 	int setMotorType(MotorType motor_type);
 	int setInverted(bool inverted);
@@ -72,8 +77,9 @@ public:
 	int setBoardStatus(int8_t board_status);
 
 	//getters
-	uint8_t getNodeID() const { return node_id_; };
 	std::string	getName() const { return name_; };
+	uint8_t getNodeID() const { return node_id_; };
+
 	ControllerType getControllerType() const { return controller_type_; };
 	MotorType getMotorType() const { return motor_type_; };
 	bool getInverted() const { return node_id_; };
@@ -130,19 +136,21 @@ public:
 	int calibrate(); //TODO make it as a service
 	void getData();  //TODO make it as a service
 
-//attributes
 protected:
-	uint8_t node_id_;
 	std::string name_;
+	DegreeOfFreedomType degree_of_freedom_type_;
+	uint8_t node_id_;
 	ControllerType controller_type_;
-	bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
 	MotorType motor_type_;
+	bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
 	ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
 	int value_;
+
 	ros::Publisher *tx_can_frame_pub_;
 	char data_[8]; //can message data
 	ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge
 	ROSCommand ros_cmd_;
+
 	//latest stored commands
 	/**<RPDO1 */
 	int32_t target_position_;
