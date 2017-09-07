@@ -202,10 +202,10 @@ bool CANLayer::init()
 
 				//controller
 				std::ostringstream controller_path;
-				type_path << absolute_str << "/controller";
-				if(!nh.getParam(type_path.str(), controller))
+				controller_path << absolute_str << "/controller";
+				if(!nh.getParam(controller_path.str(), controller))
 				{
-					ROS_ERROR("Can't grab param type for %s", dof_idx_path.str().c_str());
+					ROS_ERROR("Can't grab param controller for %s", dof_idx_path.str().c_str());
 					return false;
 				}
 
