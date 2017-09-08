@@ -4,58 +4,31 @@ robot:
   name: 'BiBot'
   dof: 2  # Number of Degrees Of Freedom.
   can_device: 'can0'
-  
+
+#dof1: {name: 'right_arm/biceps', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 150}
+#dof2: {name: 'right_arm/supra', type: 'TENDON', node_id: 2, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 100}
+#dof3: {name: 'right_arm/subscap', type: 'TENDON', node_id: 3, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof4: {name: 'right_arm/infra', type: 'TENDON', node_id: 4, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof5: {name: 'right_arm/tmin', type: 'TENDON', node_id: 5, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof6: {name: 'right_arm/lat_delt', type: 'TENDON', node_id: 6, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof7: {name: 'right_arm/ant_delt', type: 'TENDON', node_id: 7, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof8: {name: 'right_arm/post_delt', type: 'TENDON', node_id: 8, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof9: {name: 'right_arm/triceps', type: 'TENDON', node_id: 9, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof10: {name: 'right_arm/brachi', type: 'TENDON', node_id: 10, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof11: {name: 'right_arm/hand', type: 'TENDON', node_id: 11, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof12: {name: 'right_arm/rotator', type: 'TENDON', node_id: 12, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 0}
+#dof13: {name: 'right_arm/wrist_in', type: 'TENDON', node_id: 13, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 80}
+#dof14: {name: 'right_arm/wrist_up', type: 'TENDON', node_id: 14, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 80}
+#dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 150}
+#dof16: {name: 'right_arm/thumb', type: 'TENDON', node_id: 16, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 70}
+#dof17: {name: 'base/right_wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#dof18: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+#Base only
+dof1: {name: 'base/right_wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+dof2: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
 #mobile_base:
 #  nb_of_wheels: 2
 #  distance_between_wheels: 0.3 # in meter (m)
 #  wheels_diameter: 0.2
-
-dof1: {name: 'arm/r_biceps', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 150}
-dof2: {name: 'arm/r_supra', type: 'TENDON', node_id: 2, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 100}
-#controller3: {node_id: 3, name: 'R Subscap', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller4: {node_id: 4, name: 'R Infra', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller5: {node_id: 5, name: 'R Tmin', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller6: {node_id: 6, name: 'R LatDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller7: {node_id: 7, name: 'R AntDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller8: {node_id: 8, name: 'R PostDelt', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller9: {node_id: 9, name: 'R Triceps', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller10: {node_id: 10, name: 'R Brachi', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller11: {node_id: 11, name: 'R Hand', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 100}
-#controller12: {node_id: 12, name: 'R Rotator', type: 'EPOS2', inverted: false, motor: 'DCX22', mode: 'CURRENT_MODE', value: 0}
-#controller13: {node_id: 13, name: 'R WristIn', type: 'EPOS2', inverted: false, motor: 'RE13', mode: 'CURRENT_MODE', value: 80}
-#controller14: {node_id: 14, name: 'R WristUp', type: 'EPOS2', inverted: true, motor: 'RE13', mode: 'CURRENT_MODE', value: 80}
-#controller15: {node_id: 15, name: 'R WristDown', type: 'EPOS2', inverted: true, motor: 'RE13', mode: 'CURRENT_MODE', value: 150}
-#controller16: {node_id: 16, name: 'R Thumb', type: 'EPOS2', inverted: false, motor: 'DCX10', mode: 'CURRENT_MODE', value: 70}
-#controller17: {node_id: 17, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-#controller18: {node_id: 18, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-
-#controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-#controller2: {node_id: 2, name: 'left wheel', type: 'EPOS4', inverted: false, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-
-
-#controller1: 
-#{
-#  nodeID: 1,
-#  name: 'right wheel',
-#  type: 'EPOS4',
-#  inverted: true,
-#  motor: 
-#    type: 'EC90'
-#    gearbox: {ratio_numerator: 52, ratio_denominator: 1}
-#    encoder: {nb_chan: 3, resolution: 512},  # resolution is number of ticks per motor turn
-#  mode: 'PROFILE_VELOCITY_MODE',
-#  value: 0,
-#}
-#
-#controller2:
-#  nodeID: 2,
-#  name: 'left wheel',
-#  type: 'EPOS4',
-#  inverted: false
-#  motor: 
-#    type: 'EC90'
-#    gearbox: {ratio_numerator: 52, ratio_denominator: 1}
-#    encoder: {nb_chan: 3, resolution: 512}  # resolution is number of ticks per motor turn
-#  mode: 'PROFILE_VELOCITY_MODE'
-#  value: 0
-
