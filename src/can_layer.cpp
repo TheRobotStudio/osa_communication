@@ -56,7 +56,7 @@ robot_name_(""),
 robot_can_device_(""),
 epos_controller_list_(0),
 number_epos_boards_(0),
-data_({0}),
+data_ ({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
 ptr_pub_tx_can_frame_(),
@@ -377,22 +377,6 @@ bool CANLayer::init()
 
 	resetMotorCmdMultiArray();
 */
-/*
-	motor_cmd_ma_.layout.dim.push_back(std_msgs::MultiArrayDimension());
-	motor_cmd_ma_.layout.dim[0].size = NUMBER_MAX_EPOS2_PER_SLAVE;
-	motor_cmd_ma_.layout.dim[0].stride = NUMBER_SLAVE_BOARDS*NUMBER_MAX_EPOS2_PER_SLAVE;
-	motor_cmd_ma_.layout.dim[0].label = "motors";
-	motor_cmd_ma_.layout.data_offset = 0;
-	motor_cmd_ma_.motorCmd.clear();
-	motor_cmd_ma_.motorCmd.resize(NUMBER_MAX_EPOS2_PER_SLAVE);
-
-
-	for(int i=0; i<NUMBER_MAX_EPOS2_PER_SLAVE; i++)
-	{
-		motor_cmd_ma_.motorCmd[i].command = SEND_DUMB_MESSAGE;
-		motor_cmd_ma_.motorCmd[i].value = 0;
-	}
-*/
 
 	//then start the main loop
 	ROS_INFO("*** Start main loop ***");
@@ -628,6 +612,8 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 			motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
 			motor_data_array.motor_data[i].current = epos_controller_list_[i]->getCurrent();
 			motor_data_array.motor_data[i].status = epos_controller_list_[i]->getStatusword();
+
+			//TODO add other data
 		}
 
 		//ROS_INFO("Publish motor data\n");
