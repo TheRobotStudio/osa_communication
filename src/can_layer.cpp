@@ -446,6 +446,8 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 		// get the index:
 		auto index = std::distance(epos_controller_list_.begin(), it);
 
+		ROS_INFO("node_id=%d is at index=%d", node_id, index);
+
 		//check node_id first and that the command is an answer to a request (RTR=false)
 		//if((node_id >= 1) && (node_id <= number_epos_boards_) && (can_msg->is_rtr == false))
 		if(can_msg->is_rtr == false)
@@ -688,6 +690,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 
 				case SET_TARGET_VELOCITY:
 				{
+					ROS_INFO("SET_TARGET_VELOCITY: cmd[%d] val[%d]", command, value);
 					epos_controller_list_[index]->setTargetVelocity(value);
 					break;
 				}
@@ -724,6 +727,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 
 				case SET_CURRENT_MODE_SETTING_VALUE:
 				{
+					ROS_INFO("SET_CURRENT_MODE_SETTING_VALUE: cmd[%d] val[%d]", command, value);
 					epos_controller_list_[index]->setCurrentModeSettingValue(value);
 					break;
 				}
