@@ -77,6 +77,7 @@ protected:
 	std::string robot_name_;
 	std::string robot_can_device_;
 	std::vector<EPOSController*> epos_controller_list_;
+	//std::map<uint8_t, EPOSController*> epos_controller_list_;
 	int number_epos_boards_; /**< Size of epos_controller_list_ */
 	char data_[DATA_LENGTH];
 	ros::Subscriber rx_can_frame_sub_;
