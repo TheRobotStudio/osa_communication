@@ -300,6 +300,7 @@ bool CANLayer::init()
 	}
 	catch(int exception)
 	{
+		//ROS_ERROR(exception.what());
 		ROS_ERROR("Parameters didn't load correctly!");
 		ROS_ERROR("Please modify your YAML config file and try again.");
 
@@ -446,7 +447,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 		// get the index:
 		auto index = std::distance(epos_controller_list_.begin(), it);
 
-		ROS_INFO("node_id=%d is at index=%d", node_id, index);
+		//ROS_INFO("node_id=%d is at index=%d", node_id, index);
 
 		//check node_id first and that the command is an answer to a request (RTR=false)
 		//if((node_id >= 1) && (node_id <= number_epos_boards_) && (can_msg->is_rtr == false))

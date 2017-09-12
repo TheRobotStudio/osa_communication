@@ -1279,6 +1279,8 @@ void EPOSController::setTargetVelocity(int32_t velocity)
     //!> send the CAN frame.
     canToEposWrite(COB_ID_RECEIVE_PDO_1_ENABLE + node_id_, data_, 8); //write 8 bytes
 
+    ROS_INFO("Velocity command just sent");
+
     if(controller_type_ == EPOS2) ros::Duration(0.0001).sleep();
     else if(controller_type_ == EPOS4) ros::Duration(0.001).sleep();
 }
