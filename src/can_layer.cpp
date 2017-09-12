@@ -449,6 +449,9 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 		//ROS_INFO("node_id=%d is at index=%d", node_id, index);
 
+		//set the nodeID
+		epos_controller_list_[index]->setNodeID(node_id);
+
 		//check node_id first and that the command is an answer to a request (RTR=false)
 		//if((node_id >= 1) && (node_id <= number_epos_boards_) && (can_msg->is_rtr == false))
 		if(can_msg->is_rtr == false)
@@ -625,6 +628,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 			{
 				//ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
 
+				motor_data_array.motor_data[i].node_id = epos_controller_list_[i]->getNodeID();
 				motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
 				motor_data_array.motor_data[i].current = epos_controller_list_[i]->getCurrent();
 				motor_data_array.motor_data[i].status = epos_controller_list_[i]->getStatusword();
@@ -634,7 +638,6 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 			//ROS_INFO("Publish motor data\n");
 			pub_motor_data_.publish(motor_data_array);
-
 		}
 		else
 		{

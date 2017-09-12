@@ -1,0 +1,165 @@
+#
+# Open Source Android - configuration file
+#
+# Parameters:
+#
+# dofX has CAN node ID X
+#
+# type:
+#    TENDON
+#    CLASSICAL
+#    WHEEL
+#
+# controller:
+#    NOT_USED
+#    EPOS2
+#    EPOS4
+#
+# motor:
+#    NONE
+#    DCX10
+#    DCX14
+#    DCX16
+#    DCX22
+#    DCX32
+#    RE13
+#    RE30
+#    ECI40
+#    ECI52
+#    EC90
+#
+# inverted:
+#    false
+#    true
+#
+# mode: mode of operation selected during initialization: 
+#    INTERPOLATED_POSITION_MODE
+#    PROFILE_VELOCITY_MODE
+#    PROFILE_POSITION_MODE
+#    POSITION_MODE
+#    VELOCITY_MODE
+#    CURRENT_MODE
+#    CYCLIC_SYNCHRONOUS_TORQUE_MODE
+#
+# value: default value that will be sent after EPOS board initialization, according to the selected mode of operation
+# 
+
+robot:
+  name: 'HighSpeedAndroid'
+  dof: 2  # Number of Degrees Of Freedom.
+  can_device: 'can0'
+
+#Head
+dof1: {name: 'head/neck/right_down', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX14', inverted: false,  mode: 'CURRENT_MODE', value: 50}
+dof2: {name: 'head/neck/left_down', type: 'TENDON', node_id: 2, controller: 'EPOS2', motor: 'DCX14', inverted: true,  mode: 'CURRENT_MODE', value: 50}
+dof3: {name: 'head/neck/right_back', type: 'TENDON', node_id: 3, controller: 'EPOS2', motor: 'DCX14', inverted: false, mode: 'CURRENT_MODE', value: 50}
+dof4: {name: 'head/neck/left_back', type: 'TENDON', node_id: 4, controller: 'EPOS2', motor: 'DCX14', inverted: true, mode: 'CURRENT_MODE', value: 50}
+dof5: {name: 'head/eyeball/pitch', type: 'TENDON', node_id: 5, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof6: {name: 'head/eyeball/yaw', type: 'TENDON', node_id: 6, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof7: {name: 'head/eyeball/iris', type: 'CLASSICAL', node_id: 7, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: -80}
+
+#waist
+dof8: {name: 'waist', type: 'CLASSICAL', node_id: 8, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
+
+#pelvis
+dof9: {name: 'pelvis', type: 'CLASSICAL', node_id: 9, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+
+#Legs
+dof10: {name: 'head/brachi', type: 'CLASSICAL', node_id: 10, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+dof11: {name: 'right_arm/hand', type: 'CLASSICAL', node_id: 11, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+dof12: {name: 'right_arm/rotator', type: 'CLASSICAL', node_id: 12, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof13: {name: 'right_arm/wrist_in', type: 'CLASSICAL', node_id: 13, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 80}
+dof14: {name: 'right_arm/wrist_up', type: 'TENDON', node_id: 14, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 80}
+dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 150}
+dof16: {name: 'right_arm/thumb', type: 'CLASSICAL', node_id: 16, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 70}
+dof17: {name: 'base/right_wheel', type: 'CLASSICAL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+dof18: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 1, QString("Waist")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 2, QString("Pelvis")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 3, QString("Hip Right")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 4, QString("Hip Left")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 5, QString("Knee Right")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 6, QString("Knee Left")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 7, QString("Drive Right")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 8, QString("Drive Left")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 9, QString("Ankle Right")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 10, QString("Ankle Left")));
+*/
+/*
+  //Right Shoulder, Arm, Forearm and Hand
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 1, QString("R Wrist Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 2, QString("R Brachii")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 3, QString("R Triceps")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 4, QString("R Biceps")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 5, QString("R Deltoid Anterior")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 6, QString("R Deltoid Posterior")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 7, QString("R Supraspinatus")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 8, QString("R External Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 9, QString("R Internal Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 10, QString("R Shoulder Module Pitch")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 11, QString("R Fore Knuckle Flex 1")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 12, QString("R Fore Knuckle Flex 2")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 13, QString("R Thumb Knuckle In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 14, QString("R Thumb Knuckle Down")));
+
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 1, QString("R Little Whole Knuckle Out")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 2, QString("R Little Whole Knuckle In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 3, QString("R Little Whole Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 4, QString("R Little Whole 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 5, QString("R Little Whole Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 6, QString("R Fore Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 7, QString("R Fore 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 8, QString("R Fore Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 9, QString("R Thumb Basal Out")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 10, QString("R Thumb Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 11, QString("R Thumb 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 12, QString("R Thumb Tip Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 13, QString("R Thumb 2nd Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 14, QString("R Wrist In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 15, QString("R Wrist Up/Back")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 16, QString("R Wrist Down/Back")));
+
+  //Left Shoulder, Arm, Forearm and Hand
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 1, QString("L Wrist Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 2, QString("L Brachii")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 3, QString("L Triceps")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 4, QString("L Biceps")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 5, QString("L Deltoid Anterior")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 6, QString("L Deltoid Posterior")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 7, QString("L Supraspinatus")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 8, QString("L External Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 9, QString("L Internal Rotator")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 10, QString("L Shoulder Module Pitch")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 11, QString("L Fore Knuckle Flex 1")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 12, QString("L Fore Knuckle Flex 2")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 13, QString("L Thumb Knuckle In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 14, QString("L Thumb Knuckle Down")));
+
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 1, QString("L Little Whole Knuckle Out")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 2, QString("L Little Whole Knuckle In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 3, QString("L Little Whole Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 4, QString("L Little Whole 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 5, QString("L Little Whole Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 6, QString("L Fore Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 7, QString("L Fore 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 8, QString("L Fore Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 9, QString("L Thumb Basal Out")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 10, QString("L Thumb Tip Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 11, QString("L Thumb 2nd Flex")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 12, QString("L Thumb Tip Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 13, QString("L Thumb 2nd Extend")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 14, QString("L Wrist In")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 15, QString("L Wrist Up/Back")));
+  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 16, QString("L Wrist Down/Back")));
+*/
+
+#Wheels only
+dof1: {name: 'legs/right/wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+dof2: {name: 'legs/left/wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+#mobile_base:
+#  nb_of_wheels: 2
+#  distance_between_wheels: 0.3 # in meter (m)
+#  wheels_diameter: 0.2
