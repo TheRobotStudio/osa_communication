@@ -25,7 +25,7 @@
  */
 
 /**
- * @file EPOSController.cpp
+ * @file epos_controller.cpp
  * @author Cyril Jourdan
  * @date Aug 29, 2017
  * @version 0.1.0

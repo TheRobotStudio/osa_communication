@@ -25,7 +25,7 @@
  */
 
 /**
- * @file masterBoard.cpp
+ * @file master_board.cpp
  * @author Cyril Jourdan
  * @date Mar 03, 2017
  * @version 0.1.0

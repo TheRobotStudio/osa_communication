@@ -1,0 +1,9 @@
+<launch>
+	<!-- ros_canopen nodes -->
+	<node name="osa_topic_to_socketcan_node" pkg="socketcan_bridge" type="topic_to_socketcan_node" output="screen" respawn="true">
+		<param name="can_device" type="string" value="can0" />
+	</node>
+	<node name="osa_socketcan_to_topic_node" pkg="socketcan_bridge" type="socketcan_to_topic_node" output="screen" respawn="true">
+		<param name="can_device" type="string" value="can0" />
+	</node>
+</launch>
