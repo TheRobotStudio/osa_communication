@@ -46,7 +46,7 @@
 
 robot:
   name: 'HighSpeedAndroid'
-  dof: 2  # Number of Degrees Of Freedom.
+  dof: 77  # Number of Degrees Of Freedom.
   can_device: 'can0'
 
 #Head
@@ -58,106 +58,92 @@ dof5: {name: 'head/eyeball/pitch', type: 'TENDON', node_id: 5, controller: 'EPOS
 dof6: {name: 'head/eyeball/yaw', type: 'TENDON', node_id: 6, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 0}
 dof7: {name: 'head/eyeball/iris', type: 'CLASSICAL', node_id: 7, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: -80}
 
-#waist
+#Waist
 dof8: {name: 'waist', type: 'CLASSICAL', node_id: 8, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
 
-#pelvis
+#Pelvis
 dof9: {name: 'pelvis', type: 'CLASSICAL', node_id: 9, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
-#Legs
-dof10: {name: 'head/brachi', type: 'CLASSICAL', node_id: 10, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
-dof11: {name: 'right_arm/hand', type: 'CLASSICAL', node_id: 11, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
-dof12: {name: 'right_arm/rotator', type: 'CLASSICAL', node_id: 12, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 0}
-dof13: {name: 'right_arm/wrist_in', type: 'CLASSICAL', node_id: 13, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 80}
-dof14: {name: 'right_arm/wrist_up', type: 'TENDON', node_id: 14, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 80}
-dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 150}
-dof16: {name: 'right_arm/thumb', type: 'CLASSICAL', node_id: 16, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 70}
-dof17: {name: 'base/right_wheel', type: 'CLASSICAL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#Right leg
+dof10: {name: 'right_leg/hip', type: 'CLASSICAL', node_id: 10, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof11: {name: 'right_leg/knee', type: 'CLASSICAL', node_id: 11, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof12: {name: 'right_leg/ankle', type: 'CLASSICAL', node_id: 12, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof13: {name: 'right_leg/drive', type: 'WHEEL', node_id: 13, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
-dof18: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#Left leg
+dof14: {name: 'left_leg/hip', type: 'CLASSICAL', node_id: 14, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof15: {name: 'left_leg/knee', type: 'CLASSICAL', node_id: 15, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof16: {name: 'left_leg/ankle', type: 'CLASSICAL', node_id: 16, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof17: {name: 'left_leg/drive', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 1, QString("Waist")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 2, QString("Pelvis")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 3, QString("Hip Right")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 4, QString("Hip Left")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 5, QString("Knee Right")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 6, QString("Knee Left")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 7, QString("Drive Right")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 8, QString("Drive Left")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 9, QString("Ankle Right")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_2, 2, 10, QString("Ankle Left")));
-*/
-/*
-  //Right Shoulder, Arm, Forearm and Hand
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 1, QString("R Wrist Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 2, QString("R Brachii")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 3, QString("R Triceps")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 4, QString("R Biceps")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 5, QString("R Deltoid Anterior")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 6, QString("R Deltoid Posterior")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 7, QString("R Supraspinatus")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 8, QString("R External Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 9, QString("R Internal Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 10, QString("R Shoulder Module Pitch")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 11, QString("R Fore Knuckle Flex 1")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 12, QString("R Fore Knuckle Flex 2")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 13, QString("R Thumb Knuckle In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_3, 3, QString("EPOS2"), 14, QString("R Thumb Knuckle Down")));
+#Right arm
+dof18: {name: 'right_arm/forearm/wrist_rotator', type: 'CLASSICAL', node_id: 18, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof19: {name: 'right_arm/upper_arm/brachii', type: 'TENDON', node_id: 19, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof20: {name: 'right_arm/upper_arm/triceps', type: 'TENDON', node_id: 20, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof21: {name: 'right_arm/upper_arm/biceps', type: 'TENDON', node_id: 21, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof22: {name: 'right_arm/shoulder/deltoid_anterior', type: 'TENDON', node_id: 22, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof23: {name: 'right_arm/shoulder/deltoid_posterior', type: 'TENDON', node_id: 23, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof24: {name: 'right_arm/shoulder/supraspinatus', type: 'TENDON', node_id: 24, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof25: {name: 'right_arm/shoulder/external_rotator', type: 'TENDON', node_id: 25, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof26: {name: 'right_arm/shoulder/internal_rotator', type: 'TENDON', node_id: 26, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof27: {name: 'right_arm/shoulder/module_pitch', type: 'TENDON', node_id: 27, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof28: {name: 'right_arm/hand/fore_knuckle_flex_1', type: 'TENDON', node_id: 28, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof29: {name: 'right_arm/hand/fore_knuckle_flex_2', type: 'TENDON', node_id: 29, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof30: {name: 'right_arm/hand/thumb_knuckle_in', type: 'TENDON', node_id: 30, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof31: {name: 'right_arm/hand/thumb_knuckle_down', type: 'TENDON', node_id: 31, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof32: {name: 'right_arm/hand/little_whole_knuckle_out', type: 'TENDON', node_id: 32, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof33: {name: 'right_arm/hand/little_whole_knuckle_in', type: 'TENDON', node_id: 33, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof34: {name: 'right_arm/hand/little_whole_tip_flex', type: 'TENDON', node_id: 34, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof35: {name: 'right_arm/hand/little_whole_2nd_flex', type: 'TENDON', node_id: 35, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof36: {name: 'right_arm/hand/little_whole_extend', type: 'TENDON', node_id: 36, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof37: {name: 'right_arm/hand/fore_tip_flex', type: 'TENDON', node_id: 37, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof38: {name: 'right_arm/hand/fore_2nd_flex', type: 'TENDON', node_id: 38, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof39: {name: 'right_arm/hand/fore_extend', type: 'TENDON', node_id: 39, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof40: {name: 'right_arm/hand/thumb_basal_out', type: 'TENDON', node_id: 40, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof41: {name: 'right_arm/hand/thumb_tip_flex', type: 'TENDON', node_id: 41, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof42: {name: 'right_arm/hand/thumb_2nd_flex', type: 'TENDON', node_id: 42, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof43: {name: 'right_arm/hand/thumb_tip_extend', type: 'TENDON', node_id: 43, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof44: {name: 'right_arm/hand/thumb_2nd_extend', type: 'TENDON', node_id: 44, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof45: {name: 'right_arm/hand/wrist_in', type: 'TENDON', node_id: 45, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof46: {name: 'right_arm/hand/wrist_up_back', type: 'TENDON', node_id: 46, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof47: {name: 'right_arm/hand/wrist_down_back', type: 'TENDON', node_id: 47, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
 
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 1, QString("R Little Whole Knuckle Out")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 2, QString("R Little Whole Knuckle In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 3, QString("R Little Whole Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 4, QString("R Little Whole 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 5, QString("R Little Whole Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 6, QString("R Fore Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 7, QString("R Fore 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 8, QString("R Fore Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 9, QString("R Thumb Basal Out")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 10, QString("R Thumb Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 11, QString("R Thumb 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 12, QString("R Thumb Tip Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 13, QString("R Thumb 2nd Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 14, QString("R Wrist In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 15, QString("R Wrist Up/Back")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_4, 4, QString("EPOS2"), 16, QString("R Wrist Down/Back")));
+#Left arm
+dof48: {name: 'right_arm/forearm/wrist_rotator', type: 'CLASSICAL', node_id: 48, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof49: {name: 'right_arm/upper_arm/brachii', type: 'TENDON', node_id: 49, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof50: {name: 'right_arm/upper_arm/triceps', type: 'TENDON', node_id: 50, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof51: {name: 'right_arm/upper_arm/biceps', type: 'TENDON', node_id: 51, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof52: {name: 'right_arm/shoulder/deltoid_anterior', type: 'TENDON', node_id: 52, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof53: {name: 'right_arm/shoulder/deltoid_posterior', type: 'TENDON', node_id: 53, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof54: {name: 'right_arm/shoulder/supraspinatus', type: 'TENDON', node_id: 54, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof55: {name: 'right_arm/shoulder/external_rotator', type: 'TENDON', node_id: 55, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof56: {name: 'right_arm/shoulder/internal_rotator', type: 'TENDON', node_id: 56, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof57: {name: 'right_arm/shoulder/module_pitch', type: 'TENDON', node_id: 57, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof58: {name: 'right_arm/hand/fore_knuckle_flex_1', type: 'TENDON', node_id: 58, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof59: {name: 'right_arm/hand/fore_knuckle_flex_2', type: 'TENDON', node_id: 59, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof60: {name: 'right_arm/hand/thumb_knuckle_in', type: 'TENDON', node_id: 60, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof61: {name: 'right_arm/hand/thumb_knuckle_down', type: 'TENDON', node_id: 61, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof62: {name: 'right_arm/hand/little_whole_knuckle_out', type: 'TENDON', node_id: 62, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof63: {name: 'right_arm/hand/little_whole_knuckle_in', type: 'TENDON', node_id: 63, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof64: {name: 'right_arm/hand/little_whole_tip_flex', type: 'TENDON', node_id: 64, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof65: {name: 'right_arm/hand/little_whole_2nd_flex', type: 'TENDON', node_id: 65, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof66: {name: 'right_arm/hand/little_whole_extend', type: 'TENDON', node_id: 66, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof67: {name: 'right_arm/hand/fore_tip_flex', type: 'TENDON', node_id: 67, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof68: {name: 'right_arm/hand/fore_2nd_flex', type: 'TENDON', node_id: 68, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof69: {name: 'right_arm/hand/fore_extend', type: 'TENDON', node_id: 69, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof70: {name: 'right_arm/hand/thumb_basal_out', type: 'TENDON', node_id: 70, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof71: {name: 'right_arm/hand/thumb_tip_flex', type: 'TENDON', node_id: 71, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof72: {name: 'right_arm/hand/thumb_2nd_flex', type: 'TENDON', node_id: 72, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof73: {name: 'right_arm/hand/thumb_tip_extend', type: 'TENDON', node_id: 73, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof74: {name: 'right_arm/hand/thumb_2nd_extend', type: 'TENDON', node_id: 74, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof75: {name: 'right_arm/hand/wrist_in', type: 'TENDON', node_id: 75, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof76: {name: 'right_arm/hand/wrist_up_back', type: 'TENDON', node_id: 76, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
+dof77: {name: 'right_arm/hand/wrist_down_back', type: 'TENDON', node_id: 77, controller: 'EPOS2', motor: 'DCX16', inverted: false, mode: 'CURRENT_MODE', value: 0}
 
-  //Left Shoulder, Arm, Forearm and Hand
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 1, QString("L Wrist Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 2, QString("L Brachii")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 3, QString("L Triceps")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 4, QString("L Biceps")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 5, QString("L Deltoid Anterior")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 6, QString("L Deltoid Posterior")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 7, QString("L Supraspinatus")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 8, QString("L External Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 9, QString("L Internal Rotator")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 10, QString("L Shoulder Module Pitch")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 11, QString("L Fore Knuckle Flex 1")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 12, QString("L Fore Knuckle Flex 2")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 13, QString("L Thumb Knuckle In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_5, 5, QString("EPOS2"), 14, QString("L Thumb Knuckle Down")));
-
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 1, QString("L Little Whole Knuckle Out")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 2, QString("L Little Whole Knuckle In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 3, QString("L Little Whole Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 4, QString("L Little Whole 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 5, QString("L Little Whole Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 6, QString("L Fore Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 7, QString("L Fore 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 8, QString("L Fore Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 9, QString("L Thumb Basal Out")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 10, QString("L Thumb Tip Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 11, QString("L Thumb 2nd Flex")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 12, QString("L Thumb Tip Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 13, QString("L Thumb 2nd Extend")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 14, QString("L Wrist In")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 15, QString("L Wrist Up/Back")));
-  addBasicControlGUIController(new BasicControlGUIController(ui_.tab_sb_6, 6, QString("EPOS2"), 16, QString("L Wrist Down/Back")));
-*/
 
 #Wheels only
-dof1: {name: 'legs/right/wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
-dof2: {name: 'legs/left/wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#dof1: {name: 'right_leg/drive', type: 'WHEEL', node_id: 13, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+#dof2: {name: 'left_leg/drive', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
 #mobile_base:
 #  nb_of_wheels: 2
