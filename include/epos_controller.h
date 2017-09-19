@@ -82,7 +82,7 @@ public:
 
 	ControllerType getControllerType() const { return controller_type_; };
 	MotorType getMotorType() const { return motor_type_; };
-	bool getInverted() const { return node_id_; };
+	bool getInverted() const { return inverted_; };
 	ActivatedModeOfOperation getMode() const { return mode_; };
 	int getValue() const { return value_; };
 

@@ -272,7 +272,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	//publish the CAN frame
 	tx_can_frame_pub_->publish(frame);
 
-	ros::Duration(0.001).sleep();
+	ros::Duration(0.002).sleep();
 	//ros::Duration(0.001).sleep();
 }
 

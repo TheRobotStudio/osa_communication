@@ -394,16 +394,21 @@ bool CANLayer::init()
  */
 void CANLayer::run()
 {
-	ros::Rate r(LOOP_RATE);
+	ros::Rate r(50);//LOOP_RATE);
+
+	int idx = 0;
 
 	while(ros::ok())
 	{
 		//get the sensor values
-		for(int i=0; i<number_epos_boards_; i++)
-		{
-			epos_controller_list_[i]->getData();
-		}
+		//for(int i=0; i<number_epos_boards_; i++)
+		//{
+		epos_controller_list_[idx]->getData();
+		//}
+		idx++;
 
+		if(idx == number_epos_boards_) idx = 0;
+		
 		ros::spinOnce();
 		r.sleep();
 	}
@@ -469,11 +474,15 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 					if(epos_controller_list_[index]->getInverted() == true) //!< change sign
 					{
+						ROS_INFO("idx[%d]node[%d] is inverted", index, node_id);
+
 						epos_controller_list_[index]->setPosition(-1*pos);
 						epos_controller_list_[index]->setVelocity(-1*vel);
 					}
 					else
 					{
+						ROS_INFO("idx[%d]node[%d] is not inverted", index, node_id);
+						
 						epos_controller_list_[index]->setPosition(pos);
 						epos_controller_list_[index]->setVelocity(vel);
 					}

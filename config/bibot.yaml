@@ -46,7 +46,7 @@
 
 robot:
   name: 'BiBot'
-  dof: 16  # Number of Degrees Of Freedom.
+  dof: 18  # Number of Degrees Of Freedom.
   can_device: 'can0'
 
 dof1: {name: 'right_arm/biceps', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 150}
@@ -63,7 +63,7 @@ dof11: {name: 'right_arm/hand', type: 'TENDON', node_id: 11, controller: 'EPOS2'
 dof12: {name: 'right_arm/rotator', type: 'TENDON', node_id: 12, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 0}
 dof13: {name: 'right_arm/wrist_in', type: 'TENDON', node_id: 13, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 80}
 dof14: {name: 'right_arm/wrist_up', type: 'TENDON', node_id: 14, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 80}
-dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 150}
+dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 150}
 dof16: {name: 'right_arm/thumb', type: 'TENDON', node_id: 16, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 70}
 dof17: {name: 'base/right_wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
 dof18: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
