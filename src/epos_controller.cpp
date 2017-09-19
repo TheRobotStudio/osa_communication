@@ -998,7 +998,7 @@ int8_t EPOSController::initEposBoard()
     }
     else if(controller_type_ == EPOS4)
     {
-        setObjectSDO(OBJECT_EPOS4_MAX_PROFILE_VELOCITY, 0x0000C350); //0xC350 = 50000, 0x61A8 = 25000, 0x1388 = 5000
+        setObjectSDO(OBJECT_EPOS4_MAX_PROFILE_VELOCITY, 0x00001388); //0xC350 = 50000, 0x61A8 = 25000, 0x1388 = 5000
         //Miscellaneous configuration : Set bit 0 to 1 to Disable sensor supervision by software, to prevent Position Sensor Breach Error
         setObjectSDO(OBJECT_EPOS4_AXIS_CONFIGURATION_MISCELLANEOUS, 0x00000000);
         setObjectSDO(OBJECT_EPOS4_FOLLOWING_ERROR_WINDOW, 0x00004E20);
