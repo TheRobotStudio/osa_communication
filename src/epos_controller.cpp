@@ -272,7 +272,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	//publish the CAN frame
 	tx_can_frame_pub_->publish(frame);
 
-	ros::Duration(0.01).sleep();
+	ros::Duration(0.001).sleep();
 	//ros::Duration(0.001).sleep();
 }
 
@@ -1805,7 +1805,7 @@ int EPOSController::calibrate()
 		case PROFILE_VELOCITY_MODE :
 		{
 			setTargetVelocity(value_);
-			ros::Duration(0.1).sleep();
+			ros::Duration(0.01).sleep();
 			setControlword(0x000F); //Start to move
 			ROS_INFO("\tPROFILE_VELOCITY_MODE val[%d] setControlword[0x000F]", value_);
 			break;
@@ -1814,9 +1814,9 @@ int EPOSController::calibrate()
 		case PROFILE_POSITION_MODE :
 		{
 			setTargetPosition(value_);
-			ros::Duration(0.1).sleep();
+			ros::Duration(0.01).sleep();
 			setControlword(0x002F); //Start Positioning (absolute position and start immediately)
-			ros::Duration(0.1).sleep();
+			ros::Duration(0.01).sleep();
 			setControlword(0x003F);
 			ROS_INFO("\tPROFILE_POSITION_MODE val[%d] setControlword[rising edge 0x002F to 0x003F]", value_);
 			break;
@@ -1837,7 +1837,7 @@ int EPOSController::calibrate()
 		case CURRENT_MODE :
 		{
 			setCurrentModeSettingValue(value_);
-			ros::Duration(0.1).sleep();
+			ros::Duration(0.01).sleep();
 			ROS_INFO("\tCURRENT_MODE val[%d]", value_);
 			break;
 		}
@@ -1858,9 +1858,9 @@ int EPOSController::calibrate()
 
 	//TPDO : get data once to fill in the arrays
 	getPositionVelocity();
-	ros::Duration(0.01).sleep();
+	ros::Duration(0.001).sleep();
 	getCurrentFollErrStatusword();
-	ros::Duration(0.01).sleep();
+	ros::Duration(0.001).sleep();
 
 	//print results to check things are working properly
 	ROS_INFO("\tpos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
@@ -1878,11 +1878,11 @@ void EPOSController::getData()
 
 		getPositionVelocity();
 		//ros::Duration(0.0002).sleep();
-		ros::Duration(0.002).sleep();
+		//ros::Duration(0.001).sleep();
 		//ros::Duration(0.002).sleep();
 		getCurrentFollErrStatusword();
 		//ros::Duration(0.0002).sleep();
-		ros::Duration(0.002).sleep();
+		//ros::Duration(0.001).sleep();
 		//ros::Duration(0.002).sleep();
 	//}
 }
