@@ -1,0 +1,78 @@
+#
+# Open Source Android - configuration file
+#
+# Parameters:
+#
+# dofX has CAN node ID X
+#
+# type:
+#    TENDON
+#    CLASSICAL
+#    WHEEL
+#
+# controller:
+#    NOT_USED
+#    EPOS2
+#    EPOS4
+#
+# motor:
+#    NONE
+#    DCX10
+#    DCX14
+#    DCX16
+#    DCX22
+#    DCX32
+#    RE13
+#    RE30
+#    ECI40
+#    ECI52
+#    EC90
+#
+# inverted:
+#    false
+#    true
+#
+# mode: mode of operation selected during initialization: 
+#    INTERPOLATED_POSITION_MODE
+#    PROFILE_VELOCITY_MODE
+#    PROFILE_POSITION_MODE
+#    POSITION_MODE
+#    VELOCITY_MODE
+#    CURRENT_MODE
+#    CYCLIC_SYNCHRONOUS_TORQUE_MODE
+#
+# value: default value that will be sent after EPOS board initialization, according to the selected mode of operation
+# 
+
+robot:
+  name: 'Blackbase_01'
+  dof: 2  # Number of Degrees Of Freedom.
+  can_device: 'can0'
+
+#dof1: {name: 'right_arm/biceps', type: 'TENDON', node_id: 1, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 150}
+#dof2: {name: 'right_arm/supra', type: 'TENDON', node_id: 2, controller: 'EPOS2', motor: 'DCX22', inverted: false,  mode: 'CURRENT_MODE', value: 100}
+#dof3: {name: 'right_arm/subscap', type: 'TENDON', node_id: 3, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof4: {name: 'right_arm/infra', type: 'TENDON', node_id: 4, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof5: {name: 'right_arm/tmin', type: 'TENDON', node_id: 5, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof6: {name: 'right_arm/lat_delt', type: 'TENDON', node_id: 6, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof7: {name: 'right_arm/ant_delt', type: 'TENDON', node_id: 7, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof8: {name: 'right_arm/post_delt', type: 'TENDON', node_id: 8, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof9: {name: 'right_arm/triceps', type: 'TENDON', node_id: 9, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof10: {name: 'right_arm/brachi', type: 'TENDON', node_id: 10, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof11: {name: 'right_arm/hand', type: 'TENDON', node_id: 11, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 100}
+#dof12: {name: 'right_arm/rotator', type: 'TENDON', node_id: 12, controller: 'EPOS2', motor: 'DCX22', inverted: false, mode: 'CURRENT_MODE', value: 0}
+#dof13: {name: 'right_arm/wrist_in', type: 'TENDON', node_id: 13, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 80}
+#dof14: {name: 'right_arm/wrist_up', type: 'TENDON', node_id: 14, controller: 'EPOS2', motor: 'RE13', inverted: true, mode: 'CURRENT_MODE', value: 80}
+#dof15: {name: 'right_arm/wrist_down', type: 'TENDON', node_id: 15, controller: 'EPOS2', motor: 'RE13', inverted: false, mode: 'CURRENT_MODE', value: 150}
+#dof16: {name: 'right_arm/thumb', type: 'TENDON', node_id: 16, controller: 'EPOS2', motor: 'DCX10', inverted: false, mode: 'CURRENT_MODE', value: 70}
+#dof17: {name: 'base/right_wheel', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+#dof18: {name: 'base/left_wheel', type: 'WHEEL', node_id: 18, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+#Base only
+dof1: {name: 'base/right_wheel', type: 'WHEEL', node_id: 1, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+dof2: {name: 'base/left_wheel', type: 'WHEEL', node_id: 2, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_VELOCITY_MODE', value: 0}
+
+#mobile_base:
+#  nb_of_wheels: 2
+#  distance_between_wheels: 0.3 # in meter (m)
+#  wheels_diameter: 0.2
