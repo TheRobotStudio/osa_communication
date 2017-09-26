@@ -298,9 +298,9 @@ bool CANLayer::init()
 
 		ROS_INFO("Parameters loaded successfully!\n");
 	}
-	catch(int exception)
+	catch(ros::InvalidNameException const &e)
 	{
-		//ROS_ERROR(exception.what());
+		ROS_ERROR(e.what());
 		ROS_ERROR("Parameters didn't load correctly!");
 		ROS_ERROR("Please modify your YAML config file and try again.");
 
@@ -474,14 +474,14 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 					if(epos_controller_list_[index]->getInverted() == true) //!< change sign
 					{
-						ROS_INFO("idx[%d]node[%d] is inverted", index, node_id);
+						//ROS_INFO("idx[%d]node[%d] is inverted", index, node_id);
 
 						epos_controller_list_[index]->setPosition(-1*pos);
 						epos_controller_list_[index]->setVelocity(-1*vel);
 					}
 					else
 					{
-						ROS_INFO("idx[%d]node[%d] is not inverted", index, node_id);
+						//ROS_INFO("idx[%d]node[%d] is not inverted", index, node_id);
 						
 						epos_controller_list_[index]->setPosition(pos);
 						epos_controller_list_[index]->setVelocity(vel);
