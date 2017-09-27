@@ -1,0 +1,27 @@
+<launch>
+	
+	<!-- Launch the two SocketCAN nodes -->
+	<include file="$(find osa_communication)/launch/socket_can.launch"/>
+
+	<!-- Load parameters -->
+	<rosparam file="$(find osa_communication)/config/hsa_legs.yaml" command="load"/>
+	
+	<!-- Launch the CAN layer -->
+	<node name="osa_can_layer_node" pkg="osa_communication" type="osa_can_layer" output="screen" respawn="false"/>
+	
+	<!-- Launch command_builder -->
+	<node name="osa_command_builder_node" pkg="osa_control" type="osa_command_builder" output="screen" respawn="true"/>
+	
+	<!-- XBox controller node -->
+	<node name="osa_joy_node" pkg="joy" type="joy_node" respawn="true">
+		<param name="dev" type="string" value="/dev/input/js0" />
+		<remap from="joy" to="joy0"/>
+	</node>
+
+	<!-- Razor IMU 9DOF node -->
+	<node name="razor_USB0_node" pkg="razor_imu_9dof" type="imu_node.py" output="screen" respawn="true">
+        <param name="device" type="string" value="/dev/ttyUSB1" />
+	    <remap from="imuRaw" to="imu_raw_0"/>
+    </node>
+	
+</launch>

@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 		//getData();
 		//ros::spinOnce(); //receive CAN frame : motor data and emergency frames; receive motor commands, publish motor data
 
+		//TODO add a little pause
 		//r.sleep();
 	}
 
