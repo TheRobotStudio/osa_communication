@@ -777,8 +777,11 @@ int8_t EPOSController::initEposBoard()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                	ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
-                    return EPOS_ERROR;
+                	ROS_INFO("\tcontroller type: EPOS4");
+                	setObjectSDO(OBJECT_EPOS4_POLE_PAIR_NUMBER, 0x01);
+					setObjectSDO(OBJECT_EPOS4_OUTPUT_CURRENT_LIMIT, 0x0320);
+					setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
+					setObjectSDO(OBJECT_EPOS4_FOLLOWING_ERROR_WINDOW, 0x00004E20);
                 }
                 else
                 {
@@ -949,19 +952,19 @@ int8_t EPOSController::initEposBoard()
                 }
                 else if(controller_type_ == EPOS4)
                 {
-                    if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
-                    {
+                    //if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
+                    //{
                         ROS_INFO("\tcontroller type: EPOS4");
                         setObjectSDO(OBJECT_EPOS4_POLE_PAIR_NUMBER, 0x0C);
                         setObjectSDO(OBJECT_EPOS4_OUTPUT_CURRENT_LIMIT, 0x2530);
                         setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
                         setObjectSDO(OBJECT_EPOS4_FOLLOWING_ERROR_WINDOW, 0x00004E20); //0x4E20 = 20000, 0xFFFFFFFE to disactivate
-                    }
-                    else
-                    {
-                    	ROS_WARN("\tmotor type: not an EC motor");
-                        return EPOS_ERROR;
-                    }
+                    //}
+                    //else
+                    //{
+                    //	ROS_WARN("\tmotor type: not an EC motor");
+                    //    return EPOS_ERROR;
+                    //}
                 }
                 else
                 {
