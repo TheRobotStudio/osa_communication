@@ -20,7 +20,7 @@
 
 	<!-- Razor IMU 9DOF node -->
 	<node name="razor_USB0_node" pkg="razor_imu_9dof" type="imu_node.py" output="screen" respawn="true">
-        <param name="device" type="string" value="/dev/ttyUSB1" />
+        <param name="device" type="string" value="/dev/ttyUSB0" />
 	    <remap from="imuRaw" to="imu_raw_0"/>
     </node>
 	

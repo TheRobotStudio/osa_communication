@@ -50,19 +50,19 @@ robot:
   can_device: 'can0'
 
 #Waist
-dof1: {name: 'waist', type: 'CLASSICAL', node_id: 8, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof1: {name: 'waist', type: 'CLASSICAL', node_id: 1, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
 #Pelvis
-dof2: {name: 'pelvis', type: 'CLASSICAL', node_id: 9, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof2: {name: 'pelvis', type: 'CLASSICAL', node_id: 2, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
 
 #Right leg
-dof3: {name: 'right_leg/hip', type: 'CLASSICAL', node_id: 10, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof4: {name: 'right_leg/knee', type: 'CLASSICAL', node_id: 11, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof5: {name: 'right_leg/ankle', type: 'CLASSICAL', node_id: 12, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof6: {name: 'right_leg/drive', type: 'WHEEL', node_id: 13, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof4: {name: 'right_leg/hip', type: 'CLASSICAL', node_id: 4, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof6: {name: 'right_leg/knee', type: 'CLASSICAL', node_id: 6, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof8: {name: 'right_leg/ankle', type: 'CLASSICAL', node_id: 8, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof10: {name: 'right_leg/drive', type: 'WHEEL', node_id: 10, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
 
 #Left leg
-dof7: {name: 'left_leg/hip', type: 'CLASSICAL', node_id: 14, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof8: {name: 'left_leg/knee', type: 'CLASSICAL', node_id: 15, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof9: {name: 'left_leg/ankle', type: 'CLASSICAL', node_id: 16, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
-dof10: {name: 'left_leg/drive', type: 'WHEEL', node_id: 17, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof3: {name: 'left_leg/hip', type: 'CLASSICAL', node_id: 3, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof5: {name: 'left_leg/knee', type: 'CLASSICAL', node_id: 5, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof7: {name: 'left_leg/ankle', type: 'CLASSICAL', node_id: 7, controller: 'EPOS4', motor: 'EC90', inverted: true, mode: 'PROFILE_POSITION_MODE', value: 0}
+dof9: {name: 'left_leg/drive', type: 'WHEEL', node_id: 9, controller: 'EPOS4', motor: 'EC90', inverted: false, mode: 'PROFILE_POSITION_MODE', value: 0}
