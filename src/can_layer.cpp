@@ -394,7 +394,7 @@ bool CANLayer::init()
  */
 void CANLayer::run()
 {
-	ros::Rate r(50);//LOOP_RATE);
+	ros::Rate r(50);
 
 	int idx = 0;
 

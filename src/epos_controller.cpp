@@ -35,7 +35,7 @@
  * Created on : Aug 3, 2017
  */
 
-#include <epos_controller.h>
+#include "epos_controller.h"
 #include <iostream>
 #include <can_msgs/Frame.h>
 
