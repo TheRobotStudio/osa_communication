@@ -105,7 +105,7 @@ bool CANLayer::init()
 	ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
 	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
-	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
+	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 4, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
 
 	ROS_INFO("*** Grab the parameters from the YAML file ***");
@@ -397,7 +397,7 @@ bool CANLayer::init()
  */
 void CANLayer::run()
 {
-	//ros::Rate r(50);
+	ros::Rate r(50);
 
 	int idx = 0;
 
@@ -413,7 +413,7 @@ void CANLayer::run()
 		if(idx == number_epos_boards_) idx = 0;
 		
 		ros::spinOnce();
-		//r.sleep();
+		r.sleep();
 	}
 }
 
