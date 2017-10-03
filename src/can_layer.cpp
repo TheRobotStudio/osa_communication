@@ -63,7 +63,7 @@ rx_can_frame_sub_(),
 motor_cmd_sub_(),
 ptr_pub_tx_can_frame_(),
 pub_motor_data_(),
-motor_cmd_received_(false)
+motor_cmd_array_received_(false)
 {
 }
 
@@ -103,7 +103,9 @@ bool CANLayer::init()
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
 	//Subsribers and publishers
 	ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
-	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
+	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
+	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
+	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
 
 	ROS_INFO("*** Grab the parameters from the YAML file ***");
@@ -308,6 +310,7 @@ bool CANLayer::init()
 	}
 
 	//Subsriber, need the number of EPOS for the FIFO
+	//TODO put the define as a static in the namespace
 	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
@@ -394,7 +397,7 @@ bool CANLayer::init()
  */
 void CANLayer::run()
 {
-	ros::Rate r(50);
+	//ros::Rate r(50);
 
 	int idx = 0;
 
@@ -403,14 +406,14 @@ void CANLayer::run()
 		//get the sensor values
 		//for(int i=0; i<number_epos_boards_; i++)
 		//{
-		epos_controller_list_[idx]->getData();
+		epos_controller_list_[idx]->getData(); //TODO make this automatic with a hearbeat from the CAN
 		//}
 		idx++;
 
 		if(idx == number_epos_boards_) idx = 0;
 		
 		ros::spinOnce();
-		r.sleep();
+		//r.sleep();
 	}
 }
 
@@ -664,9 +667,9 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array)
 {	
 	//toggle flag, a message has been received
-	motor_cmd_received_ = true;
+	motor_cmd_array_received_ = true;
 
-	//ROS_INFO("motor_cmd_received_");
+	ROS_DEBUG("motor_cmd_array_received_");
 
 	for(int i=0; i<epos_controller_list_.size(); i++)
 	//for(std::vector<int>::const_iterator it = motor_cmd_array->motor_cmd.begin(); it != motor_cmd_array->motor_cmd.end(); ++it)
@@ -808,13 +811,13 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 
 				case SEND_DUMB_MESSAGE:
 				{
-					//if(!cmdPlayLED) ledchain[3] = 0;    //switch off when slave is idle, i.e. all cmd in a set are 0xFF.
+					ROS_DEBUG("SEND_DUMB_MESSAGE");
 					break;
 				}
 
 				default:
 				{
-					//if(!cmdPlayLED) ledchain[3] = 0;    //switch off when slave is idle, i.e. all cmd in a set are 0xFF.
+					//ROS_DEBUG("default");
 					break;
 				}
 			}

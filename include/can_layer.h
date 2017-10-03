@@ -84,7 +84,7 @@ protected:
 	ros::Subscriber motor_cmd_sub_;
 	ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
 	ros::Publisher pub_motor_data_;
-	bool motor_cmd_received_;
+	bool motor_cmd_array_received_;
 };
 
 #endif // OSA_COMMUNICATION_CAN_LAYER_H
