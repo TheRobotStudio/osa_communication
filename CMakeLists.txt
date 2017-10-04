@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   osa_msgs
   can_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -41,11 +42,16 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
+add_service_files(
+  FILES
+  InitEPOSBoard.srv
+)
+
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs#   osa_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -72,7 +78,7 @@ add_compile_options(-std=c++11)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
+include_directories(include include/osa_communication)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   osa_control/include
@@ -91,7 +97,7 @@ add_executable(osa_can_layer src/main.cpp)
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 #add_dependencies(osa_can_layer osa_communication_generate_messages_cpp)
-add_dependencies(osa_can_layer osa_communication)
+add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_communication)
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(osa_master_board ${catkin_LIBRARIES})

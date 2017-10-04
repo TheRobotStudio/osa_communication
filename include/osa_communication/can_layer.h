@@ -46,8 +46,13 @@
 #include <socketcan_bridge/socketcan_to_topic.h>
 #include <socketcan_interface/socketcan.h>
 #include "epos_controller.h"
+//ROS services
+#include "osa_communication/InitEPOSBoard.h"
 
-#define DATA_LENGTH 8
+#define DATA_LENGTH 8 //TODO use a static instead ?
+
+namespace osa_communication
+{
 
 /**
  * @brief Class representing a CAN communication layer.
@@ -73,6 +78,7 @@ public:
 	/** @brief Callback method for the motor commands to be sent. */
 	void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array);
 
+	bool ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, osa_communication::InitEPOSBoard::Response &res);
 protected:
 	std::string robot_name_;
 	std::string robot_can_device_;
@@ -85,6 +91,9 @@ protected:
 	ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
 	ros::Publisher pub_motor_data_;
 	bool motor_cmd_array_received_;
+	ros::ServiceServer ss_init_epos_board_;
 };
+
+} // osa_communication
 
 #endif // OSA_COMMUNICATION_CAN_LAYER_H

@@ -44,10 +44,11 @@
 #include "registers.h"
 #include "can_layer.h"
 
-#define LOOP_RATE 15
+//#define LOOP_RATE 15
 #define CAN_FRAME_FIFO_SIZE_FACTOR 4 //(2 request + 2 answers) factor for FIFO size: example (2 motors*(2 request + 2 answers) = 8)
 
 using namespace std;
+using namespace osa_communication;
 //Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
 /**
@@ -383,6 +384,10 @@ bool CANLayer::init()
 
 	resetMotorCmdMultiArray();
 */
+	//Services
+	CANLayer can_layer;
+	ss_init_epos_board_ = nh.advertiseService("osa_communication/init_epos_board", &CANLayer::ssInitEPOSBoard, this);
+	//ss_calibrate_ = nh.advertiseService("calibrate", ssCalibrate);
 
 	//then start the main loop
 	ROS_INFO("*** Start main loop ***");
@@ -831,3 +836,32 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 	//ROS_INFO("cmd[%d] val[%d]", motor_cmd_array->motor_cmd[0].command, motor_cmd_array->motor_cmd[0].value);
 }
 
+/*** Services ***/
+bool CANLayer::ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, osa_communication::InitEPOSBoard::Response &res)
+{
+	uint8_t node_id = req.node_id;
+
+	//Search the array for the index that has the requested nodeID
+	auto it = find_if(epos_controller_list_.begin(), epos_controller_list_.end(), [&node_id](const EPOSController* obj)-> bool {return obj->getNodeID() == node_id;});
+
+	if(it != epos_controller_list_.end())
+	{
+		// found element. it is an iterator to the first matching element.
+		// get the index:
+		auto index = std::distance(epos_controller_list_.begin(), it);
+
+		if(epos_controller_list_[index]->initEposBoard() != EPOS_OK)
+		{
+			ROS_ERROR("initEposBoard[%d] error", req.node_id);
+			return false;
+		}
+
+		if(epos_controller_list_[index]->calibrate() != EPOS_OK)
+		{
+			ROS_ERROR("initEposBoard[%d] error", req.node_id);
+			return false;
+		}
+	}
+
+	return true;
+}

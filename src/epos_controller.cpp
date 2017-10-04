@@ -40,6 +40,7 @@
 #include <can_msgs/Frame.h>
 
 using namespace std;
+using namespace osa_communication;
 
 /**
  * @brief Constructor.

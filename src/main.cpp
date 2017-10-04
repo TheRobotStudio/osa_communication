@@ -37,6 +37,8 @@
 
 #include "can_layer.h"
 
+using namespace osa_communication;
+
 /**
  *  @brief Main function for the Open Source Android CAN layer node.
  *  @param argc

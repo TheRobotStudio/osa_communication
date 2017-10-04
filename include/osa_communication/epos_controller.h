@@ -42,6 +42,9 @@
 #include "enums.h"
 #include "registers.h"
 
+namespace osa_communication
+{
+
 /**
  * @brief Class representing a maxon EPOS controller.
  */
@@ -374,5 +377,7 @@ protected:
 	uint32_t inc_enc1_cnt_at_idx_pls_; /**< Incremental encoder 1 count at index pulse. */
 	int8_t board_status_;
 };
+
+} // osa_communication
 
 #endif // OSA_COMMUNICATION_EPOS_CONTROLLER_H
