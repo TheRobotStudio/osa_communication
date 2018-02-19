@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Robot Studio
+ * Copyright (c) 2018, The Robot Studio
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,9 @@
 /**
  * @file can_layer.cpp
  * @author Cyril Jourdan
- * @date Aug 29, 2017
+ * @date Feb 19, 2018
  * @version 0.1.0
- * @brief Implementation file for the CAN communication, adaptation from the mbed code
+ * @brief Implementation file for the CAN communication, using SocketCAN
  *
  * Contact: cyril.jourdan@therobotstudio.com
  * Created on : May 24, 2017
@@ -41,6 +41,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <linux/can.h>
+#include <linux/can/raw.h>
 #include "registers.h"
 #include "can_layer.h"
 
