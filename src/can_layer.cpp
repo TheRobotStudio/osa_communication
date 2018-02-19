@@ -36,15 +36,27 @@
  */
 
 //Other includes
-//#include <ros/ros.h>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <linux/can.h>
-#include <linux/can/raw.h>
 #include "registers.h"
 #include "can_layer.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <net/if.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+
+#include <linux/can.h>
+#include <linux/can/raw.h>
+
+#include <unistd.h>
 
 //#define LOOP_RATE 15
 #define CAN_FRAME_FIFO_SIZE_FACTOR 4 //(2 request + 2 answers) factor for FIFO size: example (2 motors*(2 request + 2 answers) = 8)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Robot Studio
+ * Copyright (c) 2018, The Robot Studio
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 /**
  * @file epos_controller.cpp
  * @author Cyril Jourdan
- * @date Aug 29, 2017
+ * @date Feb 19, 2018
  * @version 0.1.0
  * @brief Implementation file for class EPOSController
  *
