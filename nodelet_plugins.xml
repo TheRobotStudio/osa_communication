@@ -1,0 +1,7 @@
+<library path="lib/libSocketCANReaderNodelet">
+  <class name="osa_communication/SocketCANReaderNodelet" type="osa_communication::SocketCANReaderNodelet" base_class_type="nodelet::Nodelet">
+  <description>
+  Nodelet to read CAN frames with SocketCAN.
+  </description>
+  </class>
+</library>

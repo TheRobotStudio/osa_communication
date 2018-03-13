@@ -88,7 +88,8 @@ protected:
 	char data_[DATA_LENGTH];
 	ros::Subscriber rx_can_frame_sub_;
 	ros::Subscriber motor_cmd_sub_;
-	ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
+	int* ptr_socket_can_; /**< To link it to EPOSController. */
+	//ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
 	ros::Publisher pub_motor_data_;
 	bool motor_cmd_array_received_;
 	ros::ServiceServer ss_init_epos_board_;

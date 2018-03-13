@@ -48,7 +48,7 @@ using namespace osa_communication;
 EPOSController::EPOSController(std::string name, std::string degree_of_freedom_type,
 		int node_id, std::string controller_type,
 		std::string motor_type, bool inverted,
-		std::string mode, int value, ros::Publisher *tx_can_frame_pub) :
+		std::string mode, int value, int* ptr_socket_can) : //ros::Publisher *tx_can_frame_pub) :
 name_(name),
 degree_of_freedom_type_(TENDON),
 node_id_(0),
@@ -57,7 +57,8 @@ motor_type_(NONE),
 inverted_(inverted),
 mode_(PROFILE_VELOCITY_MODE),
 value_(value),
-tx_can_frame_pub_(tx_can_frame_pub),
+//tx_can_frame_pub_(tx_can_frame_pub),
+ptr_socket_can_(ptr_socket_can),
 data_({0}),
 activ_mode_(),
 ros_cmd_(SEND_DUMB_MESSAGE),
@@ -202,9 +203,11 @@ int EPOSController::setBoardStatus(int8_t board_status)
 //other methods
 
 //canToEposWrite publish a CAN frame topic
-void EPOSController::canToEposWrite(int id, char* data, char len)
+void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socket_can)
 {
-	can_msgs::Frame frame;
+	int nbytes;
+	//can_msgs::Frame frame;
+	struct can_frame frame;
 	//msgs definition
 	//Header header
 	//uint32 id
@@ -214,11 +217,11 @@ void EPOSController::canToEposWrite(int id, char* data, char len)
 	//uint8 dlc
 	//uint8[8] data
 
-	frame.is_extended = false;
-	frame.is_rtr = false;
-	frame.is_error = false;
-	frame.id = id;
-	frame.dlc = 8;
+	//frame.is_extended = false;
+	//frame.is_rtr = false;
+	//frame.is_error = false;
+	frame.can_id = id;
+	frame.can_dlc = 8;
 
 	//401#0F0088130000E803
 	for(int i=0; i<8; i++)
@@ -226,16 +229,18 @@ void EPOSController::canToEposWrite(int id, char* data, char len)
 		frame.data[i] = data[i];
 	}
 
-	frame.header.frame_id = "1";  // "0" for no frame.
-	frame.header.stamp = ros::Time::now();
+	//frame.header.frame_id = "1";  // "0" for no frame.
+	//frame.header.stamp = ros::Time::now();
 
 	//publish the CAN frame
-	tx_can_frame_pub_->publish(frame);
+	//tx_can_frame_pub_->publish(frame);
+	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 }
 
-void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
+void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)
 {
-	can_msgs::Frame frame;
+	int nbytes;
+	struct can_frame frame; //can_msgs::Frame
 	//msgs definition
 	//Header header
 	//uint32 id
@@ -245,18 +250,18 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	//uint8 dlc
 	//uint8[8] data
 
-	frame.is_extended = false;
-	frame.is_rtr = true; //request only
-	frame.is_error = false;
-	frame.id = tx_pdo_cob_id + node_id_;
+	//frame.is_extended = false;
+	//frame.is_rtr = true; //request only
+	//frame.is_error = false;
+	frame.can_id = tx_pdo_cob_id + node_id_ + CAN_RTR_FLAG; //RTR bit set for remote request
 
 	if(tx_pdo_cob_id == 0x180)
 	{
-		frame.dlc = 8;
+		frame.can_dlc = 8;
 	}
 	else if(tx_pdo_cob_id == 0x280)
 	{
-		frame.dlc = 6;
+		frame.can_dlc = 6;
 	}
 
 	//ROS_INFO("frame.id = %X", frame.id);
@@ -267,11 +272,12 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 	}
 */
 
-	frame.header.frame_id = "1";  // "0" for no frame.
-	frame.header.stamp = ros::Time::now();
+	//frame.header.frame_id = "1";  // "0" for no frame.
+	//frame.header.stamp = ros::Time::now();
 
 	//publish the CAN frame
-	tx_can_frame_pub_->publish(frame);
+	//tx_can_frame_pub_->publish(frame);
+	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 
 	ros::Duration(0.002).sleep();
 	//ros::Duration(0.001).sleep();

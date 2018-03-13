@@ -42,6 +42,21 @@
 #include "enums.h"
 #include "registers.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#include <net/if.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+
+#include <linux/can.h>
+#include <linux/can/raw.h>
+
+#include <unistd.h>
+
 namespace osa_communication
 {
 
@@ -57,7 +72,7 @@ public:
 	EPOSController(std::string name, std::string degree_of_freedom_type,
 			int node_id, std::string controller_type,
 			std::string motor_type, bool inverted,
-			std::string mode, int value, ros::Publisher *tx_can_frame_pub);
+			std::string mode, int value, int* ptr_socket_can); //ros::Publisher *tx_can_frame_pub);
 
 	/** @brief Destructor. */
 	~EPOSController();
@@ -99,8 +114,8 @@ public:
 	int8_t getBoardStatus() const { return board_status_; };
 
 private:
-	void canToEposWrite(int id, char* data, char len);
-	void transmitPDOWrite(int tx_pdo_cob_id);
+	void canToEposWrite(int id, char* data, char len); //, int* socket_can);
+	void transmitPDOWrite(int tx_pdo_cob_id); //, int* socket_can);
 
 	/*! \fn void setNMT(, uint8_t cs)
 	 *  \brief
@@ -343,7 +358,8 @@ protected:
 	ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
 	int value_;
 
-	ros::Publisher *tx_can_frame_pub_;
+	//ros::Publisher *tx_can_frame_pub_;
+	int* ptr_socket_can_;
 	char data_[8]; //can message data
 	ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge
 	ROSCommand ros_cmd_;

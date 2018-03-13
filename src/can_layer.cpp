@@ -76,7 +76,8 @@ number_epos_boards_(0),
 data_ ({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
-ptr_pub_tx_can_frame_(),
+ptr_socket_can_(0),
+//ptr_pub_tx_can_frame_(),
 pub_motor_data_(),
 motor_cmd_array_received_(false)
 {
@@ -117,7 +118,7 @@ bool CANLayer::init()
 
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
 	//Subsribers and publishers
-	ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
+	//ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
 	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
 	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
@@ -269,7 +270,7 @@ bool CANLayer::init()
 						name.c_str(), type.c_str(), node_id, controller.c_str(), motor.c_str(), inverted, mode.c_str(), value);
 
 				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(name, type, node_id, controller, motor, inverted, mode, value, ptr_pub_tx_can_frame_);
+				EPOSController *epos_controller = new EPOSController(name, type, node_id, controller, motor, inverted, mode, value, ptr_socket_can_);
 
 				//epos_controller->
 
@@ -324,19 +325,47 @@ bool CANLayer::init()
 		return false;
 	}
 
+	//Create the SocketCAN
+	struct sockaddr_can addr;
+	struct ifreq ifr;
+
+	const char *ifname = robot_can_device_.c_str(); //"can0";
+
+	if((*ptr_socket_can_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+	{
+			perror("Error while opening socket");
+			return -1;
+	}
+
+	strcpy(ifr.ifr_name, ifname);
+	ioctl(*ptr_socket_can_, SIOCGIFINDEX, &ifr);
+
+	addr.can_family  = AF_CAN;
+	addr.can_ifindex = ifr.ifr_ifindex;
+
+	printf("%s at index %d\n", ifname, ifr.ifr_ifindex);
+
+	if(bind(*ptr_socket_can_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+	{
+
+			perror("Error in socket bind");
+			return -2;
+	}
+	//End Create the SocketCAN
+
 	//Subsriber, need the number of EPOS for the FIFO
 	//TODO put the define as a static in the namespace
 	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
 	ROS_INFO("*** Waiting for the TX CAN frame publisher to connect ***\n");
-
+/*
 	ros::Rate poll_rate(100);
 	while(ptr_pub_tx_can_frame_->getNumSubscribers() == 0)
 	{
 			poll_rate.sleep();
 	}
-
+*/
 	//int i = 0; //msg
 	//int j = 0; //byte number
 
@@ -477,7 +506,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 		//ROS_INFO("node_id=%d is at index=%d", node_id, index);
 
 		//set the nodeID
-		epos_controller_list_[index]->setNodeID(node_id);
+		epos_controller_list_[index]->setNodeID(node_id); //FIXME probably not necessary !
 
 		//check node_id first and that the command is an answer to a request (RTR=false)
 		//if((node_id >= 1) && (node_id <= number_epos_boards_) && (can_msg->is_rtr == false))
