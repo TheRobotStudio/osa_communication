@@ -38,6 +38,8 @@
 #ifndef OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H
 #define OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H
 
+#include <pluginlib/class_list_macros.h>
+#include <ros/ros.h>
 #include <nodelet/nodelet.h>
 
 namespace osa_communication
@@ -61,5 +63,8 @@ public:
 };
 
 } // osa_communication
+
+//PLUGINLIB_DECLARE_CLASS(osa_communication, SocketCANReaderNodelet, osa_communication::SocketCANReaderNodelet, nodelet::Nodelet);
+PLUGINLIB_DECLARE_CLASS(osa_communication, socketcan_reader_nodelet, osa_communication::SocketCANReaderNodelet, nodelet::Nodelet);
 
 #endif // OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H

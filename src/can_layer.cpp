@@ -56,6 +56,8 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+#include "nodelet/loader.h"
+
 #include <unistd.h>
 
 //#define LOOP_RATE 15
@@ -326,6 +328,7 @@ bool CANLayer::init()
 	}
 
 	//Create the SocketCAN
+	ROS_INFO("*** Create the SocketCAN TX ***");
 	struct sockaddr_can addr;
 	struct ifreq ifr;
 
@@ -352,6 +355,13 @@ bool CANLayer::init()
 			return -2;
 	}
 	//End Create the SocketCAN
+
+	ROS_INFO("*** Create the SocketCAN RX nodelet ***");
+	nodelet::Loader nodelet;
+	nodelet::M_string remap(ros::names::getRemappings());
+	nodelet::V_string nargv;
+	std::string nodelet_name = ros::this_node::getName();
+	nodelet.load(nodelet_name, "osa_communication/socket_can_reader_nodelet", remap, nargv);
 
 	//Subsriber, need the number of EPOS for the FIFO
 	//TODO put the define as a static in the namespace

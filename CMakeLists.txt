@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   osa_msgs
   can_msgs
   message_generation
+  nodelet
 )
 
 ## System dependencies are found with CMake's conventions
@@ -65,7 +66,7 @@ generate_messages(
 catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES osa_serial
- CATKIN_DEPENDS cereal_port roscpp std_msgs osa_msgs can_msgs
+ CATKIN_DEPENDS cereal_port roscpp std_msgs osa_msgs can_msgs nodelet
 #  DEPENDS system_lib
  DEPENDS Eigen
 )
@@ -84,6 +85,9 @@ include_directories(
   osa_control/include
 )
 
+# Declare nodelet library
+add_library(socketcan_reader_nodelet src/socketcan_reader_nodelet.cpp)
+
 ## Declare a cpp library
 add_library(osa_communication
   src/can_layer.cpp
@@ -101,7 +105,8 @@ add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_commu
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(osa_master_board ${catkin_LIBRARIES})
-target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication)
+target_link_libraries(socketcan_reader_nodelet ${catkin_LIBRARIES})
+target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication socketcan_reader_nodelet)
 
 #############
 ## Install ##
