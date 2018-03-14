@@ -78,7 +78,7 @@ number_epos_boards_(0),
 data_ ({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
-ptr_socket_can_(0),
+ptr_socket_can_(nullptr),
 //ptr_pub_tx_can_frame_(),
 pub_motor_data_(),
 motor_cmd_array_received_(false)
@@ -329,16 +329,25 @@ bool CANLayer::init()
 
 	//Create the SocketCAN
 	ROS_INFO("*** Create the SocketCAN TX ***");
+	
+	int s;
 	struct sockaddr_can addr;
 	struct ifreq ifr;
 
 	const char *ifname = robot_can_device_.c_str(); //"can0";
+	//const char *ifname = "can0";
 
-	if((*ptr_socket_can_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+	//ROS_INFO("test pointer before");
+	//*ptr_socket_can_ = 0;
+	//ROS_INFO("test pointer after");
+
+	if((s = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
 	{
 			perror("Error while opening socket");
 			return -1;
 	}
+
+	ptr_socket_can_ = &s;
 
 	strcpy(ifr.ifr_name, ifname);
 	ioctl(*ptr_socket_can_, SIOCGIFINDEX, &ifr);
@@ -356,12 +365,19 @@ bool CANLayer::init()
 	}
 	//End Create the SocketCAN
 
+	//Update the pointer of the epos_controller
+	//for(auto it = epos_controller_list_.cbegin(); it != epos_controller_list_.cend(); ++it)
+	for(const auto &epos_controller : epos_controller_list_)
+	{
+		epos_controller->setPtrSocketCAN(ptr_socket_can_);
+	}
+
 	ROS_INFO("*** Create the SocketCAN RX nodelet ***");
 	nodelet::Loader nodelet;
 	nodelet::M_string remap(ros::names::getRemappings());
 	nodelet::V_string nargv;
-	std::string nodelet_name = ros::this_node::getName();
-	nodelet.load(nodelet_name, "osa_communication/socket_can_reader_nodelet", remap, nargv);
+	std::string nodelet_name = "socketcan_reader_nodelet";//ros::this_node::getName();
+	nodelet.load(nodelet_name, "osa_communication/SocketCANReaderNodelet", remap, nargv);
 
 	//Subsriber, need the number of EPOS for the FIFO
 	//TODO put the define as a static in the namespace

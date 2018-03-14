@@ -102,11 +102,13 @@ add_executable(osa_can_layer src/main.cpp)
 ## as an example, message headers may need to be generated before nodes
 #add_dependencies(osa_can_layer osa_communication_generate_messages_cpp)
 add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_communication)
+add_dependencies(socketcan_reader_nodelet ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(osa_master_board ${catkin_LIBRARIES})
 target_link_libraries(socketcan_reader_nodelet ${catkin_LIBRARIES})
-target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication socketcan_reader_nodelet)
+target_link_libraries(osa_communication ${catkin_LIBRARIES})
+target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication)
 
 #############
 ## Install ##

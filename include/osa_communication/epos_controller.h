@@ -85,7 +85,7 @@ public:
 	int setInverted(bool inverted);
 	int setMode(ActivatedModeOfOperation mode);
 	int setValue(int value);
-
+	int setPtrSocketCAN(int* ptr_socket_can);
 	int setPosition(int32_t position);
 	int setCurrent(int16_t current);
 	int setVelocity(int32_t velocity);
@@ -103,7 +103,7 @@ public:
 	bool getInverted() const { return inverted_; };
 	ActivatedModeOfOperation getMode() const { return mode_; };
 	int getValue() const { return value_; };
-
+	int* getPtrSocketCAN() const { return ptr_socket_can_; };
 	int32_t getPosition() const { return position_; };
 	int16_t getCurrent() const { return current_; };
 	int32_t getVelocity() const { return velocity_; };

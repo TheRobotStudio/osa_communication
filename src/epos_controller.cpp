@@ -139,6 +139,14 @@ int	EPOSController::setNodeID(uint8_t node_id)
 		return -1;
 }
 
+int EPOSController::setPtrSocketCAN(int* ptr_socket_can)
+{
+	//TODO add a pointer check
+	ptr_socket_can_ = ptr_socket_can;
+
+	return 0;
+}
+
 int EPOSController::setPosition(int32_t position)
 {
 	position_ = position;
@@ -234,7 +242,9 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 
 	//publish the CAN frame
 	//tx_can_frame_pub_->publish(frame);
+	//ROS_INFO("before");	
 	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
+	//ROS_INFO("after");	
 }
 
 void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)

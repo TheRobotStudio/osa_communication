@@ -42,7 +42,7 @@
 #include <ros/ros.h>
 #include <nodelet/nodelet.h>
 
-namespace osa_communication
+namespace osa_communication_nodelet
 {
 
 /**
@@ -62,9 +62,9 @@ public:
 	virtual void onInit();
 };
 
-} // osa_communication
+} // osa_communication_nodelet
 
 //PLUGINLIB_DECLARE_CLASS(osa_communication, SocketCANReaderNodelet, osa_communication::SocketCANReaderNodelet, nodelet::Nodelet);
-PLUGINLIB_DECLARE_CLASS(osa_communication, socketcan_reader_nodelet, osa_communication::SocketCANReaderNodelet, nodelet::Nodelet);
+PLUGINLIB_DECLARE_CLASS(osa_communication, SocketCANReaderNodelet, osa_communication_nodelet::SocketCANReaderNodelet, nodelet::Nodelet);
 
 #endif // OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H
