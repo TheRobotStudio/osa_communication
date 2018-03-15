@@ -228,6 +228,9 @@ void SocketCANReaderNodelet::read_port()
 						can_msg->dlc = frame_rd.can_dlc;
 						for(int i=0; i<8; i++) can_msg->data[i] = frame_rd.data[i];
 
+						NODELET_INFO("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
+							frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
+
 						//publish CAN frame
 						pub_rx_can_frame_.publish(can_msg); //can_msg is discarded each time and the published pointer can be subscribed to access the data.
 					}

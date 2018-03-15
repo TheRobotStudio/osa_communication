@@ -559,7 +559,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 						epos_controller_list_[index]->setVelocity(vel);
 					}
 
-					ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
+					//ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
 
 					break;
 				}
@@ -582,7 +582,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 					//ROS_INFO("TPDO2 Node-ID[%d] curr[%d] foll_err[%d] statwrd[%d]\n", node_id, curr, foll_err, statwrd);
 
-					ROS_INFO("2 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
+					//ROS_INFO("2 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
 
 					break;
 				}
@@ -707,7 +707,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 			for(int i=0; i<epos_controller_list_.size(); i++)
 			{
-				ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
+				//ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
 
 				motor_data_array.motor_data[i].node_id = epos_controller_list_[i]->getNodeID();
 				motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
