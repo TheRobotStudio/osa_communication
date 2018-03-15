@@ -115,11 +115,11 @@ void SocketCANReaderNodelet::onInit()
 		NODELET_ERROR_STREAM(e.what());
 		NODELET_ERROR_STREAM("Parameters didn't load correctly!");
 		NODELET_ERROR_STREAM("Please modify your YAML config file and try again.");
-		break;
+		return;
 	}
 
 	//set CAN frame publisher, zero-copy data to the can_layer
-	pub_rx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/rx_can_frame", 1));
+	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>("/rx_can_frame", 1));
 
 	if(open_port(robot_can_device_.c_str()) == 0)
 	{
@@ -128,7 +128,7 @@ void SocketCANReaderNodelet::onInit()
 	else
 	{
 		NODELET_ERROR_STREAM("Couldn't open CAN port " << robot_can_device_ << "!");
-		break;
+		return;
 	}
 
 	read_port();
