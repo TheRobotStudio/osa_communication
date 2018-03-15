@@ -124,7 +124,7 @@ bool CANLayer::init()
 	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
 	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
-	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /receive_messages
+	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /rx_can_frame
 
 	ROS_INFO("*** Grab the parameters from the YAML file ***");
 
@@ -334,12 +334,7 @@ bool CANLayer::init()
 	struct sockaddr_can addr;
 	struct ifreq ifr;
 
-	const char *ifname = robot_can_device_.c_str(); //"can0";
-	//const char *ifname = "can0";
-
-	//ROS_INFO("test pointer before");
-	//*ptr_socket_can_ = 0;
-	//ROS_INFO("test pointer after");
+	const char *ifname = robot_can_device_.c_str();
 
 	if((s = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
 	{
@@ -471,7 +466,7 @@ bool CANLayer::init()
  */
 void CANLayer::run()
 {
-	ros::Rate r(50);
+	//ros::Rate r(50);
 
 	int idx = 0;
 
@@ -487,7 +482,7 @@ void CANLayer::run()
 		if(idx == number_epos_boards_) idx = 0;
 		
 		ros::spinOnce();
-		r.sleep();
+		//r.sleep();
 	}
 }
 
@@ -547,7 +542,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 					int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 					int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
 
-					//ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
+					ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
 					if(epos_controller_list_[index]->getInverted() == true) //!< change sign
 					{
@@ -564,7 +559,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 						epos_controller_list_[index]->setVelocity(vel);
 					}
 
-					//ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
+					ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
 
 					break;
 				}
@@ -712,7 +707,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 			for(int i=0; i<epos_controller_list_.size(); i++)
 			{
-				//ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
+				ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
 
 				motor_data_array.motor_data[i].node_id = epos_controller_list_[i]->getNodeID();
 				motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
@@ -896,8 +891,6 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 				}
 			}
 		}
-
-		//if(cmdPlayLED) ledchain[3] = 1;    //switch on if cmd is applied.
 		    
 		ros::Duration(0.00001).sleep(); //10us
 	}	

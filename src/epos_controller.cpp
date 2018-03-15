@@ -273,6 +273,7 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)
 	{
 		frame.can_dlc = 6;
 	}
+	//TODO for PDO 3 and 4 ?
 
 	//ROS_INFO("frame.id = %X", frame.id);
 	/*//401#0F0088130000E803
