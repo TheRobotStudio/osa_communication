@@ -79,6 +79,7 @@ public:
 	void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array);
 
 	bool ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, osa_communication::InitEPOSBoard::Response &res);
+
 protected:
 	std::string robot_name_;
 	std::string robot_can_device_;

@@ -41,6 +41,8 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/ros.h>
 #include <nodelet/nodelet.h>
+#include <can_msgs/Frame.h>
+#include "registers.h"
 
 namespace osa_communication_nodelet
 {
@@ -60,6 +62,20 @@ public:
 	~SocketCANReaderNodelet();
 
 	virtual void onInit();
+
+private:
+	int open_port(const char *port);
+	int send_port(struct can_frame *frame);
+	void read_port();
+	int close_port();
+
+protected:
+	std::string robot_name_;
+	std::string robot_can_device_;
+	int number_epos_boards_;
+	int soc_;
+	bool read_can_port_;
+	ros::Publisher pub_rx_can_frame_;
 };
 
 } // osa_communication_nodelet

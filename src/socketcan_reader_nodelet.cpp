@@ -59,11 +59,14 @@ using namespace osa_communication_nodelet;
 /**
  * @brief Constructor.
  */
-SocketCANReaderNodelet::SocketCANReaderNodelet()
+SocketCANReaderNodelet::SocketCANReaderNodelet() :
+robot_name_(""),
+robot_can_device_(""),
+number_epos_boards_(0),
+soc_(0),
+read_can_port_(false),
+pub_rx_can_frame_()
 {
-  open_port("can0");
-    read_port();
-    return 0;
 }
 
 /**
@@ -71,7 +74,8 @@ SocketCANReaderNodelet::SocketCANReaderNodelet()
  */
 SocketCANReaderNodelet::~SocketCANReaderNodelet()
 {
-
+	read_can_port_ = false;
+	close_port();
 }
 
 void SocketCANReaderNodelet::onInit()
@@ -85,47 +89,88 @@ void SocketCANReaderNodelet::onInit()
 
 	NODELET_INFO_STREAM("Initialising nodelet... [" << name << "]");
 
-	//NODELET_DEBUG("Initializing nodelet...");
+	// Grab the parameters
+	try
+	{
+		//load robot parameters
+		if(!nh.param("/robot/name", robot_name_, std::string("my_robot")))
+		{
+			NODELET_WARN_STREAM("No /robot/name found in YAML config file");
+		}
+
+		if(!nh.param("/robot/dof", number_epos_boards_, int(0)))
+		{
+			NODELET_WARN_STREAM("No /robot/dof found in YAML config file");
+		}
+
+		if(!nh.param("/robot/can_device", robot_can_device_, std::string("can0")))
+		{
+			NODELET_WARN_STREAM("No /robot/can_device found in YAML config file");
+		}
+
+		NODELET_INFO_STREAM("Robot name=" << robot_name_<< ", dof=" << number_epos_boards_ << ", can=" << robot_can_device_);
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		NODELET_ERROR_STREAM(e.what());
+		NODELET_ERROR_STREAM("Parameters didn't load correctly!");
+		NODELET_ERROR_STREAM("Please modify your YAML config file and try again.");
+		break;
+	}
+
+	//set CAN frame publisher, zero-copy data to the can_layer
+	pub_rx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/rx_can_frame", 1));
+
+	if(open_port(robot_can_device_.c_str()) == 0)
+	{
+		NODELET_INFO_STREAM("CAN port " << robot_can_device_ << " opened successfuly!");
+	}
+	else
+	{
+		NODELET_ERROR_STREAM("Couldn't open CAN port " << robot_can_device_ << "!");
+		break;
+	}
+
+	read_port();
 }
 
-int open_port(const char *port)
+int SocketCANReaderNodelet::open_port(const char *port)
 {
-    struct ifreq ifr;
-    struct sockaddr_can addr;
+	struct ifreq ifr;
+	struct sockaddr_can addr;
 
-    /* open socket */
-    soc = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-    if(soc < 0)
-    {   
-        return (-1);
-    }
+	/* open socket */
+	soc_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 
-    addr.can_family = AF_CAN;
-    strcpy(ifr.ifr_name, port);
+	if(soc_<0)
+	{
+		return (-1);
+	}
 
-    if (ioctl(soc, SIOCGIFINDEX, &ifr) < 0)
-    {
-        
-        return (-1);
-    }
+	addr.can_family = AF_CAN;
+	strcpy(ifr.ifr_name, port);
 
-    addr.can_ifindex = ifr.ifr_ifindex;
+	if(ioctl(soc_, SIOCGIFINDEX, &ifr) < 0)
+	{
+		return (-1);
+	}
 
-    fcntl(soc, F_SETFL, O_NONBLOCK);
+	addr.can_ifindex = ifr.ifr_ifindex;
 
-    if (bind(soc, (struct sockaddr *)&addr, sizeof(addr)) < 0)
-    {
-        
-        return (-1);
-    }
+	fcntl(soc_, F_SETFL, O_NONBLOCK);
 
-    return 0;
+	if (bind(soc_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+	{
+		return (-1);
+	}
+
+	return 0;
 }
 
-int send_port(struct can_frame *frame)
+int SocketCANReaderNodelet::send_port(struct can_frame *frame)
 {
     int retval;
-    retval = write(soc, frame, sizeof(struct can_frame));
+    retval = write(soc_, frame, sizeof(struct can_frame));
 
     if (retval != sizeof(struct can_frame))
     {   
@@ -137,50 +182,63 @@ int send_port(struct can_frame *frame)
     }
 }
 
-void read_port()
+void SocketCANReaderNodelet::read_port()
 {
-    struct can_frame frame_rd;
-    int recvbytes = 0;
+	struct can_frame frame_rd;
+	int recvbytes = 0;
 
-    read_can_port = 1;
-    while(read_can_port)
-    {
-        struct timeval timeout = {1, 0};
-        fd_set readSet;
-        FD_ZERO(&readSet);
-        FD_SET(soc, &readSet);
+	can_msgs::Frame can_msg; //ROS CAN frame message
+	can_msg.is_extended = false;
+	can_msg.is_rtr = false;
 
-        if (select((soc + 1), &readSet, NULL, NULL, &timeout) >= 0)
-        {
-            if (!read_can_port)
-            {
-                break;
-            }
-            if (FD_ISSET(soc, &readSet))
-            {
-                recvbytes = read(soc, &frame_rd, sizeof(struct can_frame));
-                if(recvbytes)
-                {
-                    //printf("dlc = %d, data = %X\n", frame_rd.can_dlc,frame_rd.data);  
-                    printf("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
-                        frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
+	read_can_port_ = true;
+	while(read_can_port_)
+	{
+		struct timeval timeout = {1, 0};
+		fd_set readSet;
+		FD_ZERO(&readSet);
+		FD_SET(soc_, &readSet);
 
-                        int position = 0;
-                        position = frame_rd.data[0] + (frame_rd.data[1]<<8) + (frame_rd.data[2]<<16) + (frame_rd.data[3]<<24);
+		if (select((soc_ + 1), &readSet, NULL, NULL, &timeout) >= 0)
+		{
+			if (!read_can_port_)
+			{
+				break;
+			}
+			if (FD_ISSET(soc_, &readSet))
+			{
+				recvbytes = read(soc_, &frame_rd, sizeof(struct can_frame));
+				if(recvbytes)
+				{
+					//filter out echo frames, RTR request...just take COB id of interest
+					int16_t cob_id = 0x0F80 & frame_rd.can_id;
 
-                        if(frame_rd.can_id == 0x181)
-                        {
-                                printf("motor position = %d\n", position);
-                        }
-                }
-            }
-        }
-    }
+					if ((cob_id == COB_ID_TRANSMIT_PDO_1_ENABLE) ||
+						(cob_id == COB_ID_TRANSMIT_PDO_2_ENABLE) ||
+						(cob_id == COB_ID_TRANSMIT_PDO_3_ENABLE) ||
+						(cob_id == COB_ID_TRANSMIT_PDO_4_ENABLE) ||
+						(cob_id == COB_ID_EMCY_DEFAULT) ||
+						(cob_id == COB_ID_SDO_SERVER_TO_CLIENT_DEFAULT))
+					{
+						//build ROS CAN frame
+						can_msg.id = frame_rd.can_id;
+						can_msg.dlc = frame_rd.can_dlc;
+						for(int i=0; i<8; i++) can_msg.data[i] = frame_rd.data[i];
+
+						//publish CAN frame
+						pub_rx_can_frame_.publish(can_msg);
+					}
+
+					//printf("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
+					//frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
+				}
+			}
+		}
+	}
 }
 
-int close_port()
+int SocketCANReaderNodelet::close_port()
 {
-    close(soc);
+    close(soc_);
     return 0;
 }
-

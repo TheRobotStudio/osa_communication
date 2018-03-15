@@ -137,7 +137,7 @@ bool CANLayer::init()
 			ROS_WARN("No /robot/name found in YAML config file");
 		}
 
-		if(!nh.param("/robot/dof", number_epos_boards_, int(2)))
+		if(!nh.param("/robot/dof", number_epos_boards_, int(0)))
 		{
 			ROS_WARN("No /robot/dof found in YAML config file");
 		}
@@ -381,7 +381,7 @@ bool CANLayer::init()
 
 	//Subsriber, need the number of EPOS for the FIFO
 	//TODO put the define as a static in the namespace
-	rx_can_frame_sub_ = nh.subscribe("/received_messages", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
+	rx_can_frame_sub_ = nh.subscribe("/rx_can_frame", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
 
 	//wait for the Publisher/Subscriber to connect
 	ROS_INFO("*** Waiting for the TX CAN frame publisher to connect ***\n");
