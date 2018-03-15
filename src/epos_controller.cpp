@@ -290,7 +290,8 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)
 	//tx_can_frame_pub_->publish(frame);
 	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 
-	ros::Duration(0.002).sleep();
+	//ros::Duration(0.002).sleep();
+	ros::Duration(0, 50000).sleep();
 	//ros::Duration(0.001).sleep();
 }
 

@@ -542,7 +542,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 					int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 					int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
 
-					ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
+					//ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
 					if(epos_controller_list_[index]->getInverted() == true) //!< change sign
 					{
@@ -573,7 +573,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 					int16_t foll_err = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
 					uint16_t statwrd = (can_msg->data[5]<<8 | can_msg->data[4]); //(0x0000FFFF00000000 & data) >> 32;
 
-					ROS_INFO("NodeID[%d] curr[%d] foll_err[%d] statwrd[%d]", node_id, curr, foll_err, statwrd);
+					//ROS_INFO("NodeID[%d] curr[%d] foll_err[%d] statwrd[%d]", node_id, curr, foll_err, statwrd);
 
 					if(epos_controller_list_[index]->getInverted() == true) curr = -1*curr; //change sign
 					epos_controller_list_[index]->setCurrent(curr);
