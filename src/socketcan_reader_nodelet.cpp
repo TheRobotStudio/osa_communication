@@ -76,6 +76,8 @@ SocketCANReaderNodelet::~SocketCANReaderNodelet()
 {
 	read_can_port_ = false;
 	close_port();
+	socketcan_thread_->join();
+	NODELET_INFO("SocketCAN thread stopped");
 }
 
 void SocketCANReaderNodelet::onInit()
@@ -131,7 +133,9 @@ void SocketCANReaderNodelet::onInit()
 		return;
 	}
 
-	read_port();
+	//Spawn thread for reading CAN frames
+	read_can_port_ = true;
+	socketcan_thread_ = boost::shared_ptr<boost::thread>(new boost::thread(boost::bind(&SocketCANReaderNodelet::read_port, this)));
 }
 
 int SocketCANReaderNodelet::open_port(const char *port)
@@ -187,12 +191,7 @@ void SocketCANReaderNodelet::read_port()
 	struct can_frame frame_rd;
 	int recvbytes = 0;
 
-	can_msgs::Frame can_msg; //ROS CAN frame message
-	can_msg.is_extended = false;
-	can_msg.is_rtr = false;
-
-	read_can_port_ = true;
-	while(read_can_port_)
+	while(ros::ok())
 	{
 		struct timeval timeout = {1, 0};
 		fd_set readSet;
@@ -220,20 +219,26 @@ void SocketCANReaderNodelet::read_port()
 						(cob_id == COB_ID_EMCY_DEFAULT) ||
 						(cob_id == COB_ID_SDO_SERVER_TO_CLIENT_DEFAULT))
 					{
+						can_msgs::FramePtr can_msg(new can_msgs::Frame); //ROS CAN frame message, shared pointer for zero-copy inter-process publishing
+						can_msg->is_extended = false;
+						can_msg->is_rtr = false;
+
 						//build ROS CAN frame
-						can_msg.id = frame_rd.can_id;
-						can_msg.dlc = frame_rd.can_dlc;
-						for(int i=0; i<8; i++) can_msg.data[i] = frame_rd.data[i];
+						can_msg->id = frame_rd.can_id;
+						can_msg->dlc = frame_rd.can_dlc;
+						for(int i=0; i<8; i++) can_msg->data[i] = frame_rd.data[i];
 
 						//publish CAN frame
-						pub_rx_can_frame_.publish(can_msg);
+						pub_rx_can_frame_.publish(can_msg); //can_msg is discarded each time and the published pointer can be subscribed to access the data.
 					}
 
-					//printf("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
+					//NODELET_INFO("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
 					//frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
 				}
 			}
 		}
+
+		if(!read_can_port_) break;
 	}
 }
 

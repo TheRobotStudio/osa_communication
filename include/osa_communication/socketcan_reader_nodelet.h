@@ -43,6 +43,7 @@
 #include <nodelet/nodelet.h>
 #include <can_msgs/Frame.h>
 #include "registers.h"
+#include <boost/thread.hpp>
 
 namespace osa_communication_nodelet
 {
@@ -66,7 +67,7 @@ public:
 private:
 	int open_port(const char *port);
 	int send_port(struct can_frame *frame);
-	void read_port();
+	void read_port(); //thread
 	int close_port();
 
 protected:
@@ -76,6 +77,7 @@ protected:
 	int soc_;
 	bool read_can_port_;
 	ros::Publisher pub_rx_can_frame_;
+	boost::shared_ptr<boost::thread> socketcan_thread_;
 };
 
 } // osa_communication_nodelet
