@@ -210,14 +210,14 @@ void SocketCANReaderNodelet::read_port()
 				if(recvbytes)
 				{
 					//filter out echo frames, RTR request...just take COB id of interest
-					int16_t cob_id = 0x0F80 & frame_rd.can_id;
+					int32_t filter_id = 0xF0000F80 & frame_rd.can_id;
 
-					if ((cob_id == COB_ID_TRANSMIT_PDO_1_ENABLE) ||
-						(cob_id == COB_ID_TRANSMIT_PDO_2_ENABLE) ||
-						(cob_id == COB_ID_TRANSMIT_PDO_3_ENABLE) ||
-						(cob_id == COB_ID_TRANSMIT_PDO_4_ENABLE) ||
-						(cob_id == COB_ID_EMCY_DEFAULT) ||
-						(cob_id == COB_ID_SDO_SERVER_TO_CLIENT_DEFAULT))
+					if ((filter_id == COB_ID_TRANSMIT_PDO_1_ENABLE) ||
+						(filter_id == COB_ID_TRANSMIT_PDO_2_ENABLE) ||
+						(filter_id == COB_ID_TRANSMIT_PDO_3_ENABLE) ||
+						(filter_id == COB_ID_TRANSMIT_PDO_4_ENABLE) ||
+						(filter_id == COB_ID_EMCY_DEFAULT) ||
+						(filter_id == COB_ID_SDO_SERVER_TO_CLIENT_DEFAULT))
 					{
 						can_msgs::FramePtr can_msg(new can_msgs::Frame); //ROS CAN frame message, shared pointer for zero-copy inter-process publishing
 						can_msg->is_extended = false;
