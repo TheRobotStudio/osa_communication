@@ -243,6 +243,9 @@ void SocketCANReaderNodelet::read_port()
 		}
 
 		if(!read_can_port_) break;
+		
+		//add a little pause here
+		ros::Duration(0, 100000).sleep();
 	}
 }
 

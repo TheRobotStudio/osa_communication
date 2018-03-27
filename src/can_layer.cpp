@@ -483,6 +483,9 @@ void CANLayer::run()
 		
 		ros::spinOnce();
 		//r.sleep();
+
+		//insert little pause
+		ros::Duration(0, 100000).sleep();
 	}
 }
 
