@@ -47,19 +47,14 @@ using namespace osa_communication;
  */
 int main(int argc, char **argv)
 {
-	//ros::init(argc, argv, "osa_can_layer_node");
-	//ros::Rate r(15);
-	//ros::this_node::getName());
-
 	CANLayer *can_layer = new CANLayer();
 	if(can_layer->init()) return -1;
 
 	//Main loop
 	while(ros::ok())
 	{
-		//getData();
 		//ros::spinOnce(); //receive CAN frame : motor data and emergency frames; receive motor commands, publish motor data
-
+		//ROS_INFO("while");
 		//TODO add a little pause
 		//r.sleep();
 	}

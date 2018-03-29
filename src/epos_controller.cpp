@@ -141,10 +141,13 @@ int	EPOSController::setNodeID(uint8_t node_id)
 
 int EPOSController::setPtrSocketCAN(int* ptr_socket_can)
 {
-	//TODO add a pointer check
-	ptr_socket_can_ = ptr_socket_can;
-
-	return 0;
+	if(ptr_socket_can != nullptr)
+	{
+		ptr_socket_can_ = ptr_socket_can;
+	
+		return 0;
+	}
+	else return -1;
 }
 
 int EPOSController::setPosition(int32_t position)
@@ -216,18 +219,6 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 	int nbytes;
 	//can_msgs::Frame frame;
 	struct can_frame frame;
-	//msgs definition
-	//Header header
-	//uint32 id
-	//bool is_rtr
-	//bool is_extended
-	//bool is_error
-	//uint8 dlc
-	//uint8[8] data
-
-	//frame.is_extended = false;
-	//frame.is_rtr = false;
-	//frame.is_error = false;
 	frame.can_id = id;
 	frame.can_dlc = 8;
 
@@ -237,11 +228,7 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 		frame.data[i] = data[i];
 	}
 
-	//frame.header.frame_id = "1";  // "0" for no frame.
-	//frame.header.stamp = ros::Time::now();
-
-	//publish the CAN frame
-	//tx_can_frame_pub_->publish(frame);
+	//write the CAN frame
 	//ROS_INFO("before");	
 	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 	//ROS_INFO("after");	
