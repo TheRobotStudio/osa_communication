@@ -27,7 +27,7 @@
 /**
  * @file can_layer.h
  * @author Cyril Jourdan
- * @date Aug 29, 2017
+ * @date Mar 29, 2018
  * @version 0.1.0
  * @brief Header file for class CANLayer
  *
@@ -47,9 +47,7 @@
 #include <socketcan_interface/socketcan.h>
 #include "epos_controller.h"
 //ROS services
-#include "osa_communication/InitEPOSBoard.h"
-
-#define DATA_LENGTH 8 //TODO use a static instead ?
+#include "osa_communication/SelectMotorController.h"
 
 namespace osa_communication
 {
@@ -60,40 +58,74 @@ namespace osa_communication
 class CANLayer
 {
 public:
-	/** @brief Constructor. */
+
+	/**
+	 * @brief Constructor.
+	 */
 	CANLayer();
 
-	/** @brief Destructor. */
+	/**
+	 * @brief Destructor.
+	 */
 	~CANLayer();
 
-	/** @brief Initialize the ROS node. */
+	/**
+	 * @brief Initialize the ROS node.
+	 * @return bool Returns true if the initialization has completed successfully and false otherwise.
+	 */
 	bool init();
 
-	/** @brief Run the ROS node. */
+	/**
+	 * @brief Run the ROS node.
+	 * @return void
+	 */
 	void run();
 
-	/** @brief Callback method for the CAN messages received on the bus. */
+	/**
+	 *  @brief Callback method that receives CAN messages from the CAN bus and updates motor data.
+	 *  @param can_msg CAN message.
+	 *  @return void
+	 */
 	void receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg);
 
-	/** @brief Callback method for the motor commands to be sent. */
+	/**
+	 *  @brief Callback method that receives EPOS commands and that fits it into the right frame format to be sent over CAN bus.
+	 *  @param motor_cmd_array Motor command multi-array.
+	 *  @return void
+	 */
 	void sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array);
 
-	bool ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, osa_communication::InitEPOSBoard::Response &res);
+	/**
+	 *  @brief Service server method that setup a given motor controller.
+	 *  @param req the request is the node ID on the CAN bus.
+	 *  @param res the response is a bool which has the same value as the returned value.
+	 *  @return bool whether or not the service call has succedded.
+	 */
+	bool ssSetupMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res);
 
-protected:
+	/**
+	 *  @brief Service server method that initialize a given motor controller.
+	 *  @param req the request is the node ID on the CAN bus.
+	 *  @param res the response is a bool which has the same value as the returned value.
+	 *  @return bool whether or not the service call has succedded.
+	 */
+	bool ssInitMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res);
+
+private:
+	const static int data_length = 8;
+
 	std::string robot_name_;
 	std::string robot_can_device_;
 	std::vector<EPOSController*> epos_controller_list_;
-	//std::map<uint8_t, EPOSController*> epos_controller_list_;
 	int number_epos_boards_; /**< Size of epos_controller_list_ */
-	char data_[DATA_LENGTH];
+	char data_[data_length];
 	ros::Subscriber rx_can_frame_sub_;
 	ros::Subscriber motor_cmd_sub_;
 	int* ptr_socket_can_; /**< To link it to EPOSController. */
-	//ros::Publisher* ptr_pub_tx_can_frame_; /**< To link it to EPOSController. */
 	ros::Publisher pub_motor_data_;
 	bool motor_cmd_array_received_;
-	ros::ServiceServer ss_init_epos_board_;
+	ros::ServiceServer ss_setup_motor_controller_;
+	ros::ServiceServer ss_init_motor_controller_;
 };
 
 } // osa_communication

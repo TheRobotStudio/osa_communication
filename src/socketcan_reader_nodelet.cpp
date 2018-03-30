@@ -198,13 +198,13 @@ void SocketCANReaderNodelet::read_port()
 		FD_ZERO(&readSet);
 		FD_SET(soc_, &readSet);
 
-		if (select((soc_ + 1), &readSet, NULL, NULL, &timeout) >= 0)
+		if(select((soc_ + 1), &readSet, NULL, NULL, &timeout) >= 0)
 		{
-			if (!read_can_port_)
+			if(!read_can_port_)
 			{
 				break;
 			}
-			if (FD_ISSET(soc_, &readSet))
+			if(FD_ISSET(soc_, &readSet))
 			{
 				recvbytes = read(soc_, &frame_rd, sizeof(struct can_frame));
 

@@ -27,7 +27,7 @@
 /**
  * @file epos_controller.cpp
  * @author Cyril Jourdan
- * @date Feb 19, 2018
+ * @date Mar 30, 2018
  * @version 0.1.0
  * @brief Implementation file for class EPOSController
  *
@@ -57,7 +57,6 @@ motor_type_(NONE),
 inverted_(inverted),
 mode_(PROFILE_VELOCITY_MODE),
 value_(value),
-//tx_can_frame_pub_(tx_can_frame_pub),
 ptr_socket_can_(ptr_socket_can),
 data_({0}),
 activ_mode_(),
@@ -208,26 +207,11 @@ int EPOSController::setBoardStatus(int8_t board_status)
 	return 0;
 }
 
-//other methods
-
 //canToEposWrite publish a CAN frame topic
 void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socket_can)
 {
 	int nbytes;
-	//can_msgs::Frame frame;
 	struct can_frame frame;
-	//msgs definition
-	//Header header
-	//uint32 id
-	//bool is_rtr
-	//bool is_extended
-	//bool is_error
-	//uint8 dlc
-	//uint8[8] data
-
-	//frame.is_extended = false;
-	//frame.is_rtr = false;
-	//frame.is_error = false;
 	frame.can_id = id;
 	frame.can_dlc = 8;
 
@@ -237,9 +221,6 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 		frame.data[i] = data[i];
 	}
 
-	//frame.header.frame_id = "1";  // "0" for no frame.
-	//frame.header.stamp = ros::Time::now();
-
 	//publish the CAN frame
 	//tx_can_frame_pub_->publish(frame);
 	//ROS_INFO("before");	
@@ -247,22 +228,10 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 	//ROS_INFO("after");	
 }
 
-void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)
+void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 {
 	int nbytes;
-	struct can_frame frame; //can_msgs::Frame
-	//msgs definition
-	//Header header
-	//uint32 id
-	//bool is_rtr
-	//bool is_extended
-	//bool is_error
-	//uint8 dlc
-	//uint8[8] data
-
-	//frame.is_extended = false;
-	//frame.is_rtr = true; //request only
-	//frame.is_error = false;
+	struct can_frame frame;
 	frame.can_id = tx_pdo_cob_id + node_id_ + CAN_RTR_FLAG; //RTR bit set for remote request
 
 	if(tx_pdo_cob_id == 0x180)
@@ -276,18 +245,8 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id) //, int* socket_can)
 	//TODO for PDO 3 and 4 ?
 
 	//ROS_INFO("frame.id = %X", frame.id);
-	/*//401#0F0088130000E803
-	for(int i=0; i<8; i++)
-	{
-		frame.data[i] = data[i];
-	}
-*/
-
-	//frame.header.frame_id = "1";  // "0" for no frame.
-	//frame.header.stamp = ros::Time::now();
 
 	//publish the CAN frame
-	//tx_can_frame_pub_->publish(frame);
 	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 
 	//ros::Duration(0.002).sleep();
@@ -320,28 +279,28 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
     switch(nbByteObject)
     {
         case 0x08 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_1_BYTE;
             nbByte = 1;
             break;
         }
 
         case 0x10 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_2_BYTE;
             nbByte = 2;
             break;
         }
 
         case 0x20 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_4_BYTE;
             nbByte = 4;
             break;
         }
 
         default :
-	{
+        {
             return EPOS_ERROR;
         }
     }
@@ -384,6 +343,7 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
 int8_t EPOSController::getObjectSDO(const int32_t object, int32_t value)
 {
     //TODO
+
     return EPOS_OK;
 }
 
@@ -395,27 +355,27 @@ int8_t EPOSController::setPDO(uint16_t pdoIdx, uint8_t subIdx, uint32_t value, u
     switch(nbByte)
     {
         case 1 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_1_BYTE;
             break;
         }
 
         case 2 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_2_BYTE;
             break;
         }
 
         case 4 :
-	{
+        {
             nbByteObject = WRITING_OBJECT_4_BYTE;
             break;
         }
 
         default :
-	{
+        {
             return EPOS_ERROR;
-	}
+        }
     }
 
     data_[0] = nbByteObject;
@@ -521,8 +481,6 @@ int8_t EPOSController::setModeOfOperationSDO(int8_t mode)
 
 void EPOSController::shutdownControlword()
 {
-    //CANMessage canmsg;
-
     //Shutdown Controlword Firmware Spec 8.2.84 bit wise 0xxx x110 so 0x0006
     data_[0] = WRITING_OBJECT_2_BYTE;
     data_[1] = 0x40;
@@ -533,7 +491,7 @@ void EPOSController::shutdownControlword()
     data_[6] = 0x00;
     data_[7] = 0x00;
     canToEposWrite(COB_ID_SDO_CLIENT_TO_SERVER_DEFAULT + node_id_, data_, 6);
-/*
+/*	TODO
     while (!(cantoepos.read(canmsg)))
     {
         ros::Duration(0.000001).sleep();
@@ -545,8 +503,6 @@ void EPOSController::shutdownControlword()
 
 void EPOSController::shutdownControlwordIT()
 {
-    //CANMessage canmsg;
-
     //Shutdown Controlword Firmware Spec 8.2.84 bit wise 0xxx x110 so 0x0006
     data_[0] = WRITING_OBJECT_2_BYTE;
     data_[1] = 0x40;
@@ -561,8 +517,6 @@ void EPOSController::shutdownControlwordIT()
 
 void EPOSController::switchOnEnableOperationControlword()
 {
-    //CANMessage canmsg;
-
     //Switch On & Enable Operation Controlword Firmware Spec 8.2.84 bit wise 0xxx 1111 so 0x000F
     data_[0] = WRITING_OBJECT_2_BYTE;
     data_[1] = 0x40;
@@ -573,7 +527,7 @@ void EPOSController::switchOnEnableOperationControlword()
     data_[6] = 0x00;
     data_[7] = 0x00;
     canToEposWrite(COB_ID_SDO_CLIENT_TO_SERVER_DEFAULT + node_id_, data_, 6);
-/*
+/*	TODO
     while(!(cantoepos.read(canmsg)))
     {
         ros::Duration(0.000001).sleep();
@@ -584,8 +538,6 @@ void EPOSController::switchOnEnableOperationControlword()
 
 void EPOSController::switchOnEnableOperationControlwordIT()
 {
-    //CANMessage canmsg;
-
     //Switch On & Enable Operation Controlword Firmware Spec 8.2.84 bit wise 0xxx 1111 so 0x000F
     data_[0] = WRITING_OBJECT_2_BYTE;
     data_[1] = 0x40;
@@ -600,8 +552,6 @@ void EPOSController::switchOnEnableOperationControlwordIT()
 
 void EPOSController::faultResetControlword()
 {
-    //CANMessage canmsg;
-
     //Fault reset Controlword Firmware Spec 8.2.84 bit wise 0xxx x110 so 0x0006
     data_[0] = WRITING_OBJECT_2_BYTE;
     data_[1] = 0x40;
@@ -614,15 +564,9 @@ void EPOSController::faultResetControlword()
     canToEposWrite(COB_ID_SDO_CLIENT_TO_SERVER_DEFAULT + node_id_, data_, 6);
 }
 
-int8_t EPOSController::initEposBoard()
+int8_t EPOSController::setup()
 {
-    //CANMessage canmsg;
-
-    //if(node_id_ ==1) setNMT(CS_RESET_NODE);
-
     ROS_INFO("- initialise board ID = %d", node_id_);
-
-    //if(cantoepos.frequency(1000000) != 1)  return EPOS_ERROR;
 
     if(controller_type_ == EPOS2)
     {
@@ -1199,49 +1143,49 @@ int8_t EPOSController::initEposBoard()
     switch(mode_)
     {
         case INTERPOLATED_POSITION_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_INTERPOLATED_POSITION_MODE);
             break;
         }
 
         case PROFILE_VELOCITY_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_PROFILE_VELOCITY_MODE);
             break;
         }
 
         case PROFILE_POSITION_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_PROFILE_POSITION_MODE);
             break;
         }
 
         case POSITION_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_POSITION_MODE);
             break;
         }
 
         case VELOCITY_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_VELOCITY_MODE);
             break;
         }
 
         case CURRENT_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_CURRENT_MODE);
             break;
         }
 
         case CYCLIC_SYNCHRONOUS_TORQUE_MODE :
-	{
+        {
             setModeOfOperationSDO(VALUE_CYCLIC_SYNCHRONOUS_TORQUE_MODE);
             break;
         }
 
         default :
-	{
+        {
             return EPOS_ERROR;
         }
     }
@@ -1460,52 +1404,52 @@ void EPOSController::setModesOfOperation(int8_t mode)
     switch(mode)
     {
         case 7 : //VALUE_INTERPOLATED_POSITION_MODE :
-	{
+        {
             activ_mode_ = INTERPOLATED_POSITION_MODE;
             break;
-	}
+        }
 
         case 3 : //VALUE_PROFILE_VELOCITY_MODE :
-	{
+        {
             activ_mode_ = PROFILE_VELOCITY_MODE;
             break;
-	}
+        }
 
         case 1 : //VALUE_PROFILE_POSITION_MODE :
-	{
+        {
             activ_mode_ = PROFILE_POSITION_MODE;
             break;
-	}
+        }
 
         case -1 : //VALUE_POSITION_MODE :
-	{
+        {
             activ_mode_ = POSITION_MODE;
             break;
-	}
+        }
 
         case -2 : //VALUE_VELOCITY_MODE :
-	{
+        {
             activ_mode_ = VELOCITY_MODE;
             break;
-	}
+        }
 
         case -3 : //VALUE_CURRENT_MODE :
-	{
+        {
             activ_mode_ = CURRENT_MODE;
             break;
-	}
+        }
 
         case 10 : //VALUE_CYCLIC_SYNCHRONOUS_TORQUE_MODE :
-	{
+        {
             activ_mode_ = CYCLIC_SYNCHRONOUS_TORQUE_MODE;
             break;
-	}
+        }
 
         default :
-	{
+        {
             ROS_INFO("Wrong mode value");
             return;
-	}
+        }
     }
 
     setCurrentSpeedMode(current_mode_setting_value_, maximal_speed_in_current_mode_, mode);
@@ -1532,7 +1476,7 @@ void EPOSController::getIncEnc1CntAtIdxPls()
     transmitPDOWrite(COB_ID_TRANSMIT_PDO_4_ENABLE);
 }
 
-int EPOSController::calibrate()
+int EPOSController::initialize()
 {
     uint16_t outCurLmt = 0;
     uint32_t profVel = 0;
@@ -1875,7 +1819,6 @@ int EPOSController::calibrate()
 		}
 	}
 
-   // ledchain[3] = 1;
 	ros::Duration(0.01).sleep();
 
 	//TPDO : get data once to fill in the arrays
@@ -1892,19 +1835,8 @@ int EPOSController::calibrate()
 
 void EPOSController::getData()
 {
-	//ROS_INFO("getData");
-	//for(int i=1; i<=numberEposBoards; i++)
-	//for(int i=1; i<=2; i++)
-	//{
-		//uint8_t node_id = i;
-
-		getPositionVelocity();
-		//ros::Duration(0.0002).sleep();
-		//ros::Duration(0.001).sleep();
-		//ros::Duration(0.002).sleep();
-		getCurrentFollErrStatusword();
-		//ros::Duration(0.0002).sleep();
-		//ros::Duration(0.001).sleep();
-		//ros::Duration(0.002).sleep();
-	//}
+	getPositionVelocity();
+	//ros::Duration(0.0002).sleep();
+	getCurrentFollErrStatusword();
+	//ros::Duration(0.0002).sleep();
 }
