@@ -27,7 +27,7 @@
 /**
  * @file EPOSController.hpp
  * @author Cyril Jourdan
- * @date Feb 19, 2018
+ * @date Mar 29, 2018
  * @version 0.1.0
  * @brief Header file for class EPOSController
  *
@@ -189,12 +189,12 @@ public:
 	 */
 	void faultResetControlword();
 
-	/*! \fn int8_t initEposBoard()
+	/*! \fn int8_t setup()
 	 *  \brief This funstion initialize the EPOS board of the specified node ID. It will stop if the motor type is set to NONE.
 	 *  \param node_id_ identifier of the node on the CAN bus.
 	 *  \return int8_t EPOS_OK for success or EPOS_ERROR for failure or if the node is not responding.
 	 */
-	int8_t initEposBoard();
+	int8_t setup();
 
 	/**< RPDO */
 	/*! \fn void setTargetPosition(int32_t position)
@@ -336,26 +336,26 @@ public:
 	 */
 	void getIncEnc1CntAtIdxPls();
 
-	/*! \fn void calibrate()
+	/*! \fn void initialize()
 	 *  \brief calibration routine.
 	 *  \return int EPOS_OK or EPOS_ERROR
 	 */
-	int calibrate(); //TODO make it as a service
+	int initialize();
 
 	/*! \fn void getData()
 	 *  \brief
 	 *  \return void
 	 */
-	void getData();  //TODO make it as a service
+	void getData();
 
-protected:
+private:
 	std::string name_;
 	DegreeOfFreedomType degree_of_freedom_type_;
 	uint8_t node_id_;
 	ControllerType controller_type_;
 	MotorType motor_type_;
 	bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
-	ActivatedModeOfOperation mode_; //TODO duplicate of modes_of_operation_
+	ActivatedModeOfOperation mode_; //FIXME duplicate of modes_of_operation_
 	int value_;
 
 	//ros::Publisher *tx_can_frame_pub_;

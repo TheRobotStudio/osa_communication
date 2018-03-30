@@ -27,7 +27,7 @@
 /**
  * @file socketcan_reader_nodelet.h
  * @author Cyril Jourdan
- * @date Feb 21, 2018
+ * @date Mar 29, 2018
  * @version 0.1.0
  * @brief Header file for class SocketCANReaderNodelet
  *
@@ -70,7 +70,6 @@ private:
 	void read_port(); //thread
 	int close_port();
 
-protected:
 	std::string robot_name_;
 	std::string robot_can_device_;
 	int number_epos_boards_;
@@ -82,7 +81,6 @@ protected:
 
 } // osa_communication_nodelet
 
-//PLUGINLIB_DECLARE_CLASS(osa_communication, SocketCANReaderNodelet, osa_communication::SocketCANReaderNodelet, nodelet::Nodelet);
 PLUGINLIB_DECLARE_CLASS(osa_communication, SocketCANReaderNodelet, osa_communication_nodelet::SocketCANReaderNodelet, nodelet::Nodelet);
 
 #endif // OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H

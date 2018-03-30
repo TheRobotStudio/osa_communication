@@ -27,7 +27,7 @@
 /**
  * @file can_layer.cpp
  * @author Cyril Jourdan
- * @date Feb 19, 2018
+ * @date Mar 29, 2018
  * @version 0.1.0
  * @brief Implementation file for the CAN communication, using SocketCAN
  *
@@ -67,9 +67,6 @@ using namespace std;
 using namespace osa_communication;
 //Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
-/**
- * @brief Constructor.
- */
 CANLayer::CANLayer() :
 robot_name_(""),
 robot_can_device_(""),
@@ -79,15 +76,11 @@ data_ ({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
 ptr_socket_can_(nullptr),
-//ptr_pub_tx_can_frame_(),
 pub_motor_data_(),
 motor_cmd_array_received_(false)
 {
 }
 
-/**
- * @brief Destructor.
- */
 CANLayer::~CANLayer()
 {
 	if(ros::isStarted())
@@ -98,10 +91,6 @@ CANLayer::~CANLayer()
 	wait();
 }
 
-/**
- * @brief Initialize the ROS node.
- * @return bool Returns true if the initialization has completed successfully and false otherwise.
- */
 bool CANLayer::init()
 {
 	ROS_INFO("*** CANLayer Init ***\n");
@@ -299,23 +288,6 @@ bool CANLayer::init()
 			throw 1;
 		}
 
-		/*
-		nh.param("can_device", can_device_str, std::string("can0"));
-		//mot1
-		nh.param("controller1_type", controller1_type_str, std::string("EPOS4"));
-		nh.param("motor1_type", motor1_type_str, std::string("EC90"));
-		nh.param("motor1_inverted", motor1_inverted_bool, bool(true));
-		nh.param("mode1", mode1_str, std::string("PROFILE_VELOCITY_MODE"));
-		nh.param("value1", value1_int, int(0));
-		//mot2
-		nh.param("controller2_type", controller2_type_str, std::string("EPOS4"));
-		nh.param("motor2_type", motor2_type_str, std::string("EC90"));
-		nh.param("motor2_inverted", motor2_inverted_bool, bool(false));
-		nh.param("mode2", mode2_str, std::string("PROFILE_VELOCITY_MODE"));
-		//nh.param("value2", value2_int, int(0));
-		nh.param("value2", value2_int);
-		*/
-
 		ROS_INFO("Parameters loaded successfully!\n");
 	}
 	catch(ros::InvalidNameException const &e)
@@ -378,45 +350,53 @@ bool CANLayer::init()
 	//TODO put the define as a static in the namespace
 	rx_can_frame_sub_ = nh.subscribe("/rx_can_frame", number_epos_boards_*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
 
-	//wait for the Publisher/Subscriber to connect
-	ROS_INFO("*** Waiting for the TX CAN frame publisher to connect ***\n");
-/*
-	ros::Rate poll_rate(100);
-	while(ptr_pub_tx_can_frame_->getNumSubscribers() == 0)
+	//Setup Motor Controllers
+	ROS_INFO("Do you want to setup the motor controllers ? (y/n)");
+	std::string answer_setup;
+	std::cin >> answer_setup;
+
+	if(answer_setup.compare("y") == 0)
 	{
-			poll_rate.sleep();
-	}
-*/
-	//int i = 0; //msg
-	//int j = 0; //byte number
+		ROS_INFO("*** Setup Motor Controllers ***");
 
-	//TEST assume 2 EPOS4
-	//numberEposBoards = 2;
-
-	ROS_INFO("*** Initialise EPOS boards ***");  //TODO make it as a service
-	//power or pushbutton reset
-	for(int i=0; i<number_epos_boards_; i++)
-	{
-		//ROS_INFO("initEposBoard %d", node_id);
-
-		if(epos_controller_list_[i]->initEposBoard() != EPOS_OK)
+		for(int i=0; i<number_epos_boards_; i++)
 		{
-			ROS_ERROR("initEposBoard error");
-			return false; //exit the main function and return fault if an initialization failed
+			if(epos_controller_list_[i]->setup() != EPOS_OK)
+			{
+				ROS_ERROR("Setup error");
+				return false; //exit the main function and return fault if a setup failed
+			}
 		}
 	}
-
-	ROS_INFO("*** Calibrate Arm ***");  //TODO make it as a service
-	for(int i=0; i<number_epos_boards_; i++)
+	else
 	{
-		if(epos_controller_list_[i]->calibrate() == EPOS_ERROR)
-		{
-			ROS_ERROR("Calibration error, check the mode/value of your config file, only use Profile modes for EPOS2/EPOS4 and Current mode for EPOS2.");
-			return false;
-		}
+		ROS_INFO("No motor controllers setup will be done.");
 	}
 
-	ROS_INFO("*** Getting motor data ***\n");
+	//Setup Motor Controllers
+	ROS_INFO("Do you want to initialize the motor controllers with values from the YAML config file ? (y/n)");
+	std::string answer_init;
+	std::cin >> answer_init;
+
+	if(answer_init.compare("y") == 0)
+	{
+		ROS_INFO("*** Initialize Motor Controllers ***");
+
+		for(int i=0; i<number_epos_boards_; i++)
+		{
+			if(epos_controller_list_[i]->initialize() == EPOS_ERROR)
+			{
+				ROS_ERROR("Initialization error, check the mode/value of your config file, only use Profile modes for EPOS2/EPOS4 and Current mode for EPOS2.");
+				return false; //exit the main function and return fault if an initialization failed
+			}
+		}
+	}
+	else
+	{
+		ROS_INFO("No motor controllers initialization will be done.");
+	}
+
+	ROS_INFO("*** Getting Motor Data ***\n");
 	//gather first pack of data
 	//get the sensor values
 	for(int i=0; i<number_epos_boards_; i++)
@@ -424,46 +404,18 @@ bool CANLayer::init()
 		epos_controller_list_[i]->getData();
 	}
 
-	/*
-
-	//Publishers
-	m_pub_motorCmdArray = nh.advertise<osa_msgs::MotorCmdMultiArray>("/set_motor_commands", 100, true);
-
-	//Subscribers
-	m_sub_motorDataArray = nh.subscribe("/motor_data_array", 10, &BasicControlNode::motorDataArray_cb, this);
-*/
-/*
-	ROS_INFO("--- Init motor command array ---\n");
-
-	//create the commands multi array
-	motor_cmd_ma_.layout.dim.push_back(std_msgs::MultiArrayDimension());
-	motor_cmd_ma_.layout.dim[0].size = 1;
-	motor_cmd_ma_.layout.dim[0].stride = number_epos_boards_;
-	motor_cmd_ma_.layout.dim[0].label = "epos";
-
-	motor_cmd_ma_.layout.data_offset = 0;
-
-	motor_cmd_ma_.motorCmd.clear();
-	motor_cmd_ma_.motorCmd.resize(number_epos_boards_);
-
-	resetMotorCmdMultiArray();
-*/
 	//Services
 	CANLayer can_layer;
-	ss_init_epos_board_ = nh.advertiseService("osa_communication/init_epos_board", &CANLayer::ssInitEPOSBoard, this);
-	//ss_calibrate_ = nh.advertiseService("calibrate", ssCalibrate);
+	ss_setup_motor_controller_ = nh.advertiseService("osa_communication/setup_motor_controller", &CANLayer::ssSetupMotorController, this);
+	ss_init_motor_controller_ = nh.advertiseService("osa_communication/init_motor_controller", &CANLayer::ssSetupMotorController, this);
 
-	//then start the main loop
-	ROS_INFO("*** Start main loop ***");
+	//then start the run method with the main loop
+	ROS_INFO("*** Start the run method with the main loop ***");
 	run();
 
 	return true;
 }
 
-/**
- * @brief Run the ROS node.
- * @return void
- */
 void CANLayer::run()
 {
 	//ros::Rate r(50);
@@ -472,16 +424,14 @@ void CANLayer::run()
 
 	while(ros::ok())
 	{
-		//get the sensor values
-		//for(int i=0; i<number_epos_boards_; i++)
-		//{
+		//get the sensor value of one node
 		epos_controller_list_[idx]->getData(); //TODO make this automatic with a hearbeat from the CAN
-		//}
 		idx++;
 
 		if(idx == number_epos_boards_) idx = 0;
 		
 		ros::spinOnce();
+
 		//r.sleep();
 
 		//insert little pause
@@ -489,36 +439,30 @@ void CANLayer::run()
 	}
 }
 
-/**
- *  @brief Callback function that receives CAN messages from the CAN bus and updates motor data.
- *  @param can_msg CAN message.
- *  @return void
- */
 void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 {
 	uint64_t data = 0x0000000000000000; //64 bits
 	uint8_t node_id = 0;
 	int16_t cob_id = 0;
 
-	//ROS_INFO("receiveCANMessageCallback");
+	//ROS_DEBUG("receiveCANMessageCallback");
 
-	//ROS_INFO("Interrupt frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
+	//ROS_DEBUG("Interrupt frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 
 	node_id = 0x07F & can_msg->id;
 	cob_id = 0x0F80 & can_msg->id;
 
-	//ROS_INFO("node_id [%02X],  cobID [%02X], can_msg->dlc=%d", node_id, cob_id, can_msg->dlc);
+	//ROS_DEBUG("node_id [%02X],  cobID [%02X], can_msg->dlc=%d", node_id, cob_id, can_msg->dlc);
 	
 	for(int i=0; i<can_msg->dlc; i++) //dlc=len
 	{
-		//ROS_INFO("for i=%d", i);
+		//ROS_DEBUG("for i=%d", i);
 		data = data | (can_msg->data[i]<<i*8);
 	}
 
-	//ROS_INFO("data=%ld", data);
+	//ROS_DEBUG("data=%ld", data);
 	
 	//find the index in the array which correspond to the node-id
-	//auto it = find_if(epos_controller_list_.begin(), epos_controller_list_.end(), [&node_id](const EPOSController& obj) {return obj.getNodeID() == node_id;});
 	auto it = find_if(epos_controller_list_.begin(), epos_controller_list_.end(), [&node_id](const EPOSController* obj)-> bool {return obj->getNodeID() == node_id;});
 
 	if(it != epos_controller_list_.end())
@@ -527,7 +471,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 		// get the index:
 		auto index = std::distance(epos_controller_list_.begin(), it);
 
-		//ROS_INFO("node_id=%d is at index=%d", node_id, index);
+		//ROS_DEBUG("node_id=%d is at index=%d", node_id, index);
 
 		//set the nodeID
 		epos_controller_list_[index]->setNodeID(node_id); //FIXME probably not necessary !
@@ -540,59 +484,59 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 			{
 				case COB_ID_TRANSMIT_PDO_1_ENABLE : //getPositionVelocity
 				{
-					//ROS_INFO("TPDO1 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
+					//ROS_DEBUG("TPDO1 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
 
 					int32_t pos = (can_msg->data[3]<<24 | can_msg->data[2]<<16 | can_msg->data[1]<<8 | can_msg->data[0]); //0x00000000FFFFFFFF & data;
 					int32_t vel = (can_msg->data[7]<<24 | can_msg->data[6]<<16 | can_msg->data[5]<<8 | can_msg->data[4]);
 
-					//ROS_INFO("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
+					//ROS_DEBUG("NodeID[%d] pos[%d] vel[%d]", node_id, pos, vel);
 
 					if(epos_controller_list_[index]->getInverted() == true) //!< change sign
 					{
-						//ROS_INFO("idx[%d]node[%d] is inverted", index, node_id);
+						//ROS_DEBUG("idx[%d]node[%d] is inverted", index, node_id);
 
 						epos_controller_list_[index]->setPosition(-1*pos);
 						epos_controller_list_[index]->setVelocity(-1*vel);
 					}
 					else
 					{
-						//ROS_INFO("idx[%d]node[%d] is not inverted", index, node_id);
+						//ROS_DEBUG("idx[%d]node[%d] is not inverted", index, node_id);
 						
 						epos_controller_list_[index]->setPosition(pos);
 						epos_controller_list_[index]->setVelocity(vel);
 					}
 
-					//ROS_INFO("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
+					//ROS_DEBUG("1 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
 
 					break;
 				}
 
 				case COB_ID_TRANSMIT_PDO_2_ENABLE : //getCurrentFollErrStatusword
 				{
-					//ROS_INFO("TPDO2 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
-					//ROS_INFO("IT[%02X] [%02X %02X]\n", can_msg->id, can_msg->data[5] ,  can_msg->data[4]);
+					//ROS_DEBUG("TPDO2 NodeID[%d] COB-ID[%02X] RTR[%d] data[%d]\n", node_id, cob_id, can_msg->is_rtr, data);
+					//ROS_DEBUG("IT[%02X] [%02X %02X]\n", can_msg->id, can_msg->data[5] ,  can_msg->data[4]);
 
 					int16_t curr  = (can_msg->data[1]<<8 | can_msg->data[0]); //0x000000000000FFFF & data;
 					int16_t foll_err = (can_msg->data[3]<<8 | can_msg->data[2]); //(0x00000000FFFF0000 & data) >> 16;
 					uint16_t statwrd = (can_msg->data[5]<<8 | can_msg->data[4]); //(0x0000FFFF00000000 & data) >> 32;
 
-					//ROS_INFO("NodeID[%d] curr[%d] foll_err[%d] statwrd[%d]", node_id, curr, foll_err, statwrd);
+					//ROS_DEBUG("NodeID[%d] curr[%d] foll_err[%d] statwrd[%d]", node_id, curr, foll_err, statwrd);
 
 					if(epos_controller_list_[index]->getInverted() == true) curr = -1*curr; //change sign
 					epos_controller_list_[index]->setCurrent(curr);
 					epos_controller_list_[index]->setFollowingError(foll_err);
 					epos_controller_list_[index]->setStatusword(statwrd);
 
-					//ROS_INFO("TPDO2 Node-ID[%d] curr[%d] foll_err[%d] statwrd[%d]\n", node_id, curr, foll_err, statwrd);
+					//ROS_DEBUG("TPDO2 Node-ID[%d] curr[%d] foll_err[%d] statwrd[%d]\n", node_id, curr, foll_err, statwrd);
 
-					//ROS_INFO("2 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
+					//ROS_DEBUG("2 motor_data_array[%d] position[%d] current[%d] status[%d]", node_id, epos_controller_list_[index]->getPosition(), epos_controller_list_[index]->getCurrent(), epos_controller_list_[index]->getStatusword());
 
 					break;
 				}
 
 				case COB_ID_TRANSMIT_PDO_3_ENABLE : //getModesOfOperation
 				{
-					//ROS_INFO("TPDO3 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
+					//ROS_DEBUG("TPDO3 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
 
 					int8_t modes_of_op = 0x00000000000000FF & data;;
 
@@ -603,7 +547,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 				case COB_ID_TRANSMIT_PDO_4_ENABLE : //getIncEnc1CntAtIdxPls
 				{
-					//ROS_INFO("TPDO4 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
+					//ROS_DEBUG("TPDO4 Node ID : [%d], PDO COB-ID [%02X], data = %d\n", node_id, cobID, data);
 
 					uint32_t inc_enc1 = 0x00000000FFFFFFFF & data;;
 
@@ -614,14 +558,14 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 				case COB_ID_EMCY_DEFAULT : //Emergency frame
 				{
-					//ROS_INFO("Emergency frame, Node ID : [%d], PDO COB-ID [%02X], data = %02X\n", node_id, cobID, data);
-					//ROS_INFO("EF [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
+					//ROS_DEBUG("Emergency frame, Node ID : [%d], PDO COB-ID [%02X], data = %02X\n", node_id, cobID, data);
+					//ROS_DEBUG("EF [%02X][%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 					ROS_WARN("EF%02X-%02X%02X", can_msg->id, can_msg->data[1], can_msg->data[0]);
 					//ledchain[1] = 1;
 					//nh.logerror("Emergency frame");
 					epos_controller_list_[index]->setBoardStatus(1);
 					//first step : fault reset on controlword
-					//ROS_INFO("Node %d - STEP 1 - faultResetControlword\n", node_id);
+					//ROS_DEBUG("Node %d - STEP 1 - faultResetControlword\n", node_id);
 
 					//Debug for fault detection on brachii
 					epos_controller_list_[index]->faultResetControlword();        //TODO replace with RPDO
@@ -633,7 +577,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 					int32_t reg_data = 0x00000000;
 					reg_data = (int32_t)data;
 
-					//ROS_INFO("Node %d - reg_data [%02X]\n", node_id, reg_data);
+					//ROS_DEBUG("Node %d - reg_data [%02X]\n", node_id, reg_data);
 
 					if(reg_data == 0x00604060) //Controlword
 					{
@@ -641,21 +585,21 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 						{
 							epos_controller_list_[index]->setBoardStatus(2);
 							//second step : shutdown controlword
-							//ROS_INFO("Node %d - STEP 2 - shutdownControlwordIT\n", node_id);
+							//ROS_DEBUG("Node %d - STEP 2 - shutdownControlwordIT\n", node_id);
 							epos_controller_list_[index]->shutdownControlwordIT(); //TODO replace with RPDO
 						}
 						else if(epos_controller_list_[index]->getBoardStatus() == 2)
 						{
 							epos_controller_list_[index]->setBoardStatus(3);
 							//third step : Switch On & Enable Operation on Controlword
-							//ROS_INFO("Node %d - STEP 3 - switchOnEnableOperationControlwordIT\n", node_id);
+							//ROS_DEBUG("Node %d - STEP 3 - switchOnEnableOperationControlwordIT\n", node_id);
 							epos_controller_list_[index]->switchOnEnableOperationControlwordIT(); //TODO replace with RPDO
 						}
 						else if(epos_controller_list_[index]->getBoardStatus() == 3)
 						{
 							epos_controller_list_[index]->setBoardStatus(4);
 							//ask for statusword to check if the board has reset well
-							//ROS_INFO("Node %d - STEP 4 - getStatusword\n", node_id);
+							//ROS_DEBUG("Node %d - STEP 4 - getStatusword\n", node_id);
 							//TODO getStatusword(node_id);
 						}
 					}
@@ -663,8 +607,8 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 					{
 						//int32_t swData = 0x00000000;
 
-						//ROS_INFO("Node %d - Statusword [%02X]\n", node_id, can_msg->data[4]);
-						//ROS_INFO("Statusword frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
+						//ROS_DEBUG("Node %d - Statusword [%02X]\n", node_id, can_msg->data[4]);
+						//ROS_DEBUG("Statusword frame : [%02X] [%02X %02X %02X %02X %02X %02X %02X %02X]\n", can_msg->id, can_msg->data[7], can_msg->data[6], can_msg->data[5], can_msg->data[4], can_msg->data[3], can_msg->data[2], can_msg->data[1], can_msg->data[0]);
 
 						if(epos_controller_list_[index]->getBoardStatus() == 4)
 						{
@@ -680,10 +624,10 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 							}
 							else //try to reset again
 							{
-								//ROS_INFO("Node %d - try to reset again\n", node_id);
+								//ROS_DEBUG("Node %d - try to reset again\n", node_id);
 								epos_controller_list_[index]->setBoardStatus(1);
 								//go back to first step : fault reset on controlword
-								//ROS_INFO("Node %d - STEP 1 - faultResetControlword\n", node_id);
+								//ROS_DEBUG("Node %d - STEP 1 - faultResetControlword\n", node_id);
 								epos_controller_list_[index]->faultResetControlword();       //TODO replace with RPDO
 							}
 						}
@@ -710,7 +654,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 
 			for(int i=0; i<epos_controller_list_.size(); i++)
 			{
-				//ROS_INFO("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
+				//ROS_DEBUG("3 motor_data_array[%d] position[%d] current[%d] status[%d]", i+1, epos_controller_list_[i]->getPosition(), epos_controller_list_[i]->getCurrent(), epos_controller_list_[i]->getStatusword());
 
 				motor_data_array.motor_data[i].node_id = epos_controller_list_[i]->getNodeID();
 				motor_data_array.motor_data[i].position = epos_controller_list_[i]->getPosition();
@@ -731,11 +675,6 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 	} // if index found
 }
 
-/**
- *  @brief Callback function that receives EPOS commands and that fits it into the right frame format to be sent over CAN bus.
- *  @param motor_cmd_array Motor command multi-array.
- *  @return void
- */
 void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor_cmd_array)
 {	
 	//toggle flag, a message has been received
@@ -896,13 +835,12 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 		}
 		    
 		ros::Duration(0.00001).sleep(); //10us
-	}	
+	}
 
 	//ROS_INFO("cmd[%d] val[%d]", motor_cmd_array->motor_cmd[0].command, motor_cmd_array->motor_cmd[0].value);
 }
 
-/*** Services ***/
-bool CANLayer::ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, osa_communication::InitEPOSBoard::Response &res)
+bool CANLayer::ssSetupMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res)
 {
 	uint8_t node_id = req.node_id;
 
@@ -915,18 +853,43 @@ bool CANLayer::ssInitEPOSBoard(osa_communication::InitEPOSBoard::Request  &req, 
 		// get the index:
 		auto index = std::distance(epos_controller_list_.begin(), it);
 
-		if(epos_controller_list_[index]->initEposBoard() != EPOS_OK)
+		if(epos_controller_list_[index]->setup() != EPOS_OK)
 		{
-			ROS_ERROR("initEposBoard[%d] error", req.node_id);
-			return false;
-		}
+			ROS_ERROR("setup[%d] error", req.node_id);
+			res.success = false;
 
-		if(epos_controller_list_[index]->calibrate() != EPOS_OK)
-		{
-			ROS_ERROR("initEposBoard[%d] error", req.node_id);
 			return false;
 		}
 	}
+
+	res.success = true;
+
+	return true;
+}
+
+bool CANLayer::ssInitMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res)
+{
+	uint8_t node_id = req.node_id;
+
+	//Search the array for the index that has the requested nodeID
+	auto it = find_if(epos_controller_list_.begin(), epos_controller_list_.end(), [&node_id](const EPOSController* obj)-> bool {return obj->getNodeID() == node_id;});
+
+	if(it != epos_controller_list_.end())
+	{
+		// found element. it is an iterator to the first matching element.
+		// get the index:
+		auto index = std::distance(epos_controller_list_.begin(), it);
+
+		if(epos_controller_list_[index]->initialize() != EPOS_OK)
+		{
+			ROS_ERROR("initialize[%d] error", req.node_id);
+			res.success = false;
+
+			return false;
+		}
+	}
+
+	res.success = true;
 
 	return true;
 }
