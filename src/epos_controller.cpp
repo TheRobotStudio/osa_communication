@@ -224,12 +224,6 @@ void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socke
 		frame.data[i] = data[i];
 	}
 
-<<<<<<< HEAD
-	//write the CAN frame
-=======
-	//publish the CAN frame
-	//tx_can_frame_pub_->publish(frame);
->>>>>>> bcec2f71a2c93b2462558aa1c35990e41ca4a7af
 	//ROS_INFO("before");	
 	nbytes = write(*ptr_socket_can_, &frame, sizeof(struct can_frame));
 	//ROS_INFO("after");	

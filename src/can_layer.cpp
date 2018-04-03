@@ -418,7 +418,7 @@ bool CANLayer::init()
 
 void CANLayer::run()
 {
-	//ros::Rate r(50);
+	ros::Rate r(200);
 
 	int idx = 0;
 
@@ -432,10 +432,10 @@ void CANLayer::run()
 		
 		ros::spinOnce();
 
-		//r.sleep();
+		r.sleep();
 
 		//insert little pause
-		ros::Duration(0, 100000).sleep();
+		//ros::Duration(0, 100000).sleep();
 	}
 }
 
