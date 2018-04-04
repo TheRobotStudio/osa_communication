@@ -26,19 +26,16 @@
  
  /**
  * @file enums.h
- * @author Cyril Jourdan
- * @date Mar 03, 2017
- * @version 0.1.0
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Apr 3, 2018
+ * @date Created on Mar 11, 2015
+ * @version 0.1.1
  * @brief header file for enums definitions
- *
- * Contact: cyril.jourdan@therobotstudio.com
- * Created on : Mar 11, 2015
  */
 
 #ifndef OSA_COMMUNICATION_ENUMS_H
 #define OSA_COMMUNICATION_ENUMS_H
 
-//#define NUMBER_OF_MOTORS	2
 #define NUMBER_BYTES_PER_MSG        8
 #define NB_SAMPLES_MEDIAN           5
 #define PAUSE                       10

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Robot Studio
+ * Copyright (c) 2018, The Robot Studio
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,11 @@
 
 /**
  * @file can_layer.h
- * @author Cyril Jourdan
- * @date Mar 29, 2018
- * @version 0.1.0
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Apr 3, 2018
+ * @date Created on Aug 3, 2017
+ * @version 0.1.1
  * @brief Header file for class CANLayer
- *
- * Contact: cyril.jourdan@therobotstudio.com
- * Created on : Aug 3, 2017
  */
 
 #ifndef OSA_COMMUNICATION_CAN_LAYER_H
@@ -42,9 +40,9 @@
 #include "osa_msgs/MotorCmdMultiArray.h"
 #include "osa_msgs/MotorDataMultiArray.h"
 #include <can_msgs/Frame.h>
-#include <socketcan_bridge/topic_to_socketcan.h>
-#include <socketcan_bridge/socketcan_to_topic.h>
-#include <socketcan_interface/socketcan.h>
+//#include <socketcan_bridge/topic_to_socketcan.h>
+//#include <socketcan_bridge/socketcan_to_topic.h>
+//#include <socketcan_interface/socketcan.h>
 #include "epos_controller.h"
 //ROS services
 #include "osa_communication/SelectMotorController.h"
