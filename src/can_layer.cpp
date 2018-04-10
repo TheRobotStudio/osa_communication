@@ -346,7 +346,7 @@ bool CANLayer::init()
 	nodelet::Loader nodelet;
 	nodelet::M_string remap(ros::names::getRemappings());
 	nodelet::V_string nargv;
-	std::string nodelet_name = "socketcan_reader_nodelet";//ros::this_node::getName();
+	std::string nodelet_name = robot_namespace_ + "/socketcan_reader_nodelet"; //ros::this_node::getName();
 	nodelet.load(nodelet_name, "osa_communication/SocketCANReaderNodelet", remap, nargv);
 
 	//Subsriber, need the number of EPOS for the FIFO

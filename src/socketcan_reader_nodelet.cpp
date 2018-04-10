@@ -90,8 +90,13 @@ void SocketCANReaderNodelet::onInit()
 	int pos = name.find_last_of('/');
 	name = name.substr(pos + 1);
 
-	NODELET_INFO_STREAM("Initialising nodelet... [" << name << "]");
+	NODELET_INFO_STREAM("Initializing nodelet [" << name << "]");
 
+	std::string ns =  name.substr(name.find_first_of('/') + 1 );
+	NODELET_INFO_STREAM("Nodelet robot namespace [" << ns << "]");
+
+	//robot_namespace_ = name.substr(name.find_first_of('/') + 1 );
+/*
 	// Grab the namespace parameter
 	try
 	{
@@ -106,7 +111,7 @@ void SocketCANReaderNodelet::onInit()
 
 		return;
 	}
-
+*/
 	// Grab the parameters
 	try
 	{
