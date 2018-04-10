@@ -70,6 +70,7 @@ private:
 	void read_port(); //thread
 	int close_port();
 
+	std::string robot_namespace_;
 	std::string robot_name_;
 	std::string robot_can_device_;
 	int number_epos_boards_;

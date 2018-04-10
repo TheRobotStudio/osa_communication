@@ -66,6 +66,7 @@ using namespace osa_communication;
 //Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
 CANLayer::CANLayer() :
+robot_namespace_(""),
 robot_name_(""),
 robot_can_device_(""),
 epos_controller_list_(0),

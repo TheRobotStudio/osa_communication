@@ -252,7 +252,6 @@ void EPOSController::transmitPDOWrite(int tx_pdo_cob_id)
 
 	//ros::Duration(0.002).sleep();
 	ros::Duration(0, 50000).sleep();
-	//ros::Duration(0.001).sleep();
 }
 
 void EPOSController::setNMT(uint8_t cs)
@@ -263,8 +262,8 @@ void EPOSController::setNMT(uint8_t cs)
     data_[1] = node_id_;
     canToEposWrite(CAN_NMT_ID, data_, 2);
 
-    //ros::Duration(0.01).sleep();
-	ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
+	//ros::Duration(0.1).sleep();
 }
 
 int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
@@ -331,8 +330,8 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
         timeout++;
     }
 */
-    //ros::Duration(0.01).sleep();
-	ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
+	//ros::Duration(0.1).sleep();
 
     //ROS_INFO("setObjectSDO ACK received");
 
@@ -470,7 +469,7 @@ int8_t EPOSController::setModeOfOperationSDO(int8_t mode)
 
         default :
         {
-            ROS_INFO("Wrong mode value");
+            ROS_WARN("Wrong mode value");
             return EPOS_ERROR;
         }
     }
@@ -498,8 +497,8 @@ void EPOSController::shutdownControlword()
         ros::Duration(0.000001).sleep();
     }
 */
-    //ros::Duration(0.01).sleep();
-	ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
+	//ros::Duration(0.1).sleep();
 }
 
 void EPOSController::shutdownControlwordIT()
@@ -567,26 +566,26 @@ void EPOSController::faultResetControlword()
 
 int8_t EPOSController::setup()
 {
-    ROS_INFO("- initialise board ID = %d", node_id_);
+    ROS_INFO("- setup board ID = %d", node_id_);
 
     if(controller_type_ == EPOS2)
     {
         //First reset the node, that also clears the red LED that sometimes appears at the end of the CAN bus
         setNMT(CS_RESET_COMMUNICATION);
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.01).sleep();
         setNMT(CS_RESET_NODE);
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.01).sleep();
     }
 
     setNMT(CS_ENTER_PRE_OPERATIONAL);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.01).sleep();
 
     switch(motor_type_)
     {
         case NONE :
         {
         	ROS_WARN("\t...set to NONE. STOP here.");
-        	ROS_INFO("All boards are initialised");
+        	ROS_INFO("All boards are setup");
             return EPOS_ERROR;
         }
 
@@ -952,7 +951,7 @@ int8_t EPOSController::setup()
         }
     }
 
-    ROS_INFO("\tPDO parameters");
+    ROS_DEBUG("\tPDO parameters");
 
     if(controller_type_ == EPOS2)
     {
@@ -985,7 +984,7 @@ int8_t EPOSController::setup()
     setNMT(CS_ENTER_PRE_OPERATIONAL);
 
     //set RxPDO 1
-    ROS_INFO("\tRxPDO-1");
+    ROS_DEBUG("\tRxPDO-1");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_1_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_1_SUBINDEX, COB_ID_RECEIVE_PDO_1_DISABLE + node_id_, 4);
     //ROS_INFO("...TEST,");
@@ -1001,7 +1000,7 @@ int8_t EPOSController::setup()
     setPDO(RECEIVE_PDO_1_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_1_SUBINDEX, COB_ID_RECEIVE_PDO_1_ENABLE + node_id_, 4);
 
     //set RxPDO 2
-    ROS_INFO("\tRxPDO-2");
+    ROS_DEBUG("\tRxPDO-2");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_2_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_2_SUBINDEX, COB_ID_RECEIVE_PDO_2_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1016,7 +1015,7 @@ int8_t EPOSController::setup()
     setPDO(RECEIVE_PDO_2_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_2_SUBINDEX, COB_ID_RECEIVE_PDO_2_ENABLE + node_id_, 4);
 
     //set RxPDO 3
-    ROS_INFO("\tRxPDO-3");
+    ROS_DEBUG("\tRxPDO-3");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_3_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_3_SUBINDEX, COB_ID_RECEIVE_PDO_3_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1042,7 +1041,7 @@ int8_t EPOSController::setup()
     setPDO(RECEIVE_PDO_3_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_3_SUBINDEX, COB_ID_RECEIVE_PDO_3_ENABLE + node_id_, 4);
 
     //set RxPDO 4
-    ROS_INFO("\tRxPDO-4");
+    ROS_DEBUG("\tRxPDO-4");
     //Disable the PDO to modify it
     setPDO(RECEIVE_PDO_4_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_4_SUBINDEX, COB_ID_RECEIVE_PDO_4_DISABLE + node_id_, 4);
     //Writing 0 first to the number of mapped objects
@@ -1061,7 +1060,7 @@ int8_t EPOSController::setup()
     setPDO(RECEIVE_PDO_4_PARAMETER_INDEX, COB_ID_RECEIVE_PDO_4_SUBINDEX, COB_ID_RECEIVE_PDO_4_ENABLE + node_id_, 4);
 
     //set TxPDO 1
-    ROS_INFO("\tTxPDO-1");
+    ROS_DEBUG("\tTxPDO-1");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_1_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1073,7 +1072,7 @@ int8_t EPOSController::setup()
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_1_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x02, 1);
 
     //set TxPDO 2
-    ROS_INFO("\tTxPDO-2");
+    ROS_DEBUG("\tTxPDO-2");
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_2_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
 
     if(controller_type_ == EPOS2)
@@ -1099,7 +1098,7 @@ int8_t EPOSController::setup()
     }
 
     //set TxPDO 3
-    ROS_INFO("\tTxPDO-3");
+    ROS_DEBUG("\tTxPDO-3");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_3_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
@@ -1108,7 +1107,7 @@ int8_t EPOSController::setup()
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_3_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x01, 1);
 
     //set TxPDO 4
-    ROS_INFO("\tTxPDO-4");
+    ROS_DEBUG("\tTxPDO-4");
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_TRANSMIT_PDO_4_INDEX, NUMBER_OBJECTS_TRANSMIT_PDO_SUBINDEX, 0x00, 1);
     //Set object 1

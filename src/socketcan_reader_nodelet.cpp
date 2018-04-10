@@ -60,6 +60,7 @@ using namespace osa_communication_nodelet;
  * @brief Constructor.
  */
 SocketCANReaderNodelet::SocketCANReaderNodelet() :
+robot_namespace_(""),
 robot_name_(""),
 robot_can_device_(""),
 number_epos_boards_(0),
@@ -91,32 +92,46 @@ void SocketCANReaderNodelet::onInit()
 
 	NODELET_INFO_STREAM("Initialising nodelet... [" << name << "]");
 
+	// Grab the namespace parameter
+	try
+	{
+		nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		NODELET_ERROR(e.what());
+		NODELET_ERROR("Parameter robot_namespace didn't load correctly!");
+		NODELET_ERROR("Please check the name and try again.");
+
+		return;
+	}
+
 	// Grab the parameters
 	try
 	{
 		//load robot parameters
-		if(!nh.param("/robot/name", robot_name_, std::string("my_robot")))
+		if(!nh.param(robot_namespace_ + "/robot/name", robot_name_, std::string("my_robot")))
 		{
-			NODELET_WARN_STREAM("No /robot/name found in YAML config file");
+			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/name found in YAML config file");
 		}
 
-		if(!nh.param("/robot/dof", number_epos_boards_, int(0)))
+		if(!nh.param(robot_namespace_ + "/robot/dof", number_epos_boards_, int(0)))
 		{
-			NODELET_WARN_STREAM("No /robot/dof found in YAML config file");
+			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/dof found in YAML config file");
 		}
 
-		if(!nh.param("/robot/can_device", robot_can_device_, std::string("can0")))
+		if(!nh.param(robot_namespace_ + "/robot/can_device", robot_can_device_, std::string("can0")))
 		{
-			NODELET_WARN_STREAM("No /robot/can_device found in YAML config file");
+			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/can_device found in YAML config file");
 		}
 
 		NODELET_INFO_STREAM("Robot name=" << robot_name_<< ", dof=" << number_epos_boards_ << ", can=" << robot_can_device_);
 	}
 	catch(ros::InvalidNameException const &e)
 	{
-		NODELET_ERROR_STREAM(e.what());
-		NODELET_ERROR_STREAM("Parameters didn't load correctly!");
-		NODELET_ERROR_STREAM("Please modify your YAML config file and try again.");
+		NODELET_ERROR(e.what());
+		NODELET_ERROR("Parameters didn't load correctly!");
+		NODELET_ERROR("Please modify your YAML config file and try again.");
 		return;
 	}
 
