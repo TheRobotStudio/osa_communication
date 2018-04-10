@@ -95,7 +95,8 @@ void SocketCANReaderNodelet::onInit()
 	// Grab the namespace parameter
 	try
 	{
-		nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
+		//nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
+		nh.getParam("robot_namespace", robot_namespace_);
 	}
 	catch(ros::InvalidNameException const &e)
 	{
