@@ -157,7 +157,7 @@ bool CANLayer::init()
 		bool dof_exist = true;
 		//start with controller 1
 		int dof_idx = 1;
-		std::string rad_str = robot_namespace_ + "dof"; //common radical name
+		std::string rad_str = robot_namespace_ + "/dof"; //common radical name
 
 		while(dof_exist)
 		{
