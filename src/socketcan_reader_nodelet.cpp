@@ -92,10 +92,15 @@ void SocketCANReaderNodelet::onInit()
 
 	NODELET_INFO_STREAM("Initializing nodelet [" << name << "]");
 
-	std::string ns =  name.substr(name.find_first_of('/') + 1 );
+	std::string ns = nh.getUnresolvedNamespace();
+	std::string delimiter = "/";
+	//pos = ns.find_last_of('/');
+	//ns = ns.substr(pos + 1);
+	ns = ns.substr(0, ns.length() - name.length() - 1); //ns.find(delimiter));
+	//std::string ns =  name.substr(name.find_first_of('/') + 1);
 	NODELET_INFO_STREAM("Nodelet robot namespace [" << ns << "]");
 
-	//robot_namespace_ = name.substr(name.find_first_of('/') + 1 );
+	robot_namespace_ = ns; 
 /*
 	// Grab the namespace parameter
 	try
