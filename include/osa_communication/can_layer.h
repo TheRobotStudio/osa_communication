@@ -112,6 +112,7 @@ public:
 private:
 	const static int data_length = 8;
 
+	std::string robot_namespace_;
 	std::string robot_name_;
 	std::string robot_can_device_;
 	std::vector<EPOSController*> epos_controller_list_;

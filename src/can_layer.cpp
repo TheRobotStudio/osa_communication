@@ -26,13 +26,11 @@
 
 /**
  * @file can_layer.cpp
- * @author Cyril Jourdan
- * @date Mar 29, 2018
- * @version 0.1.0
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Apr 10, 2018
+ * @date Created on May 24, 2017
+ * @version 0.1.1
  * @brief Implementation file for the CAN communication, using SocketCAN
- *
- * Contact: cyril.jourdan@therobotstudio.com
- * Created on : May 24, 2017
  */
 
 //Other includes
@@ -107,13 +105,27 @@ bool CANLayer::init()
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle nh("~");
 
+	// Grab the namespace parameter
+	try
+	{
+		nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR(e.what());
+		ROS_ERROR("Parameter robot_namespace didn't load correctly!");
+		ROS_ERROR("Please check the name and try again.");
+
+		return false;
+	}
+
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
 	//Subsribers and publishers
 	//ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
 	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
-	motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
-	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1); //Publish the data received on /rx_can_frame
+	motor_cmd_sub_ = nh.subscribe(robot_namespace_ + "/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
+	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>(robot_namespace_ + "/motor_data_array", 1); //Publish the data received on /rx_can_frame
 
 	ROS_INFO("*** Grab the parameters from the YAML file ***");
 
@@ -121,41 +133,31 @@ bool CANLayer::init()
 	try
 	{
 		//load robot parameters
-		if(!nh.param("/robot/name", robot_name_, std::string("my_robot")))
+		if(!nh.param(robot_namespace_ + "/robot/name", robot_name_, std::string(robot_namespace_ + "my_robot")))
 		{
-			ROS_WARN("No /robot/name found in YAML config file");
+			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/name found in YAML config file");
 		}
 
-		if(!nh.param("/robot/dof", number_epos_boards_, int(0)))
+		if(!nh.param(robot_namespace_ + "/robot/dof", number_epos_boards_, int(0)))
 		{
-			ROS_WARN("No /robot/dof found in YAML config file");
+			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/dof found in YAML config file");
 		}
 
-		if(!nh.param("/robot/can_device", robot_can_device_, std::string("can0")))
+		if(!nh.param(robot_namespace_ + "/robot/can_device", robot_can_device_, std::string("can0")))
 		{
-			ROS_WARN("No /robot/can_device found in YAML config file");
+			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/can_device found in YAML config file");
 		}
 
 		ROS_INFO("Robot name=%s, dof=%d, can=%s", robot_name_.c_str(), number_epos_boards_, robot_can_device_.c_str());
-/*
-		//load mobile_base parameters
-		if(nh.searchParam("/mobile_base", mobile_base_str))
-		{
-			ROS_INFO("/mobile_base found in YAML config file");
-		}
-		else
-		{
-			ROS_WARN("No /mobile_base found in YAML config file");
-		}
-*/
+
 		//load controllers parameters
 		//Example:
-		//controller1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
+		//dof1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
 
 		bool dof_exist = true;
 		//start with controller 1
 		int dof_idx = 1;
-		std::string rad_str = "dof"; //common radical name
+		std::string rad_str = robot_namespace_ + "dof"; //common radical name
 
 		while(dof_exist)
 		{
