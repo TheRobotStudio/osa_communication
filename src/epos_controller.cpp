@@ -262,8 +262,8 @@ void EPOSController::setNMT(uint8_t cs)
     data_[1] = node_id_;
     canToEposWrite(CAN_NMT_ID, data_, 2);
 
-    ros::Duration(0.01).sleep();
-	//ros::Duration(0.1).sleep();
+    //ros::Duration(0.01).sleep();
+	ros::Duration(0.1).sleep();
 }
 
 int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
@@ -330,8 +330,8 @@ int8_t EPOSController::setObjectSDO(const int32_t object, int32_t value)
         timeout++;
     }
 */
-    ros::Duration(0.01).sleep();
-	//ros::Duration(0.1).sleep();
+    //ros::Duration(0.01).sleep();
+	ros::Duration(0.1).sleep();
 
     //ROS_INFO("setObjectSDO ACK received");
 
@@ -497,8 +497,8 @@ void EPOSController::shutdownControlword()
         ros::Duration(0.000001).sleep();
     }
 */
-    ros::Duration(0.01).sleep();
-	//ros::Duration(0.1).sleep();
+    //ros::Duration(0.01).sleep();
+	ros::Duration(0.1).sleep();
 }
 
 void EPOSController::shutdownControlwordIT()
@@ -572,13 +572,13 @@ int8_t EPOSController::setup()
     {
         //First reset the node, that also clears the red LED that sometimes appears at the end of the CAN bus
         setNMT(CS_RESET_COMMUNICATION);
-        ros::Duration(0.01).sleep();
+        //ros::Duration(0.01).sleep();
         setNMT(CS_RESET_NODE);
-        ros::Duration(0.01).sleep();
+        //ros::Duration(0.01).sleep();
     }
 
     setNMT(CS_ENTER_PRE_OPERATIONAL);
-    ros::Duration(0.01).sleep();
+    //ros::Duration(0.01).sleep();
 
     switch(motor_type_)
     {
@@ -1484,7 +1484,7 @@ int EPOSController::initialize()
     uint32_t profDec = 0;
     uint32_t maxSpeed = 0;
 
-    ROS_INFO("- Calibration for nodeID %d", node_id_);
+    ROS_INFO("- Initialization of nodeID %d", node_id_);
 
 	//set default parameters
 	switch(motor_type_)
@@ -1496,11 +1496,11 @@ int EPOSController::initialize()
 
 		case DCX10 :
 		{
-			ROS_INFO("\tDCX10");
+			ROS_DEBUG("\tDCX10");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 2000;
 				profVel = 2000;
@@ -1517,11 +1517,11 @@ int EPOSController::initialize()
 
 		case DCX14 :
 		{
-			ROS_INFO("\tDCX14");
+			ROS_DEBUG("\tDCX14");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 2000;
 				profVel = 2000;
@@ -1538,11 +1538,11 @@ int EPOSController::initialize()
 
 		case DCX16 : //!< return error if it is not a DC type of motor
 		{
-			ROS_INFO("\tDCX16");
+			ROS_DEBUG("\tDCX16");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 800;
@@ -1559,11 +1559,11 @@ int EPOSController::initialize()
 
 		case DCX22 :
 		{
-			ROS_INFO("\tDCX22");
+			ROS_DEBUG("\tDCX22");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 2000;
 				profVel = 2000;
@@ -1580,11 +1580,11 @@ int EPOSController::initialize()
 
 		case DCX32 :
 		{
-			ROS_INFO("\tDCX32");
+			ROS_DEBUG("\tDCX32");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 800;
@@ -1594,7 +1594,7 @@ int EPOSController::initialize()
 			}
 			else if(controller_type_ == EPOS4)
 			{
-				ROS_INFO("\tEPOS4");
+				ROS_DEBUG("\tEPOS4");
 
 				//outCurLmt = 1000;
 				profVel = 800;
@@ -1607,11 +1607,11 @@ int EPOSController::initialize()
 
 		case RE13 :
 		{
-			ROS_INFO("\tRE13");
+			ROS_DEBUG("\tRE13");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 2000;
 				profVel = 800;
@@ -1628,11 +1628,11 @@ int EPOSController::initialize()
 
 		case RE30 :
 		{
-			ROS_INFO("\tRE30");
+			ROS_DEBUG("\tRE30");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 800;
@@ -1642,7 +1642,7 @@ int EPOSController::initialize()
 			}
 			else if(controller_type_ == EPOS4)
 			{
-				ROS_INFO("\tEPOS4");
+				ROS_DEBUG("\tEPOS4");
 
 				profVel = 800;
 				profAcc = 1000;
@@ -1654,11 +1654,11 @@ int EPOSController::initialize()
 
 		case ECI40 :
 		{
-			ROS_INFO("\tECI40");
+			ROS_DEBUG("\tECI40");
 
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 800;
@@ -1668,7 +1668,7 @@ int EPOSController::initialize()
 			}
 			else if(controller_type_ == EPOS4)
 			{
-				ROS_INFO("\tEPOS4");
+				ROS_DEBUG("\tEPOS4");
 
 				profVel = 800;
 				profAcc = 1000;
@@ -1680,10 +1680,10 @@ int EPOSController::initialize()
 
 		case ECI52 :
 		{
-			ROS_INFO("\tECI52");
+			ROS_DEBUG("\tECI52");
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 800;
@@ -1693,7 +1693,7 @@ int EPOSController::initialize()
 			}
 			else if(controller_type_ == EPOS4)
 			{
-				ROS_INFO("\tEPOS4");
+				ROS_DEBUG("\tEPOS4");
 
 				profVel = 800;
 				profAcc = 1000;
@@ -1705,10 +1705,10 @@ int EPOSController::initialize()
 
 		case EC90 :
 		{
-			ROS_INFO("\tEC90");
+			ROS_DEBUG("\tEC90");
 			if(controller_type_ == EPOS2)
 			{
-				ROS_INFO("\tEPOS2");
+				ROS_DEBUG("\tEPOS2");
 
 				outCurLmt = 1000;
 				profVel = 1500;
@@ -1718,7 +1718,7 @@ int EPOSController::initialize()
 			}
 			else if(controller_type_ == EPOS4)
 			{
-				ROS_INFO("\tEPOS4");
+				ROS_DEBUG("\tEPOS4");
 
 				profVel = 1500;
 				profAcc = 10000;
@@ -1819,16 +1819,16 @@ int EPOSController::initialize()
 		}
 	}
 
-	ros::Duration(0.01).sleep();
+	ros::Duration(0.001).sleep();
 
 	//TPDO : get data once to fill in the arrays
 	getPositionVelocity();
-	ros::Duration(0.001).sleep();
+	ros::Duration(0.01).sleep();
 	getCurrentFollErrStatusword();
-	ros::Duration(0.001).sleep();
+	ros::Duration(0.01).sleep();
 
-	//print results to check things are working properly
-	ROS_INFO("\tpos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
+	//TODO print results to check things are working properly
+	//ROS_INFO("\tpos=%d vel=%d cur=%d stwrd=%d", position_, velocity_, current_, statusword_);
 
     return EPOS_OK;
 }
