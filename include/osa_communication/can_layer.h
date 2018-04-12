@@ -112,7 +112,6 @@ private:
 	const static int data_length = 8;
 
 	osa_common::RobotDescription *ptr_robot_description_;
-
 	//std::string robot_namespace_;
 	//std::string robot_name_;
 	//std::string robot_can_device_;

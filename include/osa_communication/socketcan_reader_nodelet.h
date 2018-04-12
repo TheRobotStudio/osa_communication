@@ -44,6 +44,7 @@
 #include <can_msgs/Frame.h>
 #include "registers.h"
 #include <boost/thread.hpp>
+#include "osa_common/robot_description.h"
 
 namespace osa_communication_nodelet
 {
@@ -70,10 +71,13 @@ private:
 	void read_port(); //thread
 	int close_port();
 
+	osa_common::RobotDescription *ptr_robot_description_;
+	/*
 	std::string robot_namespace_;
 	std::string robot_name_;
 	std::string robot_can_device_;
 	int number_epos_boards_;
+	*/
 	int soc_;
 	bool read_can_port_;
 	ros::Publisher pub_rx_can_frame_;

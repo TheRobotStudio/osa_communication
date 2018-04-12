@@ -50,20 +50,19 @@
 #include <unistd.h>
 
 #include "socketcan_reader_nodelet.h"
-//#include <pluginlib/class_list_macros.h>
 
-//PLUGINLIB_EXPORT_CLASS(osa_communication_nodelet::SocketCANReaderNodelet, nodelet::Nodelet)
-
+using namespace std;
 using namespace osa_communication_nodelet;
 
 /**
  * @brief Constructor.
  */
 SocketCANReaderNodelet::SocketCANReaderNodelet() :
-robot_namespace_(""),
-robot_name_(""),
-robot_can_device_(""),
-number_epos_boards_(0),
+ptr_robot_description_(nullptr),
+//robot_namespace_(""),
+//robot_name_(""),
+//ptr_robot_description_->getRobotCANDevice()(""),
+//number_epos_boards_(0),
 soc_(0),
 read_can_port_(false),
 pub_rx_can_frame_()
@@ -91,32 +90,44 @@ void SocketCANReaderNodelet::onInit()
 	name = name.substr(pos + 1);
 
 	NODELET_INFO_STREAM("Initializing nodelet [" << name << "]");
-
+/*
 	std::string ns = nh.getUnresolvedNamespace();
 	std::string delimiter = "/";
-	//pos = ns.find_last_of('/');
-	//ns = ns.substr(pos + 1);
-	ns = ns.substr(0, ns.length() - name.length() - 1); //ns.find(delimiter));
-	//std::string ns =  name.substr(name.find_first_of('/') + 1);
+	ns = ns.substr(0, ns.length() - name.length() - 1);
 	NODELET_INFO_STREAM("Nodelet robot namespace [" << ns << "]");
 
-	robot_namespace_ = ns; 
-/*
-	// Grab the namespace parameter
+	robot_namespace_ = ns;
+*/
+
+	ptr_robot_description_ = new osa_common::RobotDescription(&nh);
+
 	try
 	{
-		//nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
-		nh.getParam("robot_namespace", robot_namespace_);
+		ptr_robot_description_->grabRobotNamespaceParameterFromServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{
-		NODELET_ERROR(e.what());
-		NODELET_ERROR("Parameter robot_namespace didn't load correctly!");
-		NODELET_ERROR("Please check the name and try again.");
-
-		return;
+		ROS_ERROR("Invalid Robot Namespace parameter!");
+		throw e;
 	}
-*/
+
+	try
+	{
+		ptr_robot_description_->grabRobotParametersFromServer();
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR(e.what());
+		throw e;
+	}
+	catch(runtime_error const &e)
+	{
+		ROS_ERROR("Robot Namespace parameter not defined!");
+		throw e;
+	}
+
+	NODELET_INFO_STREAM("Nodelet robot namespace [" << ptr_robot_description_->getRobotNamespace() << "]");
+/*
 	// Grab the parameters
 	try
 	{
@@ -131,12 +142,12 @@ void SocketCANReaderNodelet::onInit()
 			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/dof found in YAML config file");
 		}
 
-		if(!nh.param(robot_namespace_ + "/robot/can_device", robot_can_device_, std::string("can0")))
+		if(!nh.param(robot_namespace_ + "/robot/can_device", ptr_robot_description_->getRobotCANDevice(), std::string("can0")))
 		{
 			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/can_device found in YAML config file");
 		}
 
-		NODELET_INFO_STREAM("Robot name=" << robot_name_<< ", dof=" << number_epos_boards_ << ", can=" << robot_can_device_);
+		NODELET_INFO_STREAM("Robot name=" << robot_name_<< ", dof=" << number_epos_boards_ << ", can=" << ptr_robot_description_->getRobotCANDevice());
 	}
 	catch(ros::InvalidNameException const &e)
 	{
@@ -145,17 +156,17 @@ void SocketCANReaderNodelet::onInit()
 		NODELET_ERROR("Please modify your YAML config file and try again.");
 		return;
 	}
-
+*/
 	//set CAN frame publisher, zero-copy data to the can_layer
-	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>("/rx_can_frame", 1));
+	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 1));
 
-	if(open_port(robot_can_device_.c_str()) == 0)
+	if(open_port(ptr_robot_description_->getRobotCANDevice().c_str()) == 0)
 	{
-		NODELET_INFO_STREAM("CAN port " << robot_can_device_ << " opened successfuly!");
+		NODELET_INFO_STREAM("CAN port " << ptr_robot_description_->getRobotCANDevice() << " opened successfuly!");
 	}
 	else
 	{
-		NODELET_ERROR_STREAM("Couldn't open CAN port " << robot_can_device_ << "!");
+		NODELET_ERROR_STREAM("Couldn't open CAN port " << ptr_robot_description_->getRobotCANDevice() << "!");
 		return;
 	}
 
