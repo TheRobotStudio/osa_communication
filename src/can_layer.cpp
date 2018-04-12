@@ -109,6 +109,46 @@ bool CANLayer::init()
 
 	ptr_robot_description_ = new osa_common::RobotDescription(&nh);
 
+	try
+	{
+		ptr_robot_description_->grabRobotNamespaceParameterFromServer();
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR("Invalid Robot Namespace parameter!");
+		return false;
+	}
+
+	try
+	{
+		ptr_robot_description_->grabRobotParametersFromServer();
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR(e.what());
+		return false;
+	}
+	catch(runtime_error const &e)
+	{
+		ROS_ERROR("Robot Namespace parameter not defined!");
+		return false;
+	}
+
+	try
+	{
+		ptr_robot_description_->grabDOFParametersFromServer();
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR(e.what());
+		return false;
+	}
+	catch(runtime_error const &e)
+	{
+		ROS_ERROR("Robot Namespace parameter not defined!");
+		return false;
+	}
+
 	//create the EPOS contollers
 	for(int i=0; i<ptr_robot_description_->getRobotDof(); i++)
 	{
