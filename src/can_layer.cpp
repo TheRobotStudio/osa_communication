@@ -111,7 +111,7 @@ bool CANLayer::init()
 
 	try
 	{
-		ptr_robot_description_->grabRobotNamespaceParameterFromServer();
+		ptr_robot_description_->grabRobotNamespaceFromParameterServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{
@@ -121,7 +121,7 @@ bool CANLayer::init()
 
 	try
 	{
-		ptr_robot_description_->grabRobotParametersFromServer();
+		ptr_robot_description_->grabRobotFromParameterServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{
@@ -136,7 +136,7 @@ bool CANLayer::init()
 
 	try
 	{
-		ptr_robot_description_->grabDOFParametersFromServer();
+		ptr_robot_description_->grabDOFFromParameterServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{

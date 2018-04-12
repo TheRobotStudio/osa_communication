@@ -103,7 +103,7 @@ void SocketCANReaderNodelet::onInit()
 
 	try
 	{
-		ptr_robot_description_->grabRobotNamespaceParameterFromServer();
+		ptr_robot_description_->grabRobotNamespaceFromParameterServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{
@@ -111,9 +111,11 @@ void SocketCANReaderNodelet::onInit()
 		throw e;
 	}
 
+	NODELET_INFO_STREAM("Nodelet robot namespace [" << ptr_robot_description_->getRobotNamespace() << "]");
+
 	try
 	{
-		ptr_robot_description_->grabRobotParametersFromServer();
+		ptr_robot_description_->grabRobotFromParameterServer();
 	}
 	catch(ros::InvalidNameException const &e)
 	{
@@ -126,7 +128,6 @@ void SocketCANReaderNodelet::onInit()
 		throw e;
 	}
 
-	NODELET_INFO_STREAM("Nodelet robot namespace [" << ptr_robot_description_->getRobotNamespace() << "]");
 /*
 	// Grab the parameters
 	try
