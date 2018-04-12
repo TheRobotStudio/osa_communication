@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(osa_communication)
 
+## Compile as C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -10,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   osa_msgs
+  osa_common
   can_msgs
   message_generation
   nodelet
@@ -60,7 +64,7 @@ generate_messages(
 catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES osa_serial
- CATKIN_DEPENDS cereal_port roscpp std_msgs osa_msgs can_msgs nodelet
+ CATKIN_DEPENDS cereal_port roscpp std_msgs osa_msgs osa_common can_msgs nodelet
 #  DEPENDS system_lib
  DEPENDS Eigen
 )
@@ -94,15 +98,14 @@ add_executable(osa_can_layer src/main.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-#add_dependencies(osa_can_layer osa_communication_generate_messages_cpp)
-add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_communication)
+add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_communication osa_common)
 add_dependencies(socketcan_reader_nodelet ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(osa_master_board ${catkin_LIBRARIES})
 target_link_libraries(socketcan_reader_nodelet ${catkin_LIBRARIES})
 target_link_libraries(osa_communication ${catkin_LIBRARIES})
-target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication)
+target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication osa_common)
 
 #############
 ## Install ##

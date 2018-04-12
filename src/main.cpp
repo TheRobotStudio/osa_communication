@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Robot Studio
+ * Copyright (c) 2018, The Robot Studio
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  * @file main.cpp
  * @author Cyril Jourdan
  * @date Aug 29, 2017
- * @version 0.1.0
+ * @version 0.1.1
  * @brief Main function for the Open Source Android CAN layer node.
  *
  * Contact: cyril.jourdan@therobotstudio.com
@@ -53,10 +53,6 @@ int main(int argc, char **argv)
 	//Main loop
 	while(ros::ok())
 	{
-		//ros::spinOnce(); //receive CAN frame : motor data and emergency frames; receive motor commands, publish motor data
-		//ROS_INFO("while");
-		//TODO add a little pause
-		//r.sleep();
 	}
 
 	return 0;

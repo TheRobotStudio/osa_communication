@@ -39,7 +39,8 @@
 #define OSA_COMMUNICATION_EPOS_CONTROLLER_H
 
 #include <ros/ros.h>
-#include "enums.h"
+#include "osa_common/enums.h"
+#include "osa_common/controller.h"
 #include "registers.h"
 
 #include <stdio.h>
@@ -63,28 +64,33 @@ namespace osa_communication
 /**
  * @brief Class representing a maxon EPOS controller.
  */
-class EPOSController
+class EPOSController// : public osa_common::Controller
 {
 public:
 	/**
 	 * @brief Constructor.
 	 */
+	EPOSController(osa_common::Controller* controller);
+
+	/*
 	EPOSController(std::string name, std::string degree_of_freedom_type,
 			int node_id, std::string controller_type,
 			std::string motor_type, bool inverted,
-			std::string mode, int value, int* ptr_socket_can); //ros::Publisher *tx_can_frame_pub);
+			std::string mode, int value); //ros::Publisher *tx_can_frame_pub);
+*/
 
 	/** @brief Destructor. */
 	~EPOSController();
 
 	//setters //TODO check wether assessors are useful
-	int	setName(std::string name);
-	int	setNodeID(uint8_t node_id);
-	int setControllerType(ControllerType controller_type);
+//	int	setName(std::string name);
+	//int	setNodeID(uint8_t node_id);
+/*	int setControllerType(ControllerType controller_type);
 	int setMotorType(MotorType motor_type);
 	int setInverted(bool inverted);
 	int setMode(ActivatedModeOfOperation mode);
 	int setValue(int value);
+*/
 	int setPtrSocketCAN(int* ptr_socket_can);
 	int setPosition(int32_t position);
 	int setCurrent(int16_t current);
@@ -95,14 +101,15 @@ public:
 	int setBoardStatus(int8_t board_status);
 
 	//getters
-	std::string	getName() const { return name_; };
+/*	std::string	getName() const { return name_; };
 	uint8_t getNodeID() const { return node_id_; };
-
 	ControllerType getControllerType() const { return controller_type_; };
 	MotorType getMotorType() const { return motor_type_; };
 	bool getInverted() const { return inverted_; };
 	ActivatedModeOfOperation getMode() const { return mode_; };
 	int getValue() const { return value_; };
+	*/
+	osa_common::Controller* getPtrController() const { return ptr_controller_; };
 	int* getPtrSocketCAN() const { return ptr_socket_can_; };
 	int32_t getPosition() const { return position_; };
 	int16_t getCurrent() const { return current_; };
@@ -349,20 +356,24 @@ public:
 	void getData();
 
 private:
+	const static int data_length = 8;
+	/*
 	std::string name_;
 	DegreeOfFreedomType degree_of_freedom_type_;
 	uint8_t node_id_;
 	ControllerType controller_type_;
 	MotorType motor_type_;
-	bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
-	ActivatedModeOfOperation mode_; //FIXME duplicate of modes_of_operation_
+	*/
+	//bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
+	/*ActivatedModeOfOperation mode_; //FIXME duplicate of modes_of_operation_
 	int value_;
-
+*/
 	//ros::Publisher *tx_can_frame_pub_;
+	osa_common::Controller* ptr_controller_;
 	int* ptr_socket_can_;
-	char data_[8]; //can message data
+	char data_[data_length]; //can message data
 	ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge
-	ROSCommand ros_cmd_;
+	//ROSCommand ros_cmd_;
 
 	//latest stored commands
 	/**<RPDO1 */

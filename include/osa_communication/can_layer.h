@@ -39,10 +39,9 @@
 #include <ros/ros.h>
 #include "osa_msgs/MotorCmdMultiArray.h"
 #include "osa_msgs/MotorDataMultiArray.h"
+#include "osa_common/robot_description.h"
 #include <can_msgs/Frame.h>
-//#include <socketcan_bridge/topic_to_socketcan.h>
-//#include <socketcan_bridge/socketcan_to_topic.h>
-//#include <socketcan_interface/socketcan.h>
+
 #include "epos_controller.h"
 //ROS services
 #include "osa_communication/SelectMotorController.h"
@@ -112,11 +111,14 @@ public:
 private:
 	const static int data_length = 8;
 
-	std::string robot_namespace_;
-	std::string robot_name_;
-	std::string robot_can_device_;
+	osa_common::RobotDescription *ptr_robot_description_;
+
+	//std::string robot_namespace_;
+	//std::string robot_name_;
+	//std::string robot_can_device_;
 	std::vector<EPOSController*> epos_controller_list_;
-	int number_epos_boards_; /**< Size of epos_controller_list_ */
+	//int number_epos_boards_; /**< Size of epos_controller_list_ */
+
 	char data_[data_length];
 	ros::Subscriber rx_can_frame_sub_;
 	ros::Subscriber motor_cmd_sub_;
