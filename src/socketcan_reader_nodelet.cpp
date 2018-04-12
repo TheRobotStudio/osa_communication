@@ -90,26 +90,17 @@ void SocketCANReaderNodelet::onInit()
 	name = name.substr(pos + 1);
 
 	NODELET_INFO_STREAM("Initializing nodelet [" << name << "]");
-/*
+
 	std::string ns = nh.getUnresolvedNamespace();
 	std::string delimiter = "/";
 	ns = ns.substr(0, ns.length() - name.length() - 1);
 	NODELET_INFO_STREAM("Nodelet robot namespace [" << ns << "]");
 
-	robot_namespace_ = ns;
-*/
+	//robot_namespace_ = ns;
 
 	ptr_robot_description_ = new osa_common::RobotDescription(&nh);
 
-	try
-	{
-		ptr_robot_description_->grabRobotNamespaceFromParameterServer();
-	}
-	catch(ros::InvalidNameException const &e)
-	{
-		ROS_ERROR("Invalid Robot Namespace parameter!");
-		throw e;
-	}
+	ptr_robot_description_->setRobotNamespace(ns);
 
 	NODELET_INFO_STREAM("Nodelet robot namespace [" << ptr_robot_description_->getRobotNamespace() << "]");
 
