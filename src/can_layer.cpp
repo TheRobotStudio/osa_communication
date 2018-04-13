@@ -27,7 +27,7 @@
 /**
  * @file can_layer.cpp
  * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
- * @date Modified on Apr 10, 2018
+ * @date Modified on Apr 12, 2018
  * @date Created on May 24, 2017
  * @version 0.1.1
  * @brief Implementation file for the CAN communication, using SocketCAN
@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include <string.h>
 
 #include <net/if.h>
 #include <sys/types.h>
@@ -56,21 +55,14 @@
 #include "nodelet/loader.h"
 
 //#define LOOP_RATE 15
-#define CAN_FRAME_FIFO_SIZE_FACTOR 4 //(2 request + 2 answers) factor for FIFO size: example (2 motors*(2 request + 2 answers) = 8)
+
+//TODO send CAN msg through filter and command builder
 
 using namespace std;
 using namespace osa_communication;
-//Structure TODO replace with Controller class from osa_gui moved to a new package osa_common
 
 CANLayer::CANLayer() :
 ptr_robot_description_(nullptr),
-/*
-robot_namespace_(""),
-robot_name_(""),
-ptr_robot_description_->getRobotCANDevice()(""),
-ptr_robot_description_->getControllerList()(0),
-ptr_robot_description_->getRobotDof()(0),
-*/
 data_ ({0}),
 rx_can_frame_sub_(),
 motor_cmd_sub_(),
@@ -105,9 +97,10 @@ bool CANLayer::init()
 
 	ros::start(); //explicitly needed since our nodehandle is going out of scope.
 	ros::NodeHandle nh("~");
-	//ros::NodeHandle *nh = new ros::NodeHandle("~");
 
 	ptr_robot_description_ = new osa_common::RobotDescription(&nh);
+
+	ROS_INFO("*** Grab the parameters from the Parameter Server ***");
 
 	try
 	{
@@ -157,206 +150,13 @@ bool CANLayer::init()
 		epos_controller_list_.push_back(epos_controller);
 	}
 
-/*
-	// Grab the namespace parameter
-	try
-	{
-		nh.param("robot_namespace", robot_namespace_, std::string("/my_robot_ns"));
-	}
-	catch(ros::InvalidNameException const &e)
-	{
-		ROS_ERROR(e.what());
-		ROS_ERROR("Parameter robot_namespace didn't load correctly!");
-		ROS_ERROR("Please check the name and try again.");
-
-		return false;
-	}
-*/
-
 	ROS_INFO("*** Init Publishers and Subsribers ***\n");
 	//Subsribers and publishers
-	//ptr_pub_tx_can_frame_ = new ros::Publisher(nh.advertise<can_msgs::Frame>("/sent_messages", 1)); //("/sent_messages", 8, true)); //latch message
-	//motor_cmd_sub_ = nh.subscribe("/motor_cmd_array", 1, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	//FIXME find the right size of the msg buffer, 4 for the 4 steps ? 100 ?
 	motor_cmd_sub_ = nh.subscribe(ptr_robot_description_->getRobotNamespace() + "/motor_cmd_array", 100, &CANLayer::sendMotorCmdMultiArrayCallback, this); //receive commands here and translate them into CAN frames and send to /sent_messages
 	pub_motor_data_ = nh.advertise<osa_msgs::MotorDataMultiArray>(ptr_robot_description_->getRobotNamespace() + "/motor_data_array", 1); //Publish the data received on /rx_can_frame
 
-	ROS_INFO("*** Grab the parameters from the YAML file ***");
-
-/*
-	// Grab the parameters
-	try
-	{
-		//load robot parameters
-		if(!nh.param(robot_namespace_ + "/robot/name", robot_name_, std::string(robot_namespace_ + "my_robot")))
-		{
-			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/name found in YAML config file");
-		}
-
-		if(!nh.param(robot_namespace_ + "/robot/dof", ptr_robot_description_->getRobotDof(), int(0)))
-		{
-			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/dof found in YAML config file");
-		}
-
-		if(!nh.param(robot_namespace_ + "/robot/can_device", ptr_robot_description_->getRobotCANDevice(), std::string("can0")))
-		{
-			ROS_WARN_STREAM("No " << robot_namespace_ << "/robot/can_device found in YAML config file");
-		}
-
-		ROS_INFO("Robot name=%s, dof=%d, can=%s", robot_name_.c_str(), ptr_robot_description_->getRobotDof(), ptr_robot_description_->getRobotCANDevice().c_str());
-
-		//load controllers parameters
-		//Example:
-		//dof1: {node_id: 1, name: 'right wheel', type: 'EPOS4', inverted: true, motor: 'EC90', mode: 'PROFILE_VELOCITY_MODE', value: 0}
-
-		bool dof_exist = true;
-		//start with controller 1
-		int dof_idx = 1;
-		std::string rad_str = robot_namespace_ + "/dof"; //common radical name
-
-		while(dof_exist)
-		{
-			//create the string "controller+index" to search for the controller parameter with that index number
-			std::ostringstream dof_idx_path;
-			dof_idx_path << rad_str << dof_idx;
-
-			std::string absolute_str = "absolute_str";
-
-			//ROS_INFO("string=%s", dof_idx_path.str().c_str());
-
-			if(nh.searchParam(dof_idx_path.str(), absolute_str))
-			{
-				//ROS_INFO("%s found in YAML config file", dof_idx_path.str().c_str());
-				//ROS_INFO("absolute_str = %s", absolute_str.c_str());
-
-				//create variables to store the controller parameters:
-				std:: string name;
-				std:: string type;
-				int node_id = 0;
-				std:: string controller;
-				std:: string motor;
-				bool inverted;
-				std:: string mode;
-				int value;
-
-				//grab the parameters of the current controller
-
-				//name
-				std::ostringstream name_path;
-				name_path << absolute_str << "/name";
-				if(!nh.getParam(name_path.str(), name))
-				{
-					ROS_ERROR("Can't grab param name for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//type
-				std::ostringstream type_path;
-				type_path << absolute_str << "/type";
-				if(!nh.getParam(type_path.str(), type))
-				{
-					ROS_ERROR("Can't grab param type for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//node_id
-				std::ostringstream node_id_path;
-				node_id_path << absolute_str << "/node_id";
-				if(!nh.getParam(node_id_path.str(), node_id))
-				{
-					ROS_ERROR("Can't grab param node_id for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//controller
-				std::ostringstream controller_path;
-				controller_path << absolute_str << "/controller";
-				if(!nh.getParam(controller_path.str(), controller))
-				{
-					ROS_ERROR("Can't grab param controller for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//motor
-				std::ostringstream motor_path;
-				motor_path << absolute_str << "/motor";
-				if(!nh.getParam(motor_path.str(), motor))
-				{
-					ROS_ERROR("Can't grab param motor for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//inverted
-				std::ostringstream inverted_path;
-				inverted_path << absolute_str << "/inverted";
-				if(!nh.getParam(inverted_path.str(), inverted))
-				{
-					ROS_ERROR("Can't grab param inverted for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//mode
-				std::ostringstream mode_path;
-				mode_path << absolute_str << "/mode";
-				if(!nh.getParam(mode_path.str(), mode))
-				{
-					ROS_ERROR("Can't grab param mode for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//value
-				std::ostringstream value_path;
-				value_path << absolute_str << "/value";
-				if(!nh.getParam(value_path.str(), value))
-				{
-					ROS_ERROR("Can't grab param value for %s", dof_idx_path.str().c_str());
-					return false;
-				}
-
-				//print the dof parameters
-				ROS_INFO("%s : name[%s], type[%s], node_id[%d], controller[%s], motor[%s], inverted[%d], mode[%s], value[%d]", dof_idx_path.str().c_str(),
-						name.c_str(), type.c_str(), node_id, controller.c_str(), motor.c_str(), inverted, mode.c_str(), value);
-
-				//create a new EPOS controller
-				EPOSController *epos_controller = new EPOSController(name, type, node_id, controller, motor, inverted, mode, value, ptr_socket_can_);
-
-				//epos_controller->
-
-				//v_controllers.push_back(controller);
-				ptr_robot_description_->getControllerList().push_back(epos_controller);
-
-				//increment to search for the next controller
-				dof_idx++;
-			}
-			else
-			{
-				dof_exist = false;
-				//ROS_INFO("No more controllers found in YAML config file");
-			}
-
-			//dof_exist = false;
-		}
-
-		dof_idx--;
-		if(ptr_robot_description_->getRobotDof() == dof_idx) ROS_INFO("Same number of DOF(%d) and controllers(%d) defined in the YAML config file!", ptr_robot_description_->getRobotDof(), dof_idx);
-		else
-		{
-			ROS_WARN("Not the same number of DOF(%d) and controllers(%d) defined in the YAML config file!", ptr_robot_description_->getRobotDof(), dof_idx);
-			throw 1;
-		}
-
-		ROS_INFO("Parameters loaded successfully!\n");
-	}
-	catch(ros::InvalidNameException const &e)
-	{
-		ROS_ERROR(e.what());
-		ROS_ERROR("Parameters didn't load correctly!");
-		ROS_ERROR("Please modify your YAML config file and try again.");
-
-		return false;
-	}
-*/
-	//Create the SocketCAN
+	//Create the SocketCAN //TODO move into a class
 	ROS_INFO("*** Create the SocketCAN TX ***");
 	
 	int s;
@@ -403,8 +203,7 @@ bool CANLayer::init()
 	nodelet.load(nodelet_name, "osa_communication/SocketCANReaderNodelet", remap, nargv);
 
 	//Subsriber, need the number of EPOS for the FIFO
-	//TODO put the define as a static in the namespace
-	rx_can_frame_sub_ = nh.subscribe("/rx_can_frame", ptr_robot_description_->getRobotDof()*CAN_FRAME_FIFO_SIZE_FACTOR, &CANLayer::receiveCANMessageCallback, this);
+	rx_can_frame_sub_ = nh.subscribe(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", ptr_robot_description_->getRobotDof()*can_frame_fifo_size_factor, &CANLayer::receiveCANMessageCallback, this);
 
 	//Setup Motor Controllers
 	ROS_INFO("Do you want to setup the motor controllers ? (y/n)");
@@ -417,7 +216,7 @@ bool CANLayer::init()
 
 		for(int i=0; i<ptr_robot_description_->getRobotDof(); i++)
 		{
-			if(epos_controller_list_[i]->setup() != EPOS_OK)
+			if(epos_controller_list_[i]->setup() != EPOS_OK) //TODO use exception instead of error code
 			{
 				ROS_ERROR("Setup error");
 				return false; //exit the main function and return fault if a setup failed
@@ -474,7 +273,7 @@ bool CANLayer::init()
 
 void CANLayer::run()
 {
-	ros::Rate r(200);
+	ros::Rate r(200); //TODO use heartbeat*4 ?
 
 	int idx = 0;
 
@@ -482,8 +281,8 @@ void CANLayer::run()
 	{
 		//get the sensor value of one node
 		epos_controller_list_[idx]->getData(); //TODO make this automatic with a hearbeat from the CAN
-		idx++;
 
+		idx++;
 		if(idx == ptr_robot_description_->getRobotDof()) idx = 0;
 		
 		ros::spinOnce();

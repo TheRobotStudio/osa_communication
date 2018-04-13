@@ -127,9 +127,9 @@ void sendMotorCmdArrayCallback(const osa_msgs::MotorCmdMultiArrayConstPtr& motor
 		//toggle flag, a message has been received
 		msg_received = true;
 
-		#ifdef TRS_DEBUG
-		ROS_INFO("msg_received");
-		#endif
+		//#ifdef TRS_DEBUG
+		ROS_DEBUG("msg_received");
+		//#endif
 
 		//ROS_INFO("cmd[%d] val[%d]", motorCmd_ma->motor_cmd[0].command, motorCmd_ma->motor_cmd[0].value);
 
@@ -164,10 +164,24 @@ int main(int argc, char** argv)
     ros::Rate r(LOOP_RATE);
 
     // Parameters
+    std::string robot_namespace;
     std::string usb_device_name;
-    // Grab the parameters
-    nh.param("usb_device", usb_device_name, std::string("/dev/ttyUSB0"));
     //TODO make LOOP_RATE and HEART_BEAT as a parameter
+
+    // Grab the parameters
+	try
+	{
+		nh.param("robot_namespace", robot_namespace, std::string("/my_robot_ns"));
+		nh.param("usb_device", usb_device_name, std::string("/dev/ttyUSB0"));
+	}
+	catch(ros::InvalidNameException const &e)
+	{
+		ROS_ERROR(e.what());
+		ROS_ERROR("Parameter didn't load correctly!");
+		ROS_ERROR("Please check the name and try again.");
+
+		throw e;
+	}
 
     cereal::CerealPort device;
     char reply[REPLY_SIZE] = {0x00};
@@ -175,8 +189,8 @@ int main(int argc, char** argv)
 
     bool data_valid = false;
 
-	ros::Subscriber cmd_sub = nh.subscribe("/motor_cmd_array", 1, sendMotorCmdArrayCallback);
-	ros::Publisher data_pub = nh.advertise<osa_msgs::MotorDataMultiArray>("/motor_data_array", 1);
+	ros::Subscriber cmd_sub = nh.subscribe(robot_namespace + "/motor_cmd_array", 1, sendMotorCmdArrayCallback);
+	ros::Publisher data_pub = nh.advertise<osa_msgs::MotorDataMultiArray>(robot_namespace + "/motor_data_array", 1);
 	osa_msgs::MotorDataMultiArray motor_data_array;
 
 	//create the data multi array
@@ -308,7 +322,6 @@ int main(int argc, char** argv)
 
         	//publish it
         	data_pub.publish(motor_data_array);
-        	//ROS_INFO("Valid");
         	data_valid = false; //reset flag
         }
         else

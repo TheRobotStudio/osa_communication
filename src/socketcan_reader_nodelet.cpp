@@ -84,7 +84,7 @@ void SocketCANReaderNodelet::onInit()
 {
 	ros::NodeHandle nh = this->getPrivateNodeHandle();
 
-	// resolve node(let) name
+	// resolve nodelet name
 	std::string name = nh.getUnresolvedNamespace();
 	int pos = name.find_last_of('/');
 	name = name.substr(pos + 1);
@@ -92,11 +92,8 @@ void SocketCANReaderNodelet::onInit()
 	NODELET_INFO_STREAM("Initializing nodelet [" << name << "]");
 
 	std::string ns = nh.getUnresolvedNamespace();
-	std::string delimiter = "/";
+	//std::string delimiter = "/";
 	ns = ns.substr(0, ns.length() - name.length() - 1);
-	NODELET_INFO_STREAM("Nodelet robot namespace [" << ns << "]");
-
-	//robot_namespace_ = ns;
 
 	ptr_robot_description_ = new osa_common::RobotDescription(&nh);
 
@@ -119,36 +116,6 @@ void SocketCANReaderNodelet::onInit()
 		throw e;
 	}
 
-/*
-	// Grab the parameters
-	try
-	{
-		//load robot parameters
-		if(!nh.param(robot_namespace_ + "/robot/name", robot_name_, std::string("my_robot")))
-		{
-			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/name found in YAML config file");
-		}
-
-		if(!nh.param(robot_namespace_ + "/robot/dof", number_epos_boards_, int(0)))
-		{
-			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/dof found in YAML config file");
-		}
-
-		if(!nh.param(robot_namespace_ + "/robot/can_device", ptr_robot_description_->getRobotCANDevice(), std::string("can0")))
-		{
-			NODELET_WARN_STREAM("No " << robot_namespace_ << "/robot/can_device found in YAML config file");
-		}
-
-		NODELET_INFO_STREAM("Robot name=" << robot_name_<< ", dof=" << number_epos_boards_ << ", can=" << ptr_robot_description_->getRobotCANDevice());
-	}
-	catch(ros::InvalidNameException const &e)
-	{
-		NODELET_ERROR(e.what());
-		NODELET_ERROR("Parameters didn't load correctly!");
-		NODELET_ERROR("Please modify your YAML config file and try again.");
-		return;
-	}
-*/
 	//set CAN frame publisher, zero-copy data to the can_layer
 	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 1));
 

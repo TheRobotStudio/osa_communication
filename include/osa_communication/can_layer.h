@@ -110,14 +110,10 @@ public:
 
 private:
 	const static int data_length = 8;
+	const static int can_frame_fifo_size_factor = 4; //(2 request + 2 answers) factor for FIFO size: example (2 motors*(2 request + 2 answers) = 8)
 
 	osa_common::RobotDescription *ptr_robot_description_;
-	//std::string robot_namespace_;
-	//std::string robot_name_;
-	//std::string robot_can_device_;
 	std::vector<EPOSController*> epos_controller_list_;
-	//int number_epos_boards_; /**< Size of epos_controller_list_ */
-
 	char data_[data_length];
 	ros::Subscriber rx_can_frame_sub_;
 	ros::Subscriber motor_cmd_sub_;
