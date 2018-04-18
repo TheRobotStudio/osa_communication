@@ -26,7 +26,7 @@
 
 /**
  * @file master_board.cpp
- * @author Cyril Jourdan
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
  * @date Mar 03, 2017
  * @version 0.1.0
  * @brief Implementation file for the serial communication between ROS and the Master Board

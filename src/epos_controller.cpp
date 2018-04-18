@@ -26,7 +26,7 @@
 
 /**
  * @file epos_controller.cpp
- * @author Cyril Jourdan
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
  * @date Mar 30, 2018
  * @version 0.1.0
  * @brief Implementation file for class EPOSController

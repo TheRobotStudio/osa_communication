@@ -26,7 +26,7 @@
 
 /**
  * @file socketcan_reader_nodelet.cpp
- * @author Cyril Jourdan
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
  * @date Feb 21, 2018
  * @version 0.1.0
  * @brief Implementation file for class SocketCANReaderNodelet

@@ -26,7 +26,7 @@
 
 /**
  * @file main.cpp
- * @author Cyril Jourdan
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
  * @date Aug 29, 2017
  * @version 0.1.1
  * @brief Main function for the Open Source Android CAN layer node.

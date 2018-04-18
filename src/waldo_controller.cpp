@@ -27,6 +27,15 @@
  *      Author: Cyril Jourdan (cyril.jourdan@therobotstudio.com)
  */
 
+/**
+ * @file waldo_controller.cpp
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Apr 18, 2018
+ * @date Created on Feb 28, 2016
+ * @version 0.1.1
+ * @brief Implementation file for the Waldo controller
+ */
+
 /*** Includes ***/
 #include <ros/ros.h>
 #include <cereal_port/CerealPort.h>
