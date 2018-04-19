@@ -159,7 +159,7 @@ int SocketCANReaderNodelet::open_port(const char *port)
 
 	fcntl(soc_, F_SETFL, O_NONBLOCK);
 
-	if (bind(soc_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+	if(bind(soc_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 	{
 		return (-1);
 	}
