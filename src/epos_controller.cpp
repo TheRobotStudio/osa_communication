@@ -219,7 +219,7 @@ int EPOSController::setBoardStatus(int8_t board_status)
 //canToEposWrite publish a CAN frame topic
 void EPOSController::canToEposWrite(int id, char* data, char len) //, int* socket_can)
 {
-	int nbytes;
+	int nbytes = 0; //FIXME valgrind - try to init with = 0 to solve warning
 	struct can_frame frame;
 	frame.can_id = id;
 	frame.can_dlc = 8;
