@@ -1252,7 +1252,7 @@ void EPOSController::setTargetVelocity(int32_t velocity)
     //!> send the CAN frame.
     canToEposWrite(COB_ID_RECEIVE_PDO_1_ENABLE + ptr_controller_->getNodeID(), data_, 8); //write 8 bytes
 
-    ROS_INFO("Velocity command just sent");
+    ROS_DEBUG("Velocity command just sent");
 
     if(ptr_controller_->getControllerType() == EPOS2) ros::Duration(0.0001).sleep();
     else if(ptr_controller_->getControllerType() == EPOS4) ros::Duration(0.001).sleep();
@@ -1454,7 +1454,7 @@ void EPOSController::setModesOfOperation(int8_t mode)
 
         default :
         {
-            ROS_INFO("Wrong mode value");
+        	ROS_WARN("Wrong mode value");
             return;
         }
     }

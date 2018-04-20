@@ -474,7 +474,7 @@ void CANLayer::receiveCANMessageCallback(const can_msgs::FrameConstPtr& can_msg)
 							if(fault == 0) //reset OK
 							{
 								epos_controller_list_[index]->setBoardStatus(0); //Board is reset and enable OK
-								ROS_INFO("%d OK", node_id);
+								ROS_DEBUG("%d OK", node_id);
 								//ledchain[1] = 0;
 							}
 							else //try to reset again
@@ -565,14 +565,14 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 				case SET_TARGET_POSITION:
 				{
 					//ROS_INFO("SET_TARGET_POSITION");
-					ROS_INFO("SET_TARGET_POSITION: cmd[%d] val[%d]", command, value);
+					ROS_DEBUG("SET_TARGET_POSITION: cmd[%d] val[%d]", command, value);
 					epos_controller_list_[index]->setTargetPosition(value);
 					break;
 				}
 
 				case SET_TARGET_VELOCITY:
 				{
-					ROS_INFO("SET_TARGET_VELOCITY: cmd[%d] val[%d]", command, value);
+					ROS_DEBUG("SET_TARGET_VELOCITY: cmd[%d] val[%d]", command, value);
 					epos_controller_list_[index]->setTargetVelocity(value);
 					break;
 				}
@@ -609,7 +609,7 @@ void CANLayer::sendMotorCmdMultiArrayCallback(const osa_msgs::MotorCmdMultiArray
 
 				case SET_CURRENT_MODE_SETTING_VALUE:
 				{
-					ROS_INFO("SET_CURRENT_MODE_SETTING_VALUE: cmd[%d] val[%d]", command, value);
+					ROS_DEBUG("SET_CURRENT_MODE_SETTING_VALUE: cmd[%d] val[%d]", command, value);
 					epos_controller_list_[index]->setCurrentModeSettingValue(value);
 					break;
 				}
