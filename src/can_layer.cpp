@@ -203,7 +203,8 @@ bool CANLayer::init()
 	nodelet.load(nodelet_name, "osa_communication/SocketCANReaderNodelet", remap, nargv);
 
 	//Subsriber, need the number of EPOS for the FIFO
-	rx_can_frame_sub_ = nh.subscribe(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", ptr_robot_description_->getRobotDof()*can_frame_fifo_size_factor, &CANLayer::receiveCANMessageCallback, this);
+	//rx_can_frame_sub_ = nh.subscribe(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", ptr_robot_description_->getRobotDof()*can_frame_fifo_size_factor, &CANLayer::receiveCANMessageCallback, this);
+	rx_can_frame_sub_ = nh.subscribe(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 100, &CANLayer::receiveCANMessageCallback, this);
 
 	//Setup Motor Controllers
 	ROS_INFO("Do you want to setup the motor controllers ? (y/n)");

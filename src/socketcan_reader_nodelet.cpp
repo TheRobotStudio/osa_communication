@@ -117,7 +117,8 @@ void SocketCANReaderNodelet::onInit()
 	}
 
 	//set CAN frame publisher, zero-copy data to the can_layer
-	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 1));
+	//pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 1));
+	pub_rx_can_frame_ = ros::Publisher(nh.advertise<can_msgs::Frame>(ptr_robot_description_->getRobotNamespace() + "/rx_can_frame", 100));
 
 	if(open_port(ptr_robot_description_->getRobotCANDevice().c_str()) == 0)
 	{
@@ -232,8 +233,8 @@ void SocketCANReaderNodelet::read_port()
 						pub_rx_can_frame_.publish(can_msg); //can_msg is discarded each time and the published pointer can be subscribed to access the data.
 					}
 
-					//NODELET_INFO("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
-					//frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
+					NODELET_DEBUG("id = %X, dlc = %d, data = %X %X %X %X\n", frame_rd.can_id, frame_rd.can_dlc,
+							frame_rd.data[0], frame_rd.data[1], frame_rd.data[2], frame_rd.data[3]);
 				}
 			}
 		}
