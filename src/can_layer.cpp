@@ -208,8 +208,8 @@ bool CANLayer::init()
 
 	//Setup Motor Controllers
 	ROS_INFO("Do you want to setup the motor controllers ? (y/n)");
-	std::string answer_setup;
-	std::cin >> answer_setup;
+	std::string answer_setup("y");
+	//std::cin >> answer_setup; //FIXME
 
 	if(answer_setup.compare("y") == 0)
 	{
@@ -231,8 +231,8 @@ bool CANLayer::init()
 
 	//Setup Motor Controllers
 	ROS_INFO("Do you want to initialize the motor controllers with values from the YAML config file ? (y/n)");
-	std::string answer_init;
-	std::cin >> answer_init;
+	std::string answer_init("y");
+	//std::cin >> answer_init; //FIXME
 
 	if(answer_init.compare("y") == 0)
 	{

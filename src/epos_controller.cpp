@@ -627,6 +627,37 @@ int8_t EPOSController::setup()
             break;
         }
 
+	case DCX12 : //!< return error if it is not a DC type of motor
+        {
+            if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
+            {
+                ROS_INFO("\tmotor type: DCX12");
+
+                if(ptr_controller_->getControllerType() == EPOS2)
+                {
+                    ROS_INFO("\tcontroller type: EPOS2");
+                    setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
+                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
+                }
+                else if(ptr_controller_->getControllerType() == EPOS4)
+                {
+                	ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
+                    return EPOS_ERROR;
+                }
+                else
+                {
+                	ROS_WARN("\tcontroller type: no controller selected!");
+                    return EPOS_ERROR;
+                }
+            }
+            else
+            {
+                ROS_WARN("\tmotor type: not a DC motor");
+                return EPOS_ERROR;
+            }
+            break;
+        }
+
         case DCX14 : //!< return error if it is not a DC type of motor
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
@@ -907,8 +938,8 @@ int8_t EPOSController::setup()
 				if(ptr_controller_->getControllerType() == EPOS2)
 				{
 					ROS_INFO("\tcontroller type: EPOS2");
-					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
-					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x2530);
+					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x04);
+					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x07D0);
 					setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
 					setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20); //0x4E20 = 20000, 0xFFFFFFFE to disactivate
 				}
@@ -941,8 +972,8 @@ int8_t EPOSController::setup()
 				if(ptr_controller_->getControllerType() == EPOS2)
 				{
 					ROS_INFO("\tcontroller type: EPOS2");
-					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
-					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x2530);
+					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x04);
+					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x07D0);
 					setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
 					setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20); //0x4E20 = 20000, 0xFFFFFFFE to disactivate
 				}
@@ -1066,7 +1097,8 @@ int8_t EPOSController::setup()
     //Writing 0 first to the number of mapped objects
     setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, NUMBER_OBJECTS_RECEIVE_PDO_SUBINDEX, 0x00, 1);
     //Set object 1
-    setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, MAPPED_OBJECT_1_RECEIVE_PDO_SUBINDEX, OBJECT_TARGET_POSITION, 4);  //32
+    setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, MAPPED_OBJECT_1_RECEIVE_PDO_SUBINDEX, OBJECT_TARGET_POSITION, 4);  //32 //FIXME commented out to use normal position mode
+    //setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, MAPPED_OBJECT_1_RECEIVE_PDO_SUBINDEX, OBJECT_POSITION_MODE_SETTING_VALUE, 4);
     //Set object 2
     setPDO(MAPPED_OBJECT_RECEIVE_PDO_1_INDEX, MAPPED_OBJECT_2_RECEIVE_PDO_SUBINDEX, OBJECT_TARGET_VELOCITY, 4);    //32
     //enable RxPDO 1 with 2 objects
@@ -1231,7 +1263,8 @@ int8_t EPOSController::setup()
 
         case PROFILE_POSITION_MODE :
         {
-            setModeOfOperationSDO(VALUE_PROFILE_POSITION_MODE);
+            setModeOfOperationSDO(VALUE_PROFILE_POSITION_MODE); //FIXME commented out to use normal position mode
+	    //setModeOfOperationSDO(VALUE_POSITION_MODE);
             break;
         }
 
@@ -1590,6 +1623,27 @@ int EPOSController::initialize()
 			break;
 		}
 
+		case DCX12 :
+		{
+			ROS_DEBUG("\tDCX12");
+
+			if(ptr_controller_->getControllerType() == EPOS2)
+			{
+				ROS_DEBUG("\tEPOS2");
+
+				outCurLmt = 2000;
+				profVel = 2000;
+				profAcc = 2000;
+				profDec = 2000;
+				maxSpeed = 10000;
+			}
+			else if(ptr_controller_->getControllerType() == EPOS4)
+			{
+				return EPOS_ERROR;
+			}
+			break;
+		}
+
 		case DCX14 :
 		{
 			ROS_DEBUG("\tDCX14");
@@ -1735,10 +1789,10 @@ int EPOSController::initialize()
 			{
 				ROS_DEBUG("\tEPOS2");
 
-				outCurLmt = 1000;
+				outCurLmt = 4000;
 				profVel = 800;
-				profAcc = 1000;
-				profDec = 1000;
+				profAcc = 2000;
+				profDec = 2000;
 				maxSpeed = 1000;
 			}
 			else if(ptr_controller_->getControllerType() == EPOS4)
@@ -1785,8 +1839,8 @@ int EPOSController::initialize()
 			{
 				ROS_DEBUG("\tEPOS2");
 
-				outCurLmt = 1000;
-				profVel = 800;
+				outCurLmt = 3000;
+				profVel = 1000;
 				profAcc = 1000;
 				profDec = 1000;
 				maxSpeed = 1000;
@@ -1810,11 +1864,11 @@ int EPOSController::initialize()
 			{
 				ROS_DEBUG("\tEPOS2");
 
-				outCurLmt = 1000;
-				profVel = 800;
-				profAcc = 1000;
-				profDec = 1000;
-				maxSpeed = 1000;
+				outCurLmt = 2000;
+				profVel = 2000;
+				profAcc = 4000;
+				profDec = 4000;
+				maxSpeed = 3000;
 			}
 			else if(ptr_controller_->getControllerType() == EPOS4)
 			{

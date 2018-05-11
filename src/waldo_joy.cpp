@@ -39,12 +39,10 @@
 /*** Includes ***/
 #include <ros/ros.h>
 #include <cereal_port/CerealPort.h>
-#include "trs_msgs/MotorCmdMultiArray.h"
-#include "trs_msgs/MotorDataMultiArray.h"
-#include "std_msgs/UInt16MultiArray.h"
+#include <sensor_msgs/Joy.h>
 #include <sstream>
 #include <string>
-#include "robotDefines.h"
+//#include "robotDefines.h"
 
 /*** Defines ***/
 #define LOOP_RATE				100
@@ -87,7 +85,7 @@ bool verifyChecksum(char* dataArray, int nbBytes)
 int main(int argc, char** argv)
 {
 	// Initialize ROS
-    ros::init(argc, argv, "osa_waldo_controller_node");
+    ros::init(argc, argv, "osa_waldo_joy_node");
     ros::NodeHandle nh("~");
 
     ros::Rate r(LOOP_RATE);
@@ -101,12 +99,21 @@ int main(int argc, char** argv)
     char reply[TOTAL_DATA_SIZE] = {0x00};
     bool dataValid = false;
 
-	ros::Publisher rigInputs_pub = nh.advertise<std_msgs::UInt16MultiArray>("/waldo_controller_array", 1);
+	ros::Publisher waldo_joy_pub = nh.advertise<sensor_msgs::Joy>("/waldo_joy", 1);
 	
 	//init data array
-	std_msgs::UInt16MultiArray rigData;
+	//std_msgs::UInt16MultiArray rigData;
 	//Clear array
-	rigData.data.clear();
+	//rigData.data.clear();
+
+	sensor_msgs::Joy waldo_data;
+
+	waldo_data.header.seq = 0;
+	waldo_data.header.stamp = ros::Time::now();
+	waldo_data.header.frame_id = "waldo_frame";
+
+	waldo_data.axes.clear();
+	waldo_data.buttons.clear();
 
     //Change the next line according to your port name and baud rate
 	try{ device.open(usb_device_name.c_str(), RS232_BAUDRATE); }
@@ -119,9 +126,7 @@ int main(int argc, char** argv)
 
     //Main loop
     while(ros::ok())
-    {
-    	rigData.data.clear();
-
+    {    	
         //read data on serial Rx
         // Get the reply, the last value is the timeout in ms
         try{ device.readBytes(reply, TOTAL_DATA_SIZE, TIMEOUT); } //+4 for 2 0xAA and 2 0xBB
@@ -154,18 +159,23 @@ int main(int argc, char** argv)
         {
         	//ROS_INFO("Data valid");
 
+		waldo_data.axes.clear();
+		waldo_data.buttons.clear();
+		waldo_data.header.seq++;
+		waldo_data.header.stamp = ros::Time::now();
+
         	for(int i=0; i<NUMBER_OF_DIN; i++)
-			{
-				rigData.data.push_back((uint8_t)reply[i+2]);
-			}
+		{
+			waldo_data.buttons.push_back((uint8_t)reply[i+2]);
+		}
 
         	//build the custom message
         	for(int i=0; i<NUMBER_OF_AIN; i++)
-			{
-        		rigData.data.push_back((uint8_t)reply[NUMBER_OF_DIN + i*BYTES_PER_AIN_DATA+2] + ((uint8_t)reply[NUMBER_OF_DIN + i*BYTES_PER_AIN_DATA+1+2] << 8));
-			}
+		{
+        		waldo_data.axes.push_back((uint8_t)reply[NUMBER_OF_DIN + i*BYTES_PER_AIN_DATA+2] + ((uint8_t)reply[NUMBER_OF_DIN + i*BYTES_PER_AIN_DATA+1+2] << 8));
+		}
 
-			rigInputs_pub.publish(rigData);
+		waldo_joy_pub.publish(waldo_data);
         	dataValid = false; //reset flag
         }
         else

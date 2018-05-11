@@ -92,13 +92,22 @@ add_library(osa_communication
   src/epos_controller.cpp
 )
 
+add_library(osa_i2c
+  src/i2c_master.cpp
+  src/i2c_slave.cpp
+)
+
+
 ## Declare a cpp executable
 #add_executable(osa_master_board src/master_board.cpp)
 add_executable(osa_can_layer src/main.cpp)
+add_executable(osa_motor_controller_board src/motor_controller_board.cpp)
+add_executable(osa_waldo_joy src/waldo_joy.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(osa_can_layer osa_communication_generate_messages_cpp osa_communication osa_common)
+add_dependencies(osa_motor_controller_board osa_communication_generate_messages_cpp osa_i2c osa_common)
 add_dependencies(socketcan_reader_nodelet ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
@@ -106,6 +115,8 @@ add_dependencies(socketcan_reader_nodelet ${catkin_EXPORTED_TARGETS})
 target_link_libraries(socketcan_reader_nodelet ${catkin_LIBRARIES})
 target_link_libraries(osa_communication ${catkin_LIBRARIES})
 target_link_libraries(osa_can_layer ${catkin_LIBRARIES} osa_communication osa_common)
+target_link_libraries(osa_motor_controller_board ${catkin_LIBRARIES} osa_i2c osa_common)
+target_link_libraries(osa_waldo_joy ${catkin_LIBRARIES})
 
 #############
 ## Install ##
