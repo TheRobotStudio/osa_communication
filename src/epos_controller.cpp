@@ -734,8 +734,9 @@ int8_t EPOSController::setup()
                 }
                 else if(ptr_controller_->getControllerType() == EPOS4)
                 {
-                	ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
-                    return EPOS_ERROR;
+                	ROS_INFO("\tcontroller type: EPOS2");
+                    	setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
+                    	setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0FA0);
                 }
                 else
                 {
@@ -877,8 +878,11 @@ int8_t EPOSController::setup()
                 }
                 else if(ptr_controller_->getControllerType() == EPOS4)
                 {
-                	ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
-                    return EPOS_ERROR;
+                    ROS_INFO("\tcontroller type: EPOS2");
+                    setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
+                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x12FC); //0x2530
+                    setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
+                    setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20);
                 }
                 else
                 {
@@ -1702,7 +1706,13 @@ int EPOSController::initialize()
 			}
 			else if(ptr_controller_->getControllerType() == EPOS4)
 			{
-				return EPOS_ERROR;
+				ROS_DEBUG("\tEPOS4");
+
+				outCurLmt = 2000;
+				profVel = 2000;
+				profAcc = 10000;
+				profDec = 10000;
+				maxSpeed = 10000;
 			}
 			break;
 		}
@@ -1799,10 +1809,10 @@ int EPOSController::initialize()
 			{
 				ROS_DEBUG("\tEPOS4");
 
-				profVel = 800;
-				profAcc = 1000;
-				profDec = 1000;
-				maxSpeed = 1000;
+				profVel = 3000;
+				profAcc = 10000;
+				profDec = 10000;
+				maxSpeed = 14000;
 			}
 			break;
 		}
