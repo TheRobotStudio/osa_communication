@@ -110,7 +110,7 @@ board_status_(0)
 	else if(!motor_type.compare("RE30")) ptr_controller_->getMotorType() = MotorType(RE30);
 	else if(!motor_type.compare("ECI40")) ptr_controller_->getMotorType() = MotorType(ECI40);
 	else if(!motor_type.compare("ECI52")) ptr_controller_->getMotorType() = MotorType(ECI52);
-	else if(!motor_type.compare("EC90")) ptr_controller_->getMotorType() = MotorType(EC90);
+	else if(!motor_type.compare("EC90F")) ptr_controller_->getMotorType() = MotorType(EC90F);
 
 	//mode_
 	if(!mode.compare("INTERPOLATED_POSITION_MODE")) mode_ = ActivatedModeOfOperation(INTERPOLATED_POSITION_MODE);
@@ -830,6 +830,37 @@ int8_t EPOSController::setup()
             break;
         }
 
+        case RE25 : //!< return error if it is not a DC type of motor
+		{
+			if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
+			{
+				ROS_INFO("\tmotor type: RE25");
+
+				if(ptr_controller_->getControllerType() == EPOS2)
+				{
+					ROS_INFO("\tcontroller type: EPOS2");
+					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
+					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x03E8);
+				}
+				else if(ptr_controller_->getControllerType() == EPOS4)
+				{
+					ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
+					return EPOS_ERROR;
+				}
+				else
+				{
+					ROS_WARN("\tcontroller type: no controller selected!");
+					return EPOS_ERROR;
+				}
+			}
+			else
+			{
+				ROS_WARN("\tmotor type: not a DC motor");
+				return EPOS_ERROR;
+			}
+			break;
+		}
+
         case RE30 : //!< return error if it is not a DC type of motor
         {
             if(setObjectSDO(OBJECT_MOTOR_TYPE, BRUSHED_DC_MOTOR) == EPOS_OK)
@@ -840,7 +871,7 @@ int8_t EPOSController::setup()
                 {
                     ROS_INFO("\tcontroller type: EPOS2");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x01);
-                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x0320);
+                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x03E8);
                 }
                 else if(ptr_controller_->getControllerType() == EPOS4)
                 {
@@ -1000,12 +1031,12 @@ int8_t EPOSController::setup()
 			break;
 		}
 
-        case EC90 : //!< return error if it is not an EC type of motor
+        case EC90F : //!< return error if it is not an EC type of motor
         {
             //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
             //if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) //EC_MOTOR_HALL_ENCODER1 //EC_MOTOR_HALL
             //{
-                ROS_INFO("\tmotor type: EC90");
+                ROS_INFO("\tmotor type: EC90F");
 
                 if(ptr_controller_->getControllerType() == EPOS2)
                 {
@@ -1765,6 +1796,32 @@ int EPOSController::initialize()
 			break;
 		}
 
+		case RE25 :
+		{
+			ROS_DEBUG("\tRE25");
+
+			if(ptr_controller_->getControllerType() == EPOS2)
+			{
+				ROS_DEBUG("\tEPOS2");
+
+				outCurLmt = 1000;
+				profVel = 800;
+				profAcc = 5000;
+				profDec = 5000;
+				maxSpeed = 1000;
+			}
+			else if(ptr_controller_->getControllerType() == EPOS4)
+			{
+				ROS_DEBUG("\tEPOS4");
+
+				profVel = 800;
+				profAcc = 1000;
+				profDec = 1000;
+				maxSpeed = 1000;
+			}
+			break;
+		}
+
 		case RE30 :
 		{
 			ROS_DEBUG("\tRE30");
@@ -1892,9 +1949,9 @@ int EPOSController::initialize()
 			break;
 		}
 
-		case EC90 :
+		case EC90F :
 		{
-			ROS_DEBUG("\tEC90");
+			ROS_DEBUG("\tEC90F");
 			if(ptr_controller_->getControllerType() == EPOS2)
 			{
 				ROS_DEBUG("\tEPOS2");
