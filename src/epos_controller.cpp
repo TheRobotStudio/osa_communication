@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, The Robot Studio
+ * Copyright (c) 2019, The Robot Studio
  *  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 /**
  * @file epos_controller.cpp
  * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
- * @date Mar 30, 2018
+ * @date Jan 25, 2019
  * @version 0.1.0
  * @brief Implementation file for class EPOSController
  *
@@ -892,6 +892,43 @@ int8_t EPOSController::setup()
             break;
         }
 
+        case ECI30 : //!< return error if it is not an EC type of motor
+        {
+            //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
+            if(setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK)
+            {
+                ROS_INFO("\tmotor type: ECI30");
+
+                if(ptr_controller_->getControllerType() == EPOS2)
+                {
+                    ROS_INFO("\tcontroller type: EPOS2");
+                    setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x02);
+                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x12FC);
+                    setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
+                    setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20); //0x4E20 = 20000, 0xFFFFFFFE to disactivate
+                }
+                else if(ptr_controller_->getControllerType() == EPOS4)
+                {
+                    ROS_INFO("\tcontroller type: EPOS4");
+                    setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x02);
+                    setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x12FC); //0x2530
+                    setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
+                    setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20);
+                }
+                else
+                {
+                	ROS_WARN("\tcontroller type: no controller selected!");
+                    return EPOS_ERROR;
+                }
+            }
+            else
+            {
+            	ROS_WARN("\tmotor type: not an EC motor");
+                return EPOS_ERROR;
+            }
+            break;
+        }
+
         case ECI40 : //!< return error if it is not an EC type of motor
         {
             //if((setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER1) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL) == EPOS_OK) || (setObjectSDO(OBJECT_MOTOR_TYPE, EC_MOTOR_HALL_ENCODER2) == EPOS_OK))
@@ -909,7 +946,7 @@ int8_t EPOSController::setup()
                 }
                 else if(ptr_controller_->getControllerType() == EPOS4)
                 {
-                    ROS_INFO("\tcontroller type: EPOS2");
+                    ROS_INFO("\tcontroller type: EPOS4");
                     setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x07);
                     setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x12FC); //0x2530
                     setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
@@ -1014,8 +1051,11 @@ int8_t EPOSController::setup()
 				}
 				else if(ptr_controller_->getControllerType() == EPOS4)
 				{
-					ROS_WARN("\tcontroller type: EPOS4 - not implemented!");
-					return EPOS_ERROR;
+					ROS_INFO("\tcontroller type: EPOS4");
+					setObjectSDO(OBJECT_POLE_PAIR_NUMBER, 0x04);
+					setObjectSDO(OBJECT_OUTPUT_CURRENT_LIMIT, 0x05DC);
+					setObjectSDO(OBJECT_QUICKSTOP_DECELERATION, 0x00002710);
+					setObjectSDO(OBJECT_MAXIMAL_FOLLOWING_ERROR, 0x00004E20); //0x4E20 = 20000, 0xFFFFFFFE to disactivate
 				}
 				else
 				{
@@ -1848,6 +1888,32 @@ int EPOSController::initialize()
 			break;
 		}
 
+		case ECI30 :
+		{
+			ROS_DEBUG("\tECI30");
+
+			if(ptr_controller_->getControllerType() == EPOS2)
+			{
+				ROS_DEBUG("\tEPOS2");
+
+				outCurLmt = 4000;
+				profVel = 800;
+				profAcc = 2000;
+				profDec = 2000;
+				maxSpeed = 1000;
+			}
+			else if(ptr_controller_->getControllerType() == EPOS4)
+			{
+				ROS_DEBUG("\tEPOS4");
+
+				profVel = 3000;
+				profAcc = 10000;
+				profDec = 10000;
+				maxSpeed = 8000;
+			}
+			break;
+		}
+
 		case ECI40 :
 		{
 			ROS_DEBUG("\tECI40");
@@ -1941,10 +2007,10 @@ int EPOSController::initialize()
 			{
 				ROS_DEBUG("\tEPOS4");
 
-				profVel = 800;
-				profAcc = 1000;
-				profDec = 1000;
-				maxSpeed = 1000;
+				profVel = 2000;
+				profAcc = 4000;
+				profDec = 4000;
+				maxSpeed = 3000;
 			}
 			break;
 		}
