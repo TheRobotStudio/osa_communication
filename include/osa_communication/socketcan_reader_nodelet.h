@@ -1,16 +1,20 @@
 /*
- * Copyright (c) 2018, The Robot Studio
- *  All rights reserved.
+ * Copyright (c) 2019, The Robot Studio
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *	* Redistributions of source code must retain the above copyright notice, this
- *	  list of conditions and the following disclaimer.
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
  *
- *	* Redistributions in binary form must reproduce the above copyright notice,
- *	  this list of conditions and the following disclaimer in the documentation
- *	  and/or other materials provided with the distribution.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+
+ * * Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,15 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
+ /**
  * @file socketcan_reader_nodelet.h
- * @author Cyril Jourdan
- * @date Mar 29, 2018
- * @version 0.1.0
- * @brief Header file for class SocketCANReaderNodelet
- *
- * Contact: cyril.jourdan@therobotstudio.com
- * Created on : Feb 21, 2018
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Jun 3, 2019
+ * @date Created on Feb 21, 2018
+ * @version 0.2.0
+ * @brief header file for class SocketCANReaderNodelet
  */
 
 #ifndef OSA_COMMUNICATION_SOCKETCAN_READER_NODELET_H
@@ -72,12 +74,6 @@ private:
 	int close_port();
 
 	osa_common::RobotDescription *ptr_robot_description_;
-	/*
-	std::string robot_namespace_;
-	std::string robot_name_;
-	std::string robot_can_device_;
-	int number_epos_boards_;
-	*/
 	int soc_;
 	bool read_can_port_;
 	ros::Publisher pub_rx_can_frame_;

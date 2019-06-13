@@ -1,16 +1,20 @@
 /*
- * Copyright (c) 2018, The Robot Studio
- *  All rights reserved.
+ * Copyright (c) 2019, The Robot Studio
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *	* Redistributions of source code must retain the above copyright notice, this
- *	  list of conditions and the following disclaimer.
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
  *
- *	* Redistributions in binary form must reproduce the above copyright notice,
- *	  this list of conditions and the following disclaimer in the documentation
- *	  and/or other materials provided with the distribution.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+
+ * * Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,14 +29,12 @@
  */
 
 /**
- * @file EPOSController.hpp
- * @author Cyril Jourdan
- * @date Mar 29, 2018
- * @version 0.1.0
+ * @file epos_controller.h
+ * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @date Modified on Jun 3, 2019
+ * @date Created on Aug 3, 2017
+ * @version 0.2.0
  * @brief Header file for class EPOSController
- *
- * Contact: cyril.jourdan@therobotstudio.com
- * Created on : Aug 3, 2017
  */
 
 #ifndef OSA_COMMUNICATION_EPOS_CONTROLLER_H
@@ -82,15 +84,7 @@ public:
 	/** @brief Destructor. */
 	~EPOSController();
 
-	//setters //TODO check wether assessors are useful
-//	int	setName(std::string name);
-	//int	setNodeID(uint8_t node_id);
-/*	int setControllerType(ControllerType controller_type);
-	int setMotorType(MotorType motor_type);
-	int setInverted(bool inverted);
-	int setMode(ActivatedModeOfOperation mode);
-	int setValue(int value);
-*/
+	//setters
 	int setPtrSocketCAN(int* ptr_socket_can);
 	int setPosition(int32_t position);
 	int setCurrent(int16_t current);
@@ -101,14 +95,6 @@ public:
 	int setBoardStatus(int8_t board_status);
 
 	//getters
-/*	std::string	getName() const { return name_; };
-	uint8_t getNodeID() const { return node_id_; };
-	ControllerType getControllerType() const { return controller_type_; };
-	MotorType getMotorType() const { return motor_type_; };
-	bool getInverted() const { return inverted_; };
-	ActivatedModeOfOperation getMode() const { return mode_; };
-	int getValue() const { return value_; };
-	*/
 	osa_common::Controller* getPtrController() const { return ptr_controller_; };
 	int* getPtrSocketCAN() const { return ptr_socket_can_; };
 	int32_t getPosition() const { return position_; };
@@ -121,8 +107,8 @@ public:
 	int8_t getBoardStatus() const { return board_status_; };
 
 private:
-	void canToEposWrite(int id, char* data, char len); //, int* socket_can);
-	void transmitPDOWrite(int tx_pdo_cob_id); //, int* socket_can);
+	void canToEposWrite(int id, char* data, char len);
+	void transmitPDOWrite(int tx_pdo_cob_id);
 
 	/*! \fn void setNMT(, uint8_t cs)
 	 *  \brief
@@ -357,23 +343,10 @@ public:
 
 private:
 	const static int data_length = 8;
-	/*
-	std::string name_;
-	DegreeOfFreedomType degree_of_freedom_type_;
-	uint8_t node_id_;
-	ControllerType controller_type_;
-	MotorType motor_type_;
-	*/
-	//bool inverted_; /**< 0 for non inverted, 1 for inverted, this will invert the sign of commands. */
-	/*ActivatedModeOfOperation mode_; //FIXME duplicate of modes_of_operation_
-	int value_;
-*/
-	//ros::Publisher *tx_can_frame_pub_;
 	osa_common::Controller* ptr_controller_;
 	int* ptr_socket_can_;
 	char data_[data_length]; //can message data
 	ActivatedModeOfOperation activ_mode_; //duplicate of modesOfOperation[], to merge
-	//ROSCommand ros_cmd_;
 
 	//latest stored commands
 	/**<RPDO1 */

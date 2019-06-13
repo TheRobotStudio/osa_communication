@@ -1,16 +1,20 @@
 /*
- * Copyright (c) 2018, The Robot Studio
- *  All rights reserved.
+ * Copyright (c) 2019, The Robot Studio
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *	* Redistributions of source code must retain the above copyright notice, this
- *	  list of conditions and the following disclaimer.
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
  *
- *	* Redistributions in binary form must reproduce the above copyright notice,
- *	  this list of conditions and the following disclaimer in the documentation
- *	  and/or other materials provided with the distribution.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+
+ * * Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,9 +31,9 @@
 /**
  * @file can_layer.h
  * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
- * @date Modified on Apr 3, 2018
+ * @date Modified on Jun 3, 2019
  * @date Created on Aug 3, 2017
- * @version 0.1.1
+ * @version 0.2.0
  * @brief Header file for class CANLayer
  */
 
@@ -96,7 +100,7 @@ public:
 	 *  @brief Service server method that setup a given motor controller.
 	 *  @param req the request is the node ID on the CAN bus.
 	 *  @param res the response is a bool which has the same value as the returned value.
-	 *  @return bool whether or not the service call has succedded.
+	 *  @return bool whether or not the service call has succeeded.
 	 */
 	bool ssSetupMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res);
 
@@ -104,7 +108,7 @@ public:
 	 *  @brief Service server method that initialize a given motor controller.
 	 *  @param req the request is the node ID on the CAN bus.
 	 *  @param res the response is a bool which has the same value as the returned value.
-	 *  @return bool whether or not the service call has succedded.
+	 *  @return bool whether or not the service call has succeeded.
 	 */
 	bool ssInitMotorController(osa_communication::SelectMotorController::Request  &req, osa_communication::SelectMotorController::Response &res);
 
