@@ -5,7 +5,7 @@
   <description>This package is the communication interface between the robot and ROS</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
-  <maintainer email="cyril.jourdan@therobotstudio.com">Cyril Jourdan</maintainer>
+  <maintainer email="contact@therobotstudio.com">Rob Knight</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
@@ -19,7 +19,7 @@
   
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
-  <author email="cyril.jourdan@therobotstudio.com">Cyril Jourdan</author>
+  <author email="cyril.jourdan.86@gmail.com">Cyril Jourdan</author>
 
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
