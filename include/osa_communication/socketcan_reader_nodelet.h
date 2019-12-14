@@ -30,7 +30,7 @@
 
  /**
  * @file socketcan_reader_nodelet.h
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Modified on Jun 3, 2019
  * @date Created on Feb 21, 2018
  * @version 0.2.0

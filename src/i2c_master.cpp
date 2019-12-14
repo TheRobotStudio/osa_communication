@@ -30,7 +30,7 @@
 
 /**
  * @file can_layer.cpp
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Modified on May 1, 2018
  * @date Created on Apr 31, 2018
  * @version 0.1.1

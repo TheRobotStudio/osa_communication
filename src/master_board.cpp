@@ -30,13 +30,13 @@
 
 /**
  * @file master_board.cpp
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Mar 03, 2017
  * @version 0.1.0
  * @brief Implementation file for the serial communication between ROS and the Master Board
  * Deprecated.
  *
- * Contact: cyril.jourdan@therobotstudio.com
+ * Contact: contact@therobotstudio.com
  * Created on : Feb 28, 2013
  */
 

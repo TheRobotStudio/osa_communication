@@ -30,7 +30,7 @@
 
 /**
  * @file waldo_controller.cpp
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Modified on Apr 18, 2018
  * @date Created on Feb 28, 2016
  * @version 0.1.1

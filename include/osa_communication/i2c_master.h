@@ -30,7 +30,7 @@
 
 /**
  * @file i2c_master.h
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Modified on Jun 3, 2019
  * @date Created on Apr 31, 2018
  * @version 0.2.0

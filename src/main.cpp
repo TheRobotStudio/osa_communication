@@ -30,12 +30,12 @@
 
 /**
  * @file main.cpp
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Aug 29, 2017
  * @version 0.1.1
  * @brief Main function for the Open Source Android CAN layer node.
  *
- * Contact: cyril.jourdan@therobotstudio.com
+ * Contact: contact@therobotstudio.com
  * Created on : Aug 3, 2017
  */
 

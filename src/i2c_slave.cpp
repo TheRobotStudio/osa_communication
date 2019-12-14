@@ -30,12 +30,12 @@
 
 /**
  * @file epos_controller.cpp
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Mar 30, 2018
  * @version 0.1.0
  * @brief Implementation file for class I2CSlave
  *
- * Contact: cyril.jourdan@therobotstudio.com
+ * Contact: contact@therobotstudio.com
  * Created on : Aug 3, 2017
  */
 

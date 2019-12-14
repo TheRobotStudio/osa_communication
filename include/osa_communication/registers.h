@@ -30,7 +30,7 @@
 
  /**
  * @file registers.h
- * @author Cyril Jourdan <cyril.jourdan@therobotstudio.com>
+ * @author Cyril Jourdan <contact@therobotstudio.com>
  * @date Modified on Jun 3, 2019
  * @date Created on Feb 27, 2013
  * @version 0.2.0
